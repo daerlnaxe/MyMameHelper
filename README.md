@@ -22,3 +22,9 @@
 
 # Notes
 - Visiblement j'ai travaillé sur une base sql.
+
+
+# Tests
+## Exemples de résultat
+Chargement d'un fichier XML tiré de MAME
+<img width="2304" height="1117" alt="image" src="https://github.com/user-attachments/assets/eda39a20-bc90-4ac8-b870-c2b851ef8525" />
