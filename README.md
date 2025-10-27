@@ -5,9 +5,6 @@
 27/10/2025: reprise du programme et publication, j'avais totalement oublié de le faire depuis 2020 ou 2022, je ne sais plus.
 
 # Todo
-- Versionning de la base
-- Créatoin de la base, mettre un waiting et probablement passer en parallèle, bref à voir
-- Revoir l'algo de feed surtout pour le rom.count
 - Passer en .net core
 - Reprendre contact avec le code pour sortir une documentation sur le fonctionnement, j'ai totalement oublié
 - Voir s'il répond le besoin de filtrage des roms de manière simple.
@@ -35,3 +32,8 @@ Load an xml from M.A.M.E
 ## dbtools
 - Création de la base
 - Ne lit pas la base si non présente
+
+# Tests
+## Exemples de résultat
+Chargement d'un fichier XML tiré de MAME
+<img width="2304" height="1117" alt="image" src="https://github.com/user-attachments/assets/eda39a20-bc90-4ac8-b870-c2b851ef8525" />
