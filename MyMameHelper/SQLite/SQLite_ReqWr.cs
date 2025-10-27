@@ -318,6 +318,7 @@ namespace MyMameHelper.SQLite
             uint max = 50;
             Debug.WriteLine($"Insertion de la collection de roms brutes");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+            
 
             Stopwatch sw = new Stopwatch();
             sw.Start();

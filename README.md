@@ -5,6 +5,9 @@
 27/10/2025: reprise du programme et publication, j'avais totalement oublié de le faire depuis 2020 ou 2022, je ne sais plus.
 
 # Todo
+- Versionning de la base
+- Créatoin de la base, mettre un waiting et probablement passer en parallèle, bref à voir
+- Revoir l'algo de feed surtout pour le rom.count
 - Passer en .net core
 - Reprendre contact avec le code pour sortir une documentation sur le fonctionnement, j'ai totalement oublié
 - Voir s'il répond le besoin de filtrage des roms de manière simple.
@@ -21,4 +24,14 @@
 - Rajouter éventuellement le genre du jeu en xml.
 
 # Notes
-- Visiblement j'ai travaillé sur une base sql.
+- Visiblement j'ai travaillé sur une base sqlite.
+
+# Fonctionnalités
+## MainPage
+### Populate Temp
+Load an xml from M.A.M.E
+
+
+## dbtools
+- Création de la base
+- Ne lit pas la base si non présente

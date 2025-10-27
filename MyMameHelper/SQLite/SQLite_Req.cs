@@ -46,6 +46,10 @@ namespace MyMameHelper.SQLite
             try
             {
                 SQLiteConn = new SQLiteConnection($"Data Source={Settings.Default.DataBase_Path};Version=3");
+                string path = Directory.GetCurrentDirectory();
+                Trace.WriteLine($"Current directory: '{path}'");
+                
+
                 SQLiteConn.Open();
 
                 while (SQLiteConn.State == ConnectionState.Closed)
@@ -54,6 +58,7 @@ namespace MyMameHelper.SQLite
                 }
 
                 Debug.WriteLine($"SQlite_Test, connexion à '{SQLiteConn.DataSource}': {SQLiteConn.State}");
+                Trace.WriteLine($"Connect to {SQLiteConn.FileName}");
             }
             catch (SQLiteException sqlEXC)
             {
@@ -61,6 +66,9 @@ namespace MyMameHelper.SQLite
                 this.Dispose();
                 throw new Exception("Erreur SQlite");
             }
+            
+
+
         }
 
 

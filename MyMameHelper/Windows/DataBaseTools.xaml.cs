@@ -95,8 +95,9 @@ namespace MyMameHelper.Windows
                     // Liste des tables
                     lTables = sqRead.GET_TablesName();
 
+
                     // Liste des constructeurs 
-                    Constructors.ChangeContent = sqRead.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Constructeurs, all: true, orders: new SqlOrder("Nom")));
+                    //Constructors.ChangeContent = sqRead.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Constructeurs, all: true, orders: new SqlOrder("Nom")));
 
                     // Liste des genres
                     Genres.ChangeContent = sqRead.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true, orders: new SqlOrder("Nom")));

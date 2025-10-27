@@ -362,7 +362,8 @@ namespace MyMameHelper.SQLite
                     cols2Sel = string.Join(", ", objSelect.Colonnes.Select(x => $"[{x}]"));
                 }
 
-                string sql = $"SELECT {cols2Sel} FROM [{objSelect.Table}]";
+                //string sql = $"SELECT {cols2Sel} FROM \"{objSelect.Table}\"";
+                string sql = $"SELECT {cols2Sel} FROM \"Genres\"";
                 SQLiteCommand command = new SQLiteCommand(sql, this.SQLiteConn);
 
                 Condition_TreatMt(command, objSelect.Conditions);
@@ -373,6 +374,7 @@ namespace MyMameHelper.SQLite
                     command.CommandText += $" LIMIT {objSelect.Limit}";
 
                 Trace.WriteLine($"Lancement de la commande {command.CommandText}");
+                Trace.WriteLine(this.SQLiteConn.State);
                 SQLiteDataReader reader = command.ExecuteReader();
                 Trace.WriteLine($"Nombre de résultats, {reader.RecordsAffected}");
                 return reader;
@@ -394,6 +396,7 @@ namespace MyMameHelper.SQLite
                 DxMBox.ShowDial($"Erreur d'accès TABLE {objSelect.Table} \n {exc.Message}", "Erreur", DxTBoxWPF.Common.DxButtons.Ok);
                 Dispose();
             }
+
             return null;
         }
 
@@ -509,6 +512,7 @@ namespace MyMameHelper.SQLite
                 Debug.WriteLine(exc);
                 Dispose();
             }
+
             return lCollec;
         }
 

@@ -135,7 +135,7 @@ namespace MyMameHelper
 
             if (DatabaseOk && !TestTable())
             {
-                System.Windows.MessageBox.Show("Table Missing, Build or Update Database", "Alarm", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                System.Windows.MessageBox.Show("Table Missing, Build or Update Database (you can use DbTools)", "Alarm", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                 DatabaseOk = false;
                 return;
             }
