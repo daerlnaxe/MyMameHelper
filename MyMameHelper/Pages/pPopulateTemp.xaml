@@ -1,0 +1,71 @@
+﻿<Page x:Class="MyMameHelper.Pages.pPopulateTemp"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MyMameHelper.Pages"
+         xmlns:commands="clr-namespace:MyMameHelper.Commands"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="pAddByXML">
+    <Page.CommandBindings>
+        <CommandBinding Command="commands:FileCommands.Load_File" Executed="Ex_LoadXML"/>
+        <CommandBinding Command="commands:UICommands.SaveTemp" Executed="Ex_SaveDb" CanExecute="Can_Save"/>
+        <CommandBinding Command="commands:UICommands.RemoveRom" CanExecute="Can_Remove" Executed="Ex_Remove"/>
+    </Page.CommandBindings>
+    <Page.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Margin="10">
+            <Button Content="Load Mame XML" Command="commands:FileCommands.Load_File" VerticalAlignment="Top"/>
+            <Button Content="SaveToTemp" Command="commands:UICommands.SaveTemp"/>
+
+        </StackPanel>
+        <!-- Bios Roms -->
+
+        <Grid Grid.Column="1" Grid.RowSpan="3" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Label Content="Number of Roms"/>
+            <Label Content="{Binding RomsCollec.Count}" Grid.Column="1"/>
+            <!-- Roms List -->
+            <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding RomsCollec}" SelectedValue="{Binding IndexRom}" IsReadOnly="True" AutoGenerateColumns="False">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="commands:UICommands.RemoveRom" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
+                    <DataGridTextColumn Header="Source File" Binding="{Binding Source_File}"/>
+                    <DataGridTextColumn Header="Clone Of" Binding="{Binding Clone_Of}"/>
+                    <DataGridTextColumn Header="Rom Of" Binding="{Binding Rom_Of}"/>
+                    <DataGridTextColumn Header="Sample Of" Binding="{Binding Sample_Of}"/>
+                    <DataGridCheckBoxColumn Header="Bios" Binding="{Binding Is_Bios}"/>
+                    <DataGridCheckBoxColumn Header="Mechanical" Binding="{Binding Is_Mechanical}"/>
+                    <DataGridTextColumn Header="Year" Binding="{Binding Year}"/>
+                    <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}"/>                    
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+    </Grid>
+</Page>

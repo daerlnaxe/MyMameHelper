@@ -1,0 +1,116 @@
+﻿<Page x:Class="MyMameHelper.Pages.pHandleRoms"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MyMameHelper.Pages"
+      xmlns:commands ="clr-namespace:MyMameHelper.Commands"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="pHandleRoms" >
+    <Page.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+    </Page.Resources>
+    <Page.CommandBindings>
+        <CommandBinding Command="commands:UICommands.BiosRoms_Preview" CanExecute="Can_BiosPreview" Executed="Ex_BiosPreview"/>
+        <CommandBinding Command="commands:UICommands.GamesRoms_Preview" CanExecute="Can_GamesPreview" Executed="Ex_GamesPreview"/>
+        <CommandBinding Command="commands:UICommands.MecaRoms_Preview" CanExecute="Can_MecaPreview" Executed="Ex_MecaPreview"/>
+        <CommandBinding Command="commands:UICommands.FlushTemp"  Executed="Ex_FlushTemp"/>
+        <CommandBinding Command="local:pHandleRoms.Save_All" CanExecute="Can_SaveAll"  Executed="Ex_SaveAll"/>
+        <CommandBinding Command="local:pHandleRoms.PreSave_Bios" CanExecute="Can_SaveBios" Executed="Ex_SaveBios"/>
+        <CommandBinding Command="local:pHandleRoms.PreSave_Games" CanExecute="Can_SaveGames"  Executed="Ex_SaveGames"/>
+        <CommandBinding Command="local:pHandleRoms.PreSave_Mechanics" CanExecute="Can_SaveMecas" Executed="Ex_SaveMecas"/>
+        <!--CommandBinding Command="local:pHandleRoms.Fill_Manufacts" CanExecute="Can_Manufacts" Executed="Ex_Manufacts"/-->
+    </Page.CommandBindings>
+    <DockPanel>
+        <Label DockPanel.Dock="Top" Content="Management of the roms contained in 'Temp' to the statuses 'bios', 'Mechanic', 'Arcade'. Stocked to Temp data" Margin="5"/>
+        <StackPanel DockPanel.Dock="Left" Margin="5">
+            <Button Content="Manage" Click="Proceed_Click"/>
+            <Separator />
+            <!--Button Content="Fill Manufacturers" Command="local:pHandleRoms.Fill_Manufacts" ToolTip="Complete with missing manufacturers"/-->
+        </StackPanel>
+        <Grid Margin="5">
+
+            <StackPanel Grid.RowSpan="4" Grid.ColumnSpan="2" >
+                <StackPanel.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="BorderBrush" Value="Black" />
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="CornerRadius" Value="5"/>
+                        <Setter Property="Margin" Value="5"/>
+                        <Setter Property="Padding" Value="5"/>
+                    </Style>
+                </StackPanel.Resources>
+                <!-- Bios Roms -->
+                <Border Grid.Column="1" >
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Number of Bios:"/>
+                        <Label Content="{Binding BiosCollec.Count}" Grid.Column="1"/>
+                        <StackPanel Grid.Column="3" Orientation="Horizontal">
+                            <Button Content="Preview" Command="commands:UICommands.BiosRoms_Preview" />
+                            <Button Content="PreSave" Command="local:pHandleRoms.PreSave_Bios" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <!-- Mechanicals Roms-->
+                <Border Grid.Row="1" Grid.Column="1" >
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Number of Mechanicals:"/>
+                        <Label Content="{Binding MecanicsCollec.Count}" Grid.Column="1"/>
+                        <StackPanel Grid.Column="3" Orientation="Horizontal" >
+                            <Button Content="Preview" Command="commands:UICommands.MecaRoms_Preview" />
+                            <Button Content="PreSave" Command="local:pHandleRoms.PreSave_Mechanics" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <!-- Games Roms -->
+                <Border >
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Number of Games:"/>
+                        <Label Content="{Binding GamesCollec.Count}" Grid.Column="1"/>
+                        <StackPanel Grid.Column="3" Orientation="Horizontal">
+                            <Button Content="Preview" Command="commands:UICommands.GamesRoms_Preview"/>
+                            <Button Content="PreSave" Command="local:pHandleRoms.PreSave_Games"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </StackPanel>
+
+
+        </Grid>
+    </DockPanel>
+</Page>

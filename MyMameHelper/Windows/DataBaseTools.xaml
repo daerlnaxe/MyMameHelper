@@ -1,0 +1,156 @@
+﻿<Window x:Class="MyMameHelper.Windows.DataBaseTools"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyMameHelper.Windows"
+        xmlns:commands="clr-namespace:MyMameHelper.Commands"
+        mc:Ignorable="d"
+        Title="DataBaseTools" Height="450" Width="800">
+    <Window.Resources>
+        <Style TargetType="ListView">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="commands:UICommands.UpdateDb" Executed="UpdateDB"/>
+        <!-- Constructor -->
+        <CommandBinding Command="commands:UICommands.AddConstructor" CanExecute="Can_AddConstructor" Executed="Ex_AddConstructor"/>
+        <CommandBinding Command="commands:UICommands.EditConstructor" CanExecute="Can_EditConstructor" Executed="Ex_EditConstructor"/>
+        <CommandBinding Command="commands:UICommands.RemoveConstructor" CanExecute="Can_RemoveConstructor" Executed="Ex_RemoveConstructor"/>
+        <!-- Genre -->
+        <CommandBinding Command="commands:UICommands.AddGenre" CanExecute="Can_AddGenre" Executed="Ex_AddGenre"/>
+        <CommandBinding Command="commands:UICommands.EditGenre" CanExecute="Can_EditGenre" Executed="Ex_EditGenre"/>
+        <CommandBinding Command="commands:UICommands.RemoveGenre" CanExecute="Can_RemoveGenre" Executed="Ex_RemoveGenre"/>
+        <!-- Machine -->
+        <CommandBinding Command="commands:UICommands.AddMachine" CanExecute="Can_AddMachine" Executed="Ex_AddMachine"/>
+        <CommandBinding Command="commands:UICommands.EditMachine" CanExecute="Can_EditMachine" Executed="Ex_EditMachine"/>
+        <CommandBinding Command="commands:UICommands.LinkAMachine" Executed="Ex_LinkAMachine"/>
+        <CommandBinding Command="commands:UICommands.RemoveMachine" CanExecute="Can_RemoveMachine" Executed="Ex_RemoveMachine"/>
+        <!-- Manufacturer -->
+        <!--CommandBinding Command="commands:UICommands.AddManufacturer" CanExecute="Can_AddManufacturer" Executed="Ex_AddManufacturer" />
+        <CommandBinding Command="commands:UICommands.EditManufacturer" CanExecute="Can_EditManufacturer" Executed="Ex_EditManufacturer"/>
+        <CommandBinding Command="commands:UICommands.RemoveManufacturer" CanExecute="Can_RemoveManufacturer" Executed="Ex_RemoveManufacturer"/-->
+    </Window.CommandBindings>
+    <Grid>
+        <TabControl >
+
+            <TabItem Header="Genres">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Content="Genre:"/>
+                    <DataGrid x:Name="dgGenres" Grid.Row="1" SelectionUnit="FullRow" ItemsSource="{Binding Genres}"
+                              AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="commands:UICommands.AddGenre" />
+                                <MenuItem Command="commands:UICommands.EditGenre" />
+                                <MenuItem Command="commands:UICommands.RemoveGenre" />
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Hardware">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="100*"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="100*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="Constuctor:"/>
+                    <DataGrid x:Name="dgConstructors" Grid.Row="1" ItemsSource="{Binding Constructors}" SelectionChanged="lvConstructors_SelectionChanged" AutoGenerateColumns="False" SelectionUnit="FullRow" IsReadOnly="True">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="commands:UICommands.AddConstructor"/>
+                                <MenuItem Command="commands:UICommands.EditConstructor"/>
+                                <MenuItem Command="commands:UICommands.RemoveConstructor"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding ID}" />
+                            <DataGridTextColumn Header="Nom"  Binding="{Binding Nom}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Label Content="Machine:" Grid.Row="2" />
+                    <DataGrid x:Name="dgMachines" Grid.Row="4" ItemsSource="{Binding Machines}" VirtualizingStackPanel.IsVirtualizing="False" AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="commands:UICommands.AddMachine"/>
+                                <MenuItem Command="commands:UICommands.EditMachine"/>
+                                <MenuItem Command="commands:UICommands.LinkAMachine"/>
+                                <MenuItem Command="commands:UICommands.RemoveMachine"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID"  Binding="{Binding ID}"/>
+                            <DataGridTextColumn Binding="{Binding Nom}" Header="Nom" Width="Auto"/>
+                            <DataGridTextColumn Binding="{Binding Constructeur}" Header="Constructor"/>
+                            <DataGridTextColumn Binding="{Binding Revision}" Header="Revision"/>
+                            <DataGridTextColumn Binding="{Binding Year}" Header="Year"/>
+                            <DataGridCheckBoxColumn Binding="{Binding AllowCPath}" Header="CPath"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Manufacturers">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Content="Manufacturers:"/>
+                    <DataGrid x:Name="dgManufacturers" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding Manufacturers}">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <!--MenuItem Command="commands:UICommands.AddManufacturer"/>
+                                <MenuItem Command="commands:UICommands.EditManufacturer"/>
+                                <MenuItem Command="commands:UICommands.RemoveManufacturer"/-->
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="DataBase">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="87*"/>
+                        <ColumnDefinition Width="454*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- Connexion -->
+                    <Label Content="Connect:" />
+                    <TextBox x:Name="tbDataBase_Path" Text="{Binding DataBase_Path}" Grid.Column="1" TextChanged="tbDataBase_Path_TextChanged" Grid.ColumnSpan="2"/>
+                    <Button x:Name="Choose_DataBase" Content="Choose..." Command="" Click="Choose_DataBase_Click" Grid.Column="3" />
+                    <!-- Création -->
+                    <Button x:Name="Create_DataBase" Content="Créer" Command="" Click="Create_DataBase_Click" Grid.Column="4"  />
+                    
+                    <!-- Reset Temp -->
+                    <Button Content="Reset Temp Roms" Grid.Row="2" Click="Reset_TempRoms_Click"/>
+                    <Button x:Name="button" Content="Update" Command="commands:UICommands.UpdateDb" Grid.Column="3" HorizontalAlignment="Left" Height="25" Grid.Row="2" VerticalAlignment="Top" Width="51"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</Window>

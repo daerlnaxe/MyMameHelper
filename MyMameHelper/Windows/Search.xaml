@@ -1,0 +1,62 @@
+﻿<Window x:Class="MyMameHelper.Windows.Search"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyMameHelper.Windows"
+        mc:Ignorable="d"
+        Title="Search" Height="450" Width="800" Loaded="Window_Loaded">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="46*"/>
+            <ColumnDefinition Width="275*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="150*"/>
+            <RowDefinition/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Content="Choose a method:"/>
+        <RadioButton GroupName="TypeRecherche" Content="Archive Name" Grid.Row="1" Margin="20,0,0,0" Checked="RadioButton_Checked"/>
+        <RadioButton GroupName="TypeRecherche" Content="Game Name" Checked="RadioButton_Checked" Grid.Row="2" Margin="20,0,0,0" IsChecked="True"  />
+        <StackPanel Grid.Row="5" Orientation="Horizontal"  Grid.ColumnSpan="3">
+            <Label Content="Type the string:"  />
+            <TextBox  x:Name="tbSearch"  Width="200"/>
+            <Button Content="Search" x:Name="btSearch" Click="BtSearch_Click"  />
+        </StackPanel>
+
+        <CheckBox x:Name="cbIgnoreCase" Grid.Row="6" Margin="20,0,0,0" Content="Ignore Case" />
+        <ListView x:Name="lvFound" ItemsSource="{Binding GamesFound}" Grid.Row="8" Grid.ColumnSpan="3" Visibility="Hidden"  >
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Remove From Research" Click="MenuItem_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Archive_Name}">
+                        <GridViewColumnHeader Content="Archive Name" Click="GridViewColumnHeader_Click" Padding="5"/>
+                    </GridViewColumn>
+                    <GridViewColumn  DisplayMemberBinding="{Binding Game_Name}" >
+                        <GridViewColumnHeader Content="Game Name" Click="GridViewColumnHeader_Click" Padding="5"/>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <StackPanel Grid.Row="11" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5" >
+            <Button Content="Cancel" Padding="5" IsCancel="True"/>
+            <Button x:Name="btFeed" Content="Feed" Padding="5" IsDefault="True" Click="btFeed_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

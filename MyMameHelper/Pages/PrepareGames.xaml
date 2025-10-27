@@ -1,0 +1,143 @@
+﻿<Page x:Class="MyMameHelper.Pages.PrepareGames"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MyMameHelper.Pages"
+      xmlns:commands="clr-namespace:MyMameHelper.Commands"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AddGamesByTXT">
+    <Page.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style TargetType="ListView">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    </Page.Resources>
+    <Page.CommandBindings>
+        <CommandBinding Command="commands:FileCommands.Load_File" Executed="Ex_LoadFile" />
+        <!--CommandBinding Command="commands:UICommands.LoadVracCmd" Executed="Ex_LoadDb" /-->
+        <CommandBinding Command="commands:UICommands.SearchCmd" Executed="Ex_Search" CanExecute="Can_Search"/>
+        <!--CommandBinding Command="commands:UICommands.SaveVracCmd" Executed="Ex_SaveVrac" CanExecute="Can_SaveVrac"/-->
+        <CommandBinding Command="commands:UICommands.WorkCmd" Executed="Ex_Work" CanExecute="Can_Work" />
+        <!-- Panneau de gauche -->
+        <CommandBinding Command="commands:UICommands.SwapLeft2Right" Executed="Ex_AddGame" CanExecute="Can_AddGame"/>
+        <CommandBinding Command="commands:UICommands.ResetLeft" CanExecute="Can_ResetLeft" Executed="Ex_ResetLeft"/>
+        <!-- Panneau de droite -->
+        <CommandBinding Command="commands:UICommands.SwapRight2Left" CanExecute="Can_RemoveRight" Executed="Ex_Remove"/>
+        <CommandBinding Command="commands:UICommands.ResetRight" CanExecute="Can_ResetRight" Executed="Ex_ResetRight"/>
+    </Page.CommandBindings>
+    <Grid>
+
+        <DockPanel >
+            <Grid DockPanel.Dock="Top">
+                <TextBlock Text="Load games from a Txt File" Margin="10,5,5,5" />
+            </Grid>
+            <StackPanel DockPanel.Dock="Left">
+                <Button x:Name="Load_File" Content="Load File" Command="commands:FileCommands.Load_File" />
+                <!--Button Content="Load Vrac Db" Command="commands:UICommands.LoadVracCmd">
+                    <Button.ToolTip>
+                        <TextBlock Text="Load Data from the 'Vrac' Data Base's table "/>
+                    </Button.ToolTip>
+                </-->
+                <Separator />
+                <!--Button x:Name="button" Content="Compare" Margin="0" Width="75" d:LayoutOverrides="Height" Click="Button_Click"/-->
+                <Button x:Name="btSearch"  Content="Search" Command="commands:UICommands.SearchCmd"/>
+                <Separator />
+                <!--Button x:Name="btSave" Content="Save to Db" Command="commands:UICommands.SaveVracCmd" /-->
+            </StackPanel>
+
+            <!-- Droite -->
+            <StackPanel DockPanel.Dock="Right">
+                <Button x:Name="btWork" Content="Work" Command="commands:UICommands.WorkCmd"/>
+            </StackPanel>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="292*"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="292*"/>
+                </Grid.ColumnDefinitions>
+                <DockPanel>
+                    <!-- haut -->
+                    <Grid DockPanel.Dock="Top" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="123*"/>
+                            <ColumnDefinition Width="181*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <RadioButton GroupName="Mode" Content="Mode Archive" Checked="RBGames_Checked" />
+                        <RadioButton GroupName="Mode" Content="Mode Game" Grid.Row="1" IsChecked="True" Checked="RBGames_Checked"/>
+                        <Label Grid.Column="1" Grid.RowSpan="2" Content="{Binding LeftKFilter}" KeyUp="ListView_KeyUp"/>
+                    </Grid>
+                    <!-- bas -->
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                        <Label Content="Number of Games:"/>
+                        <Label Content="{Binding Games.Count}"/>
+                    </StackPanel>
+                    <!-- centre -->
+                    <DataGrid x:Name="lvGames" ItemsSource="{Binding Games}" KeyUp="ListView_KeyUp"  SelectedItem="{Binding Selected4List}" IsReadOnly="True" AutoGenerateColumns="False"  SelectionMode="Extended">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Add To Selected" Command="commands:UICommands.SwapLeft2Right" />
+                                <MenuItem Header="Reset"  Command="commands:UICommands.ResetLeft"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Archive Name" Binding="{Binding Archive_Name}" SortDirection="Ascending"/>
+                            <DataGridTextColumn Header="Game Name" Binding="{Binding Game_Name}"/>
+                        </DataGrid.Columns>
+
+                    </DataGrid>
+                </DockPanel>
+                <TextBlock Text="=>" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                <!-- ListView de Droite -->
+                <DockPanel Grid.Column="2">
+                    <!-- haut -->
+                    <Grid DockPanel.Dock="Top" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <RadioButton GroupName="SelectedMode" Content="Mode Archive" Checked="RBSelectedGames_Checked"/>
+                        <RadioButton GroupName="SelectedMode" Content="Mode Game" Grid.Row="1" IsChecked="True" Checked="RBSelectedGames_Checked"/>
+                    </Grid>
+                    <!-- bas -->
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                        <Label Content="Number of Games:"/>
+                        <Label Content="{Binding SelectedGames.Count}"/>
+                    </StackPanel>
+
+                    <!-- Centre-->
+                    <DataGrid x:Name="lvSelected" ItemsSource="{Binding SelectedGames}" IsReadOnly="True" AutoGenerateColumns="False">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem x:Name="miSRemove" Header="Remove" Command="commands:UICommands.SwapRight2Left" CommandParameter="{Binding SelectedGames}" />
+                                <MenuItem Header="Reset" Command="commands:UICommands.ResetRight" />
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Archive Name" Binding="{Binding Archive_Name}" SortDirection="Ascending"/>
+                            <DataGridTextColumn Header="Game Name" Binding="{Binding Game_Name}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Page>

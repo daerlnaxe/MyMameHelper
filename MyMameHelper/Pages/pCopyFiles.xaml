@@ -1,0 +1,82 @@
+﻿<Page x:Class="MyMameHelper.Pages.pCopyFiles"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MyMameHelper.Pages"
+      xmlns:commands="clr-namespace:MyMameHelper.Commands"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="MoveATXTFile" Loaded="Page_Loaded">
+    <Page.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+    </Page.Resources>
+    <Page.CommandBindings>
+        <CommandBinding Command="commands:UICommands.CopyRoms" Executed="Move_Roms"/>
+    </Page.CommandBindings>
+
+    <Grid>
+        <DockPanel >
+            <!-- Panneau de gauche -->
+
+
+            <!-- Panneau du haut -->
+            <StackPanel DockPanel.Dock="Top">
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="435*"/>
+                        <ColumnDefinition Width="121*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="Source Folder:"/>
+                    <Label Content="{Binding Rom_Folder}" Grid.Row="0" Grid.Column="1" />
+                    <Label Content="Destination Folder:" Grid.Row="1"/>
+                    <Label Content="{Binding Destination_Folder}" Grid.Row="1" Grid.Column="1" />
+                    <Button x:Name="RB_Button" Content="Change"  VerticalAlignment="Top" Click="RB_Button_Click" Grid.Column="2" />
+                    <Button x:Name="DF_Button" Content="Change" Click="DF_Button_Click" Grid.Column="2" Grid.Row="1" />
+                </Grid>
+            </StackPanel>
+
+
+
+            <!-- Panneau du bas -->
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" FlowDirection="RightToLeft">
+                <Button Name="Proceed" Content="Copy Roms" Command="commands:UICommands.CopyRoms" />
+            </StackPanel>
+            <StackPanel>
+                <GroupBox x:Name="groupBox" Header="Options" Margin="10" Height="141">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="19*"/>
+                            <RowDefinition Height="50*"/>
+                        </Grid.RowDefinitions>
+                        <CheckBox x:Name="useFiles" Content="Use Files Information"  />
+                        <CheckBox x:Name="useUnwanted"  Content="Use Unwanted Folder (Machine method)" Grid.Row="1"  />
+                        <CheckBox x:Name="OverWrite"  Content="OverWrite Files" Grid.Row="2"  />
+
+                    </Grid>
+                </GroupBox>
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <Label Content="Choose a method:"/>
+                    <ComboBox x:Name="cbMethod" HorizontalAlignment="Left" Width="165">
+                        <ComboBoxItem Content="Favorites"/>
+                        <ComboBoxItem Content="Machine"/>
+                    </ComboBox>
+                </StackPanel>
+            </StackPanel>
+            <!-- Panneau du milieu -->
+        </DockPanel>
+
+
+    </Grid>
+</Page>

@@ -1,0 +1,453 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{24E7CA3A-2FC2-4114-B768-4DD7F70C8DEF}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>MyMameHelper</RootNamespace>
+    <AssemblyName>MyMameHelper</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DxTBoxWPF">
+      <HintPath>..\..\..\Git-Hub\DlnxLocalTransfert\DxTBoxWPF\bin\Release\DxTBoxWPF.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.111.0\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.111.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.111.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Commands\DbCommands.cs" />
+    <Compile Include="Commands\FileCommands.cs" />
+    <Compile Include="Commands\UICommands.cs" />
+    <Compile Include="Commands\SaveToVracCommand.cs" />
+    <Compile Include="Commands\SearchCommand.cs" />
+    <Compile Include="ContTable\CT_Bios.cs" />
+    <Compile Include="ContTable\CT_Genre.cs" />
+    <Compile Include="ContTable\CT_Mechanical.cs" />
+    <Compile Include="ContTable\CT_Rom.cs" />
+    <Compile Include="ContTable\iCT_Game.cs" />
+    <Compile Include="ContTable\iCT_Rom.cs" />
+    <Compile Include="ContTable\M_TypeRom.cs" />
+    <Compile Include="ContTable\RawMameRom.cs" />
+    <Compile Include="Methods\FindInGames.cs" />
+    <Compile Include="Methods\Keyboard.cs" />
+    <None Include="Methods\MameXMLParser.cs" />
+    <Compile Include="Methods\MameXMLRaw.cs" />
+    <Compile Include="Methods\UpdateDbRoms.cs" />
+    <Compile Include="Pages\pBuildManus.xaml.cs">
+      <DependentUpon>pBuildManus.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\pBuildDevs.xaml.cs">
+      <DependentUpon>pBuildDevs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\pHandleRoms.xaml.cs">
+      <DependentUpon>pHandleRoms.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\pPopulateTemp.xaml.cs">
+      <DependentUpon>pPopulateTemp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PrepareGames - Copier.xaml.cs">
+      <DependentUpon>PrepareGames - Copier.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\pBuildRoms.xaml.cs">
+      <DependentUpon>pBuildRoms.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\pUpdateRoms.xaml.cs">
+      <DependentUpon>pUpdateRoms.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\pWorkOnGames.xaml.cs">
+      <DependentUpon>pWorkOnGames.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\pBuildGames.xaml.cs">
+      <DependentUpon>pBuildGames.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\AsyncLoading.xaml.cs">
+      <DependentUpon>AsyncLoading.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\RawRomSearch.xaml.cs">
+      <DependentUpon>RawRomSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\wGame.xaml.cs">
+      <DependentUpon>wGame.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\wLinkMachine.xaml.cs">
+      <DependentUpon>wLinkMachine.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\wPrevMeca.xaml.cs">
+      <DependentUpon>wPrevMeca.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\wPrevBios.xaml.cs">
+      <DependentUpon>wPrevBios.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\wPrevGames.xaml.cs">
+      <DependentUpon>wPrevGames.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Methods\SaveDb.cs" />
+    <Compile Include="ContTable\Aff_Game.cs" />
+    <Compile Include="ContTable\CT.cs" />
+    <Compile Include="ContTable\CT_Base.cs" />
+    <Compile Include="ContTable\CT_Constructeur.cs" />
+    <Compile Include="ContTable\Aff_Machine.cs" />
+    <Compile Include="ContTable\CT_Gen.cs" />
+    <Compile Include="ContTable\CT_Machine.cs" />
+    <Compile Include="ContTable\Trans.cs" />
+    <Compile Include="DataBinding\FormatPercentConverter.cs" />
+    <Compile Include="Methods\Collections.cs" />
+    <None Include="Methods\SearchMethod.cs" />
+    <Compile Include="Methods\UpdateDbGames.cs" />
+    <Compile Include="Methods\WorkWithDb.cs" />
+    <Compile Include="MyObservableCollection.cs" />
+    <Compile Include="Pages\pAccueil.xaml.cs">
+      <DependentUpon>pAccueil.xaml</DependentUpon>
+    </Compile>
+    <None Include="Pages\pMoveATXFiles.xaml.cs">
+      <DependentUpon>pMoveATXFiles.xaml</DependentUpon>
+    </None>
+    <Compile Include="Pages\pUpdateGames.xaml.cs">
+      <DependentUpon>pUpdateGames.xaml</DependentUpon>
+    </Compile>
+    <None Include="Pages\pWorkPage.xaml.cs">
+      <DependentUpon>pWorkPage.xaml</DependentUpon>
+    </None>
+    <Compile Include="SQLite\SQLite_ReqDel.cs" />
+    <Compile Include="Windows\AsyncWindowProgress.xaml.cs">
+      <DependentUpon>AsyncWindowProgress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\LambdaValue.xaml.cs">
+      <DependentUpon>LambdaValue.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\raoul.xaml.cs">
+      <DependentUpon>raoul.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\SearchPlus.xaml.cs">
+      <DependentUpon>SearchPlus.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\wMachine.xaml.cs">
+      <DependentUpon>wMachine.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\wConstructeur.xaml.cs">
+      <DependentUpon>wConstructeur.xaml</DependentUpon>
+    </Compile>
+    <None Include="Pages\Game_Comparer.cs" />
+    <None Include="Controls\ListViewPlus.xaml.cs">
+      <DependentUpon>ListViewPlus.xaml</DependentUpon>
+    </None>
+    <Compile Include="Pages\pCompare_Games.xaml.cs">
+      <DependentUpon>pCompare_Games.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SQLite\eWhere.cs" />
+    <Compile Include="SQLite\Obj_Select.cs" />
+    <Compile Include="SQLite\SqlCond.cs" />
+    <Compile Include="SQLite\SQLiteDb.cs" />
+    <Compile Include="SQLite\SQLite_Req.cs" />
+    <Compile Include="SQLite\SQLite_ReqR.cs" />
+    <Compile Include="SQLite\SQLite_ReqWr.cs" />
+    <Compile Include="SQLite\SqlOrder.cs" />
+    <Compile Include="Windows\DataBaseTools.xaml.cs">
+      <DependentUpon>DataBaseTools.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ProgressWindow.xaml.cs">
+      <DependentUpon>ProgressWindow.xaml</DependentUpon>
+    </Compile>
+    <None Include="Windows\Search.xaml.cs">
+      <DependentUpon>Search.xaml</DependentUpon>
+    </None>
+    <None Include="Controls\ListViewPlus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <Page Include="Pages\pAccueil.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\pBuildManus.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\pBuildDevs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\pHandleRoms.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\pPopulateTemp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <None Include="Pages\pMoveATXFiles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </None>
+    <Page Include="Pages\pCompare_Games.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\pUpdateGames.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <None Include="Pages\pWorkPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <Page Include="Pages\PrepareGames - Copier.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\pBuildRoms.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\pUpdateRoms.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\pWorkOnGames.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\pBuildGames.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\AsyncWindowProgress.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Configuration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Configuration.xaml.cs">
+      <DependentUpon>Configuration.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ContTable\CT_Game.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Pages\PrepareGames.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\pCopyFiles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\DataBaseTools.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\RawRomSearch.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\wGame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\LambdaValue.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\AsyncLoading.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ProgressWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\SearchPlus.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <None Include="Windows\Search.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <Page Include="Windows\raoul.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\wLinkMachine.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\wMachine.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\wConstructeur.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\wPrevMeca.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\wPrevBios.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\wPrevGames.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Pages\PrepareGames.xaml.cs">
+      <DependentUpon>PrepareGames.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\pCopyFiles.xaml.cs">
+      <DependentUpon>pCopyFiles.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Parsers\MameExportParser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 et x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="XML\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Ce projet fait référence à des packages NuGet qui sont manquants sur cet ordinateur. Utilisez l'option de restauration des packages NuGet pour les télécharger. Pour plus d'informations, consultez http://go.microsoft.com/fwlink/?LinkID=322105. Le fichier manquant est : {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\System.Data.SQLite.Core.targets'))" />
+  </Target>
+</Project>

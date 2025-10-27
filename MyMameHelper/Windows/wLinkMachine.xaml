@@ -1,0 +1,44 @@
+﻿<Window x:Class="MyMameHelper.Windows.wLinkMachine"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyMameHelper.Windows"
+        xmlns:commands ="clr-namespace:MyMameHelper.Commands"
+        mc:Ignorable="d"
+        Title="wLinkMachine" Height="450" Width="800">
+    <Window.CommandBindings>
+        <CommandBinding Command="commands:UICommands.SaveCmd" CanExecute="Can_Save" Executed="Ex_Save"/>
+    </Window.CommandBindings>
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel  Grid.Row="5" VerticalAlignment="Bottom" Orientation="Horizontal" FlowDirection="RightToLeft" Grid.ColumnSpan="3">
+            <Button Content="Save" IsDefault="True" Command="commands:UICommands.SaveCmd"/>
+            <Button Content="Cancel" IsCancel="True"/>
+        </StackPanel>
+        <!-- Machine -->
+        <Label x:Name="label1" Content="Machine:"   />
+        <ComboBox Grid.Column="1"  ItemsSource="{Binding Machines}" SelectedValuePath="ID" DisplayMemberPath="Nom" SelectedItem="{Binding Machine}" SelectionChanged="ComboBox_SelectionChanged"/>
+        <!-- Constructeurs -->
+        <Label x:Name="label" Content="Select Constructor:" Grid.Row="1" />
+        <ComboBox x:Name="cboxConst" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Constructeurs}"  SelectedItem="{Binding Constructeur}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectionChanged="CboxConst_SelectionChanged"/>
+
+        <!-- Year -->
+        <Label Content="Year:" Grid.Row="2"/>
+        <TextBox Text="{Binding Machine.Year}" Grid.Row="2" Grid.Column="1"/>
+        <!-- AllowCpath -->
+        <CheckBox IsChecked="{Binding Machine.AllowCPath}" Content="Allow Machine Name for Path" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="3" ToolTip="Used for copy files method"/>
+    </Grid>
+</Window>

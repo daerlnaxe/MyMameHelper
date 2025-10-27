@@ -1,0 +1,54 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MyMameHelper.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="RomSource" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="RomDestination" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ExportFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LastPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="MameFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DataBase_Path" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="T_Machines" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Machines</Value>
+    </Setting>
+    <Setting Name="T_Constructeurs" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Constructeurs</Value>
+    </Setting>
+    <Setting Name="T_TempRoms" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">TempRoms</Value>
+    </Setting>
+    <Setting Name="T_Games" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Games</Value>
+    </Setting>
+    <Setting Name="UpgradeRequired" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="T_Companies" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Companies</Value>
+    </Setting>
+    <Setting Name="T_Genres" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Genres</Value>
+    </Setting>
+    <Setting Name="T_Roms" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Roms</Value>
+    </Setting>
+    <Setting Name="T_Bios" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Bios</Value>
+    </Setting>
+    <Setting Name="T_Mechanics" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Mechanicals</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
