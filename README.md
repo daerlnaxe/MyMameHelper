@@ -21,8 +21,17 @@
 - Rajouter éventuellement le genre du jeu en xml.
 
 # Notes
-- Visiblement j'ai travaillé sur une base sql.
+- Visiblement j'ai travaillé sur une base sqlite.
 
+# Fonctionnalités
+## MainPage
+### Populate Temp
+Load an xml from M.A.M.E
+
+
+## dbtools
+- Création de la base
+- Ne lit pas la base si non présente
 
 # Tests
 ## Exemples de résultat
