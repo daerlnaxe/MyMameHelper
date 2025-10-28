@@ -1,10 +1,19 @@
+# Categories
+- Build
+- Work
+- Manage
+
+<br>
+
+----
+
 # Starting without db
 You can:
 - Populate Temp: 
 
 
-# Populate Temp
-## Load XML
+## Populate Temp
+### Load XML
 Select an XML file containing ROM data; it will load and parse it, then display the results in a grid.
 <img width="1651" height="165" alt="2025-10-28_20h07_12" src="./_Ressources/populate_sample.png" />
 
@@ -21,7 +30,7 @@ After it, you can save:
 <br>
 
 
-# DbTools
+## DbTools
 You can create an empty database here.
 
 <br>
@@ -34,6 +43,12 @@ You can create an empty database here.
 
 ----
 
+# Not Working
+## Add Games1.
+Need to revisiting the code behind.
+
+
+----
 
 # FAQ
 ## What happens if i want to add some games
