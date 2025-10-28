@@ -29,7 +29,10 @@ You can create an empty database here.
 <br>
 
 # FAQ
+## What happens if i want to add some games
+Currently you can add new games by feed with load XML the data base. You don’t have to populate it all at once.
+
 ## What happens if i save over a non empty database
-You will be notifier about a constraints violation if data are the same[^violation]. 
+You will be notified about constraint violations if some data already exist[^violation]. 
 
 [^violation] peut être sortir sur un système récapitulatif en fin, car actuellement c'est assez pénible.
