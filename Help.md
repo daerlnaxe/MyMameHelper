@@ -20,13 +20,20 @@ After it, you can save:
 
 <br>
 
-# Compare
-# Copy all Games
-# Move all Games
+
 # DbTools
 You can create an empty database here.
 
 <br>
+
+----
+
+# Compare
+# Copy all Games
+# Move all Games
+
+----
+
 
 # FAQ
 ## What happens if i want to add some games
