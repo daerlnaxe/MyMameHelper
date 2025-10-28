@@ -6,7 +6,7 @@ You can:
 # Populate Temp
 ## Load XML
 Select an XML file containing ROM data; it will load and parse it, then display the results in a grid.
-<img width="1651" height="165" alt="2025-10-28_20h07_12" src="https://github.com/user-attachments/assets/7d49a84d-54c4-4724-a954-c28a513ae26b" />
+<img width="1651" height="165" alt="2025-10-28_20h07_12" src="./_Ressources/populate_sample.png" />
 
 After it, you can save:
 - The content to a sqlite database to populate it => table `TempRoms` (MyMameHelper create it)
@@ -25,3 +25,11 @@ After it, you can save:
 # Move all Games
 # DbTools
 You can create an empty database here.
+
+<br>
+
+# FAQ
+## What happens if i save over a non empty database
+You will be notifier about a constraints violation if data are the same[^violation]. 
+
+[^violation] peut être sortir sur un système récapitulatif en fin, car actuellement c'est assez pénible.
