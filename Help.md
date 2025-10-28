@@ -37,9 +37,11 @@ You can create an empty database here.
 
 ----
 
-# Compare
-# Copy all Games
-# Move all Games
+# With a db
+## Populate Temp
+## Compare[^changeit]
+## Copy all Games
+## Move Games1
 
 ----
 
@@ -47,6 +49,7 @@ You can create an empty database here.
 ## Add Games1.
 Need to revisiting the code behind.
 
+## Move Games1
 
 ----
 

@@ -14,14 +14,14 @@
         </Style>
     </Window.Resources>
     <Window.CommandBindings>
-        <!-- Add -->
+        <!-- Build -->
         <CommandBinding Command="local:MainWindow.AddByXML" Executed="Ex_AddByXML"/>
         <CommandBinding Command="local:MainWindow.Build_Developers" Executed="Ex_BuildDeveloper" CanExecute="Can_BuildDeveloper"/>
         <CommandBinding Command="local:MainWindow.Build_Manufacturers"  Executed="Ex_BuildManus" CanExecute="Can_BuildManus"/>
         <CommandBinding Command="local:MainWindow.Build_Roms" Executed="Ex_BuildRoms" CanExecute="Can_BuildRoms"/>
         <CommandBinding Command="local:MainWindow.RomManager" Executed="Ex_RomManager" CanExecute="Can_Manage"/>
         <CommandBinding Command="local:MainWindow.AddGames" CanExecute="Can_AddGames" Executed="Ex_AddGames"/>
-        <!-- -->
+        <!-- Work -->
         <CommandBinding Command="local:MainWindow.Compare" CanExecute="Can_Compare" Executed="Ex_Compare"/>
         <CommandBinding Command="local:MainWindow.MoveAllGames" CanExecute="Can_MoveAllGames" Executed="Ex_MoveAllGames"/>
         <CommandBinding Command="local:MainWindow.MoveGames1" CanExecute="Can_MoveGames1" Executed="Ex_MoveGames1"/>
