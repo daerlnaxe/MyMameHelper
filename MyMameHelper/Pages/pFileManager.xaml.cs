@@ -73,7 +73,8 @@ namespace MyMameHelper.Pages
             }
         }
 
-        
+        public Boolean MoveFiles { get; set; }
+
         public pFileManager()
         {
             InitializeComponent();
@@ -201,7 +202,7 @@ namespace MyMameHelper.Pages
 
         }
 
-        private void Move_Roms(object sender, ExecutedRoutedEventArgs e)
+        private void Proceed_Roms(object sender, ExecutedRoutedEventArgs e)
         {
             if (System.Windows.MessageBox.Show("Are you sure ?", "", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                 return;
@@ -219,9 +220,26 @@ namespace MyMameHelper.Pages
             // Méthode
             string methodChoosen = (string)cbMethod.SelectionBoxItem;
 
+
             foreach (Aff_Game dbG in DbGames)
             {
-                throw new Exception("A revoir");
+                string dbgFile = Path.Combine(PProp.Default.RomSource, $"{dbG.Parent_Name}.zip");
+                string destPath = null;
+
+                if (MoveFiles == true)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+
+            throw new Exception("A revoir");
+            foreach (Aff_Game dbG in DbGames)
+            {
+
                 /*
                 string dbgFile = Path.Combine(PProp.Default.RomSource, $"{dbG.Parent_Name}.zip");
                 string destPath = null;

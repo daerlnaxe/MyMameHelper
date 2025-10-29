@@ -16,9 +16,9 @@
         </Style>
     </Page.Resources>
     <Page.CommandBindings>
-        <CommandBinding Command="commands:UICommands.CopyRoms" Executed="Move_Roms"/>
+        <CommandBinding Command="commands:UICommands.Proceed" Executed="Proceed_Roms"/>
     </Page.CommandBindings>
-
+    <!--  -->
     <Grid>
         <DockPanel >
             <!-- Panneau de gauche -->
@@ -49,7 +49,7 @@
 
             <!-- Panneau du bas -->
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" FlowDirection="RightToLeft">
-                <Button Name="Proceed" Content="Copy Roms" Command="commands:UICommands.CopyRoms" />
+                <Button Name="Proceed" Content="Proceed" Command="commands:UICommands.Proceed" />
             </StackPanel>
             <StackPanel>
                 <GroupBox x:Name="groupBox" Header="Options" Margin="10" Height="141">
@@ -57,12 +57,14 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="19*"/>
                             <RowDefinition Height="50*"/>
                         </Grid.RowDefinitions>
-                        <CheckBox x:Name="useFiles" Content="Use Files Information"  />
-                        <CheckBox x:Name="useUnwanted"  Content="Use Unwanted Folder (Machine method)" Grid.Row="1"  />
-                        <CheckBox x:Name="OverWrite"  Content="OverWrite Files" Grid.Row="2"  />
+                        <CheckBox x:Name="useFiles" Content="Use Files Information"  ToolTip="???"/>
+                        <CheckBox x:Name="useUnwanted"  Content="Use Unwanted Folder (Machine method)" Grid.Row="1" ToolTip="???"/>
+                        <CheckBox x:Name="OverWrite"  Content="OverWrite Files" Grid.Row="2"  ToolTip="OverWrite if file exists"/>
+                        <CheckBox Content="Move files" Grid.Row="3"  ToolTip="Move files instead of copy" IsChecked="{Binding MoveFiles}"/>
 
                     </Grid>
                 </GroupBox>
@@ -79,4 +81,5 @@
 
 
     </Grid>
+    
 </Page>

@@ -77,7 +77,7 @@ namespace MyMameHelper.Commands
         public static readonly  RoutedUICommand ResetRight = new RoutedUICommand("Reset Right", "ResetRight",  typeof(UICommands));
 
         // Files
-        public static readonly  RoutedUICommand CopyRoms = new RoutedUICommand("Copy Roms", "CopyRoms",  typeof(UICommands));
+        public static readonly  RoutedUICommand Proceed = new RoutedUICommand("Proceed with Roms", "Proceed",  typeof(UICommands));
 
         // Type Of roms
         public static readonly RoutedUICommand BiosRoms_Preview = new RoutedUICommand("Preview Bios", "PreviewBios", typeof(UICommands));
