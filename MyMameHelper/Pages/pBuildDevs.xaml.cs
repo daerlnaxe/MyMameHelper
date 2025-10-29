@@ -45,13 +45,16 @@ namespace MyMameHelper.Pages
 
                 using (SQLite_Req sqReq = new SQLite_Req())
                 {
+                    #region Collection of Devs
                     Obj_Select obsDev = new Obj_Select(PProp.Default.T_Companies, all: true);
                     companies = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, obsDev);
+                    #endregion
 
+                    #region Collection of Temporary Roms
                     Obj_Select obsJ = new Obj_Select(table: PProp.Default.T_TempRoms, colonnes: new string[] { "Manufacturer" }, groups: new string[] { "Manufacturer" });
                     obsJ.Conditions = new SqlCond[] { new SqlCond(colonne: "Is_Bios", eWhere.Equal, "False"), new SqlCond(link: Linker.And, colonne: "Is_Mechanical", eWhere.Equal, "False"), new SqlCond(Linker.And, "Manufacturer", eWhere.Not_Equal, "null") };
-
                     gDev = sqReq.GetListOf<RawMameRom>(RawMameRom.Result2Class, obsJ);
+                    #endregion
                 }
 
                 for (int i = 0; i < gDev.Count; i++)

@@ -30,6 +30,11 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
 
         <!-- Raw -->
         <DockPanel Grid.RowSpan="2">
@@ -44,6 +49,7 @@
                 <Button Content="Remove Null" Click="Remove_Null"/>
 
             </StackPanel>
+            <!-- Left Grid --> 
             <DataGrid x:Name="dgManus" ItemsSource="{Binding GameManufacturers}"
                       AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow">
                 <DataGrid.ContextMenu>
@@ -59,7 +65,7 @@
             </DataGrid>
 
         </DockPanel>
-        <!-- TO Database-->
+        <!-- TO Database -->
         <DockPanel Grid.Column="2">
             <Label Content="Developers to Add:" DockPanel.Dock="Top"/>
             <StackPanel DockPanel.Dock="Right">

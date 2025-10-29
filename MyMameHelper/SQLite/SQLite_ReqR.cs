@@ -362,8 +362,8 @@ namespace MyMameHelper.SQLite
                     cols2Sel = string.Join(", ", objSelect.Colonnes.Select(x => $"[{x}]"));
                 }
 
-                //string sql = $"SELECT {cols2Sel} FROM \"{objSelect.Table}\"";
-                string sql = $"SELECT {cols2Sel} FROM \"Genres\"";
+                string sql = $"SELECT {cols2Sel} FROM \"{objSelect.Table}\"";
+                
                 SQLiteCommand command = new SQLiteCommand(sql, this.SQLiteConn);
 
                 Condition_TreatMt(command, objSelect.Conditions);
@@ -399,6 +399,7 @@ namespace MyMameHelper.SQLite
 
             return null;
         }
+
 
         public T GetOneResult<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect)
         {
@@ -566,6 +567,8 @@ namespace MyMameHelper.SQLite
 
             return lCollec;
         }
+
+
 
         public Dictionary<string, T> GetDictOf<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect, string key)
         {

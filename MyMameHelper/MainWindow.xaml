@@ -33,8 +33,8 @@
             <Expander Header="Build" IsExpanded="False">
                 <StackPanel>
                     <Button Content="Populate Temp" Command="local:MainWindow.AddByXML" ToolTip="Load XML File to populate the temp part of the Database"/>
-                    <Button Content="Build Developers" Command="local:MainWindow.Build_Developers" ToolTip="Game's Developer"/>
-                    <Button Content="Build Constructors" Command="local:MainWindow.Build_Manufacturers" ToolTip="Machine's Developer"/>
+                    <Button Content="Build Developers" Command="local:MainWindow.Build_Developers" ToolTip="Populate the Game Developer table by using temporary roms table"/>
+                    <Button Content="Build Constructors" Command="local:MainWindow.Build_Manufacturers" ToolTip="Populate the Game Constructeurs table by using temporary roms table"/>
                     <Button Content="Build Roms" Command="local:MainWindow.Build_Roms" />
                     <Button Content="Rom Manager" Command="local:MainWindow.RomManager" />
                     <Button Content="Add Games1" Command="local:MainWindow.AddGames"/>
