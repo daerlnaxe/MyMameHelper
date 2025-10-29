@@ -56,11 +56,11 @@ namespace MyMameHelper
             get { return _Active_Page; }
             set
             {
-                if (value != _Active_Page)
-                {
+                /*if (value != _Active_Page)
+                {*/
                     _Active_Page = value;
                     NotifyPropertyChanged();
-                }
+                //}
             }
         }
 

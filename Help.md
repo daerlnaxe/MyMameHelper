@@ -44,6 +44,16 @@ You can create an empty database here.
 ## Move Games1
 
 ----
+# Menu
+## Build Developers
+You can feed the Developers table with the temporary roms table.
+
+## Build Constructors
+You can feed the Constructeurs table with the temporary roms table.
+
+## Build Roms
+> :warning: unavailable until Developers table is populated
+----
 
 # Not Working
 ## Add Games1.

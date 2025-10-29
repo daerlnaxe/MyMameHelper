@@ -5,6 +5,7 @@
 27/10/2025: reprise du programme et publication, j'avais totalement oublié de le faire depuis 2020 ou 2022, je ne sais plus.
 
 # Todo
+- Urgent: en cas de base manquante le data context n'est pas initialisé (pourquoi pas). Mais à la création de la table il faudrait l'initialiser sinon on ne peut plus travailler... peut être que tout appel de DB Tools devrait recharger.
 - Versioning de la base
 - Mettre sur la page de copie des roms les aides pour expliquer  à quoi ça sert
 - Mettre sur la page help.md à quoi servent les options
