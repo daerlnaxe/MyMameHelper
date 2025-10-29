@@ -1,14 +1,16 @@
-# MyMameHelper
- Help to manage M.A.M.E roms
-
-> :warning: You must own all the games. I am not responsible for how you use this program
-
-<br>
 
 27/10/2025: reprise du programme et publication, j'avais totalement oublié de le faire depuis 2020 ou 2022, je ne sais plus. Analyse du fonctionnement via le code (je n'avais laissé aucune doc :/)
 
 # Todo
 - :warning: Urgent: en cas de base manquante le data context n'est pas initialisé (pourquoi pas). Mais à la création de la table il faudrait l'initialiser sinon on ne peut plus travailler... peut être que tout appel de DB Tools devrait recharger => Décidé: oui
+- :warning: Comprendre pour le mode archive et le mode game dans la creation des roms.
+- :warning: Voir en urgence pour le déplacement des roms
+    - Renommer que c'est du move
+    - Voir pour identifier si c'est le même lecteur
+        - Implanter si ce n'est pas le même lecteur le calcul de somme
+        - Implémenter le déplacement si c'est le même lecteur
+        - Favorites ?? Quelle était l'ID ? Un dossier peut être
+        - Implémenter le mode full, on déplace juste dans le dossier
 - Identifier pourquoi je rajoute automatiquement des marques à la création de la base...
     - Par défaut pour faciliter
     - Sample pour le débug qui est resté
@@ -23,35 +25,25 @@
 - Reprendre contact avec le code pour sortir une documentation sur le fonctionnement, j'ai totalement oublié
 - Voir s'il répond le besoin de filtrage des roms de manière simple.
 
-# But
-- Identifier les roms de types:
- - pinball (méchanical
- - fruit (méchanical)
-- Voir éventuellement:
- - CPS1
- - CPS2
- - Naomi
- > (doit le faire normalement)
-- Rajouter éventuellement le genre du jeu en xml.
+<br>
 
-# Notes
-- Visiblement j'ai travaillé sur une base sqlite.
+----
 
-# Fonctionnalités
-## MainPage
-### Populate Temp
-Load an xml from M.A.M.E
+# Functions
+## DB Tools
+### Création de Table
+:warning: identifier le besoin
+
+- Ajout à Constructeurs de 
+    - Capcom
+    - Konami
+    - Sega
 
 
-## dbtools
-- Création de la base
-<<<<<<< HEAD
-- Ne lit pas la base si non présente
-=======
-- Ne lit pas la base si non présente
+- Genres
+    - Shoot Them Up
+    - Fight
 
-# Tests
-## Exemples de résultat
-Chargement d'un fichier XML tiré de MAME
-<img width="2304" height="1117" alt="image" src="https://github.com/user-attachments/assets/eda39a20-bc90-4ac8-b870-c2b851ef8525" />
->>>>>>> 8e271a0c6aff76e5d462c63e1dc4d59289a05204
+
+
+> Toutes les marques citées sont sous copyright etc etc... je ne sais plus le disclamer qu'il faut mettre mais vous êtes bien entendu au courant qu'elles ne m'appartiennent pas.

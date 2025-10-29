@@ -208,7 +208,7 @@ namespace MyMameHelper.Pages
             // Récupérer les fichiers dans le répertoire
             _DirFiles = Directory.GetFiles(PProp.Default.RomSource);
 
-            // Récupérer les données de la base
+            // Récupérer les données de la base, table roms
             using (SQLite_Req sqReq = new SQLite_Req())
             {
                 DbGames.ChangeContent = sqReq.AffGames_List();

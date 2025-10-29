@@ -29,6 +29,12 @@ After it, you can save:
 
 <br>
 
+## Compare
+
+<br>
+
+## Copy all Games
+<br>
 
 ## DbTools
 You can create an empty database here.
@@ -39,20 +45,58 @@ You can create an empty database here.
 
 # With a db
 ## Populate Temp
-## Compare[^changeit]
+## Compare
 ## Copy all Games
 ## Move Games1
+
+<br>
+
+----
+With a db AND Developers built
+
+
+
+
+<br>
 
 ----
 # Menu
 ## Build Developers
 You can feed the Developers table with the temporary roms table.
 
+<br>
+
 ## Build Constructors
 You can feed the Constructeurs table with the temporary roms table.
 
+<br>
+
 ## Build Roms
-> :warning: unavailable until Developers table is populated
+> :warning: unavailable until Developers table is populated  
+> :warning: refactorisation en cours.
+
+Select the roms you want to keep and save it in the `roms` table.
+
+Methods:
+- Machine: Combine your destination path with the machine name.
+- Favorites (not implemented)
+
+<br>
+
+Options:
+- OverWrite: you overwrite the file if he is existing (usefull for a new romset)
+- Unwanted.
+- Use Files Information
+> :warning: A voir une fois le code refactorisé
+
+<br>
+
+## DB Tools
+- Create table
+- Empty temp roms table
+
+
+
 ----
 
 # Not Working
@@ -61,9 +105,22 @@ Need to revisiting the code behind.
 
 ## Move Games1
 
+<br>
+
 ----
 
 # FAQ
+## How i begin ?
+- Create db by using dbtools with MyMameHelper
+- Create an xml file with M.A.M.E
+- Populate temp 
+    - Load XML with MyMameHelper
+    - Save it
+- Build Developers
+- Now you have the list of the games you can add in the rom table
+
+> :warning: Work In Progress
+
 ## What happens if i want to add some games
 Currently you can add new games by feed with load XML the data base. You don’t have to populate it all at once.
 
