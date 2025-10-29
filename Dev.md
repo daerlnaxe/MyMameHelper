@@ -2,6 +2,7 @@
 27/10/2025: reprise du programme et publication, j'avais totalement oublié de le faire depuis 2020 ou 2022, je ne sais plus. Analyse du fonctionnement via le code (je n'avais laissé aucune doc :/)
 
 # Todo
+- :warning: voir en urgence le certificat
 - :warning: Urgent: en cas de base manquante le data context n'est pas initialisé (pourquoi pas). Mais à la création de la table il faudrait l'initialiser sinon on ne peut plus travailler... peut être que tout appel de DB Tools devrait recharger => Décidé: oui
 - :warning: Comprendre pour le mode archive et le mode game dans la creation des roms.
 - :warning: Voir en urgence pour le déplacement des roms
