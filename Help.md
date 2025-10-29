@@ -33,7 +33,7 @@ After it, you can save:
 
 <br>
 
-## Copy all Games
+## File Manager
 <br>
 
 ## DbTools
@@ -46,7 +46,7 @@ You can create an empty database here.
 # With a db
 ## Populate Temp
 ## Compare
-## Copy all Games
+## File Manager
 ## Move Games1
 
 <br>

@@ -30,6 +30,10 @@
 <br>
 
 ----
+# Done
+- `Copy all` devient `File Manager`, ce qui permet copy ou déplacement.
+
+----
 
 # Functions
 ## DB Tools

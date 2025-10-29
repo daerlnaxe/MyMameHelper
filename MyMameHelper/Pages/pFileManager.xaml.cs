@@ -29,7 +29,7 @@ namespace MyMameHelper.Pages
     /// <summary>
     /// Logique d'interaction pour MoveATXTFile.xaml
     /// </summary>
-    public partial class pCopyFiles : Page, INotifyPropertyChanged
+    public partial class pFileManager : Page, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -73,7 +73,8 @@ namespace MyMameHelper.Pages
             }
         }
 
-        public pCopyFiles()
+        
+        public pFileManager()
         {
             InitializeComponent();
 

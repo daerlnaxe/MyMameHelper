@@ -196,7 +196,8 @@ namespace MyMameHelper
 
         public static readonly RoutedCommand AddGames = new RoutedCommand("Add Games", typeof(MainWindow));
         public static readonly RoutedCommand Compare = new RoutedCommand("Compare", typeof(MainWindow));
-        public static readonly RoutedCommand MoveAllGames = new RoutedCommand("Move All Games", typeof(MainWindow));
+        // public static readonly RoutedCommand MoveAllGames = new RoutedCommand("Move All Games", typeof(MainWindow));
+        public static readonly RoutedCommand FileManager = new RoutedCommand("Move All Games", typeof(MainWindow));
         public static readonly RoutedCommand MoveGames1 = new RoutedCommand("Move Games1", typeof(MainWindow));
         public static readonly RoutedCommand ModifyGames = new RoutedCommand("Modify Games", typeof(MainWindow));
 
@@ -228,7 +229,7 @@ namespace MyMameHelper
 
         private void Ex_MoveAllGames(object sender, ExecutedRoutedEventArgs e)
         {
-            Active_Page = new pCopyFiles();
+            //Active_Page = new pCopyFiles();
         }
 
         private void Can_MoveGames1(object sender, CanExecuteRoutedEventArgs e)
