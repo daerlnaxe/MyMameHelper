@@ -11,6 +11,7 @@
         - Implémenter le déplacement si c'est le même lecteur
         - Favorites ?? Quelle était l'ID ? Un dossier peut être
         - Implémenter le mode full, on déplace juste dans le dossier
+- :warning: Idée à voir, générer un dat compatible avec CLRMamePro quoiqu'il n'y a pas les hashs ...
 - Identifier pourquoi je rajoute automatiquement des marques à la création de la base...
     - Par défaut pour faciliter
     - Sample pour le débug qui est resté
