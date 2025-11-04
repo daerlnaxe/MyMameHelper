@@ -81,7 +81,7 @@ namespace MyMameHelper.SQLite
             string tBios = Properties.Settings.Default.T_Bios;
             string tMechanicals = Properties.Settings.Default.T_Mechanics;
             string tConstructeurs = Properties.Settings.Default.T_Constructeurs;
-            string tCompanies = Properties.Settings.Default.T_Companies;
+            string tCompanies = Properties.Settings.Default.T_Developers;
             string tGenres = Properties.Settings.Default.T_Genres;
             string tMachines = Properties.Settings.Default.T_Machines;
             string tRoms = Properties.Settings.Default.T_Roms;

@@ -103,7 +103,7 @@ namespace MyMameHelper.Windows
                     Genres.ChangeContent = sqRead.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true, orders: new SqlOrder("Nom")));
 
                     // Liste des Manufacturers
-                    Manufacturers.ChangeContent = sqRead.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Companies, all: true));
+                    Manufacturers.ChangeContent = sqRead.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
 
 
 
@@ -466,7 +466,7 @@ namespace MyMameHelper.Windows
                 using (SQLite_Req sqReq = new SQLite_Req())
                 {
                     sqReq.Insert_Companie(new CT_Constructeur() { Nom = lval.Valeur });
-                    Manufacturers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Companies, all: true));
+                    Manufacturers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
                 }
             }
         }
@@ -490,7 +490,7 @@ namespace MyMameHelper.Windows
                 using (SQLite_Req sqReq = new SQLite_Req())
                 {
                     sqReq.Update_Company(ctManu);
-                    Manufacturers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Companies, all: true));
+                    Manufacturers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
                 }
             }
         }
@@ -511,7 +511,7 @@ namespace MyMameHelper.Windows
                     SqlCond cond = new SqlCond("ID", eWhere.Equal, ctManu.ID);
                     sqReq.Delete_Companie(new SqlCond[] { cond });
 
-                    Manufacturers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Companies, all: true));
+                    Manufacturers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
                 }
             }
 

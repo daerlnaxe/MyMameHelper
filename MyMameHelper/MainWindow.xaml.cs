@@ -145,7 +145,7 @@ namespace MyMameHelper
             using (SQLite_Req sqReq = new SQLite_Req())
             {
                 NumberOf_TempRoms = sqReq.Count(PProp.Default.T_TempRoms);
-                NumberOf_Dev = sqReq.Count(PProp.Default.T_Companies);
+                NumberOf_Dev = sqReq.Count(PProp.Default.T_Developers);
                 NumberOf_Manus = sqReq.Count(PProp.Default.T_Constructeurs);
                 NumberOf_Roms = sqReq.Count(PProp.Default.T_Roms);
             }

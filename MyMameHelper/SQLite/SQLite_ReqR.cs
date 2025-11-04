@@ -24,7 +24,7 @@ namespace MyMameHelper.SQLite
         #region 1 Element
         public CT_Constructeur Get_Companie(SqlCond[] conds)
         {
-            Obj_Select objCompanie = new Obj_Select(table: PProp.Default.T_Companies, all: true, conditions: conds);
+            Obj_Select objCompanie = new Obj_Select(table: PProp.Default.T_Developers, all: true, conditions: conds);
             return Get_OneResult<CT_Constructeur>(CT_Constructeur.Result2Class, objCompanie);
         }
 
@@ -930,7 +930,7 @@ namespace MyMameHelper.SQLite
         private SQLiteDataReader AffGames_SQL(SqlCond[] conds, SqlOrder order)
         {
             //string constructeurs = PProp.Default.T_Constructeurs;
-            string tCompany = PProp.Default.T_Companies;
+            string tCompany = PProp.Default.T_Developers;
             string tGame = PProp.Default.T_Games;
             string tGenre = PProp.Default.T_Genres;
             string tMachine = PProp.Default.T_Machines;
@@ -1069,7 +1069,7 @@ namespace MyMameHelper.SQLite
         private SQLiteDataReader AffRoms_SQL(SqlCond[] conds, SqlOrder order)
         {
             //string constructeurs = PProp.Default.T_Constructeurs;
-            string tCompany = PProp.Default.T_Companies;
+            string tCompany = PProp.Default.T_Developers;
             string tRom = PProp.Default.T_Roms;
             //   string tMachine = PProp.Default.T_Machines;
 

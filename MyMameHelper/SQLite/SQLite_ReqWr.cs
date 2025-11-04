@@ -26,7 +26,7 @@ namespace MyMameHelper.SQLite
         {
             Debug.WriteLine($"Insertion de la companie: {ctC.Nom}");
 
-            string sql = $"INSERT INTO [{PProp.Default.T_Companies}] ([Nom]) VALUES (@Nom)";
+            string sql = $"INSERT INTO [{PProp.Default.T_Developers}] ([Nom]) VALUES (@Nom)";
             SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
             sqlCmd.Parameters.Add("@Nom", DbType.String).Value = ctC.Nom;
 
@@ -224,7 +224,7 @@ namespace MyMameHelper.SQLite
             {
                 CT_Constructeur dev = developers[i];
                 //  string vals = null;
-                sqlCmd.CommandText = $"Insert INTO [{PProp.Default.T_Companies}] (" +
+                sqlCmd.CommandText = $"Insert INTO [{PProp.Default.T_Developers}] (" +
                                         "[Nom] " +
                                         ") VALUES ";
 
@@ -581,7 +581,7 @@ namespace MyMameHelper.SQLite
             Debug.WriteLine($"Update de {ctComp.Nom}");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
-            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Companies}] SET [Nom]=@Nom WHERE ID=@ID";
+            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Developers}] SET [Nom]=@Nom WHERE ID=@ID";
 
             sqlCmd.Parameters.Add($"@Nom", DbType.String).Value = ctComp.Nom;
 

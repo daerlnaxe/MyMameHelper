@@ -9,9 +9,9 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="pAddByXML">
     <Page.CommandBindings>
-        <!-- CommandBinding Command="commands:FileCommands.Load_File" Executed="Ex_LoadXML"/-->
-        <!-- CommandBinding Command="commands:UICommands.SaveTemp" Executed="Ex_SaveDb" CanExecute="Can_Save"/-->
-        <!-- CommandBinding Command="commands:UICommands.RemoveRom" CanExecute="Can_Remove" Executed="Ex_Remove"/-->
+        <CommandBinding Command="commands:FileCommands.Load_File" Executed="Ex_LoadXML"/>
+        <CommandBinding Command="commands:UICommands.SaveTemp" Executed="Ex_SaveDb" CanExecute="Can_Save"/>
+        <CommandBinding Command="commands:UICommands.RemoveRom" CanExecute="Can_Remove" Executed="Ex_Remove"/>
     </Page.CommandBindings>
     <Page.Resources>
         <Style TargetType="Button">
@@ -28,8 +28,8 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <StackPanel Margin="10">
-            <!---Button Content="Load Mame XML" Command="commands:FileCommands.Load_File" VerticalAlignment="Top"/-->
-            <!--Button Content="SaveToTemp" Command="commands:UICommands.SaveTemp"/-->
+            <Button Content="Load Mame XML" Command="commands:FileCommands.Load_File" VerticalAlignment="Top"/>
+            <Button Content="SaveToTemp" Command="commands:UICommands.SaveTemp"/>
 
         </StackPanel>
         <!-- Bios Roms -->

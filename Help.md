@@ -62,17 +62,21 @@ With a db AND Developers built
 ----
 # Menu
 ## Build Developers
-You can feed the Developers table with the temporary roms table.
+You can feed the Developers table with the field `manufacturer` from the temporary roms table.
 
 <br>
 
 ## Build Constructors
+> :warning: Unavailable until TempRoms table is populated  
+
 You can feed the Constructeurs table with the temporary roms table.
 
 <br>
 
 ## Build Roms
-> :warning: unavailable until Developers table is populated  
+> :warning: Unavailable until TempRoms table is populated  
+> :warning: Unavailable until Developers table is populated  
+
 > :warning: refactorisation en cours.
 
 Select the roms you want to keep and save it in the `roms` table.

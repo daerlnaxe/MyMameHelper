@@ -46,7 +46,7 @@ namespace MyMameHelper.Pages
                 using (SQLite_Req sqReq = new SQLite_Req())
                 {
                     #region Collection of Devs
-                    Obj_Select obsDev = new Obj_Select(PProp.Default.T_Companies, all: true);
+                    Obj_Select obsDev = new Obj_Select(PProp.Default.T_Developers, all: true);
                     companies = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, obsDev);
                     #endregion
 
@@ -57,15 +57,24 @@ namespace MyMameHelper.Pages
                     #endregion
                 }
 
+
                 for (int i = 0; i < gDev.Count; i++)
                 {
                     RawMameRom rom = gDev[i];
+
+                    // Recherche dans companies du manufacturer, enlève de la liste des Manufacturer à rajouter
                     if (companies.FirstOrDefault(x => x.Nom.Equals(rom.Manufacturer)) != null)
                     {
                         gDev.RemoveAt(i);
                         i--;
                     }
                 }
+
+                // 
+                foreach(var c in companies)
+                    Developers.Add(c);
+                
+                
 
                 GameManufacturers.ChangeContent = gDev;
             }
@@ -122,7 +131,7 @@ namespace MyMameHelper.Pages
             e.CanExecute = Developers.Count > 0;
         }
 
-
+        
         private void Ex_RR(object sender, ExecutedRoutedEventArgs e)
         {
             foreach (CT_Constructeur constructor in Developers)
@@ -192,7 +201,7 @@ namespace MyMameHelper.Pages
 
             using (SQLite_Req sqReq = new SQLite_Req())
             {
-                MainWindow.NumberOf_Dev = sqReq.Count(PProp.Default.T_Companies);
+                MainWindow.NumberOf_Dev = sqReq.Count(PProp.Default.T_Developers);
             }
         }
 

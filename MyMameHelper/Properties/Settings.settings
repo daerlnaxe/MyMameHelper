@@ -35,8 +35,8 @@
     <Setting Name="UpgradeRequired" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="T_Companies" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Companies</Value>
+    <Setting Name="T_Developers" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Developers</Value>
     </Setting>
     <Setting Name="T_Genres" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Genres</Value>

@@ -121,6 +121,16 @@ namespace MyMameHelper
             }
         }
 
+        // Convertisseur implicite
+       /* public static implicit operator MyObservableCollection<T>(List<T> v)
+        {
+            MyObservableCollection<T> collection = new MyObservableCollection<T>();
+            foreach (var c in v)
+            {
+                collection.Add(c);
+            }
 
+            return collection;
+        }*/
     }
 }
