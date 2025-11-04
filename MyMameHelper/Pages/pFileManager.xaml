@@ -16,7 +16,7 @@
         </Style>
     </Page.Resources>
     <Page.CommandBindings>
-        <CommandBinding Command="commands:UICommands.Proceed" Executed="Proceed_Roms"/>
+        <!-- CommandBinding Command="commands:UICommands.Proceed" Executed="Proceed_Roms"/-->
     </Page.CommandBindings>
     <!--  -->
     <Grid>
@@ -49,7 +49,7 @@
 
             <!-- Panneau du bas -->
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" FlowDirection="RightToLeft">
-                <Button Name="Proceed" Content="Proceed" Command="commands:UICommands.Proceed" />
+                <!--Button Name="Proceed" Content="Proceed" Command="commands:UICommands.Proceed" /-->
             </StackPanel>
             <StackPanel>
                 <GroupBox x:Name="groupBox" Header="Options" Margin="10" Height="141">

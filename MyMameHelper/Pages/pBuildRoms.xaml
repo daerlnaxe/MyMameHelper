@@ -28,17 +28,17 @@
         <CollectionViewSource x:Key="ItemsDevelopers" Source="{Binding Developers}" />
     </Page.Resources>
     <Page.CommandBindings>
-        <CommandBinding Command="commands:UICommands.SaveDb" Executed="SaveRoms" CanExecute="Can_Save"/>
-        <CommandBinding Command="commands:UICommands.ChangeCmd" Executed="Ex_Change" CanExecute="Can_Change"/>
+        <!--CommandBinding Command="commands:UICommands.SaveDb" Executed="SaveRoms" CanExecute="Can_Save"/>
+        <CommandBinding Command="commands:UICommands.ChangeCmd" Executed="Ex_Change" CanExecute="Can_Change"/-->
         <!--CommandBinding Command="commands:UICommands.DeleteFromDb" Executed="DeleteGames" CanExecute="Can_Delete"/-->
         <!-- Panneau de gauche -->
-        <CommandBinding Command="commands:UICommands.SearchCmd" Executed="Ex_Search" />
+        <!-- CommandBinding Command="commands:UICommands.SearchCmd" Executed="Ex_Search" />
         <CommandBinding Command="commands:UICommands.Select_AllCmd" Executed="Select_All"/>
-        <CommandBinding Command="commands:UICommands.SwapLeft2Right" Executed="Ex_Left2Right" CanExecute="Can_Left2Right"/>
+        <CommandBinding Command="commands:UICommands.SwapLeft2Right" Executed="Ex_Left2Right" CanExecute="Can_Left2Right"/ -->
 
         <!-- Panneau de droite -->
-        <CommandBinding Command="commands:UICommands.SwapRight2Left" CanExecute="Can_Right2Left" Executed="Ex_Right2Left"/>
-        <CommandBinding Command="commands:UICommands.ResetRight" CanExecute="Can_ResetRight" Executed="Ex_ResetRight"/>
+        <!-- CommandBinding Command="commands:UICommands.SwapRight2Left" CanExecute="Can_Right2Left" Executed="Ex_Right2Left"/>
+        <CommandBinding Command="commands:UICommands.ResetRight" CanExecute="Can_ResetRight" Executed="Ex_ResetRight"/-->
     </Page.CommandBindings>
 
     <Grid>
@@ -62,7 +62,7 @@
         <!-- DockPanel Gauche -->
         <DockPanel Grid.Row="1">
             <StackPanel DockPanel.Dock="Left">
-                <Button Content="Search" Command="commands:UICommands.SearchCmd"/>
+                <!--Button Content="Search" Command="commands:UICommands.SearchCmd"/-->
             </StackPanel>
 
             <!-- Grille basse -->
@@ -102,10 +102,10 @@
                           ItemsSource="{Binding RawRomsCollec}" SelectedItem="{Binding LeftSelected}" >
                     <DataGrid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Select All" Command="commands:UICommands.Select_AllCmd"/>
+                            <!--MenuItem Header="Select All" Command="commands:UICommands.Select_AllCmd"/>
                             <MenuItem Header="Add" Command="commands:UICommands.SwapLeft2Right"/>
                             <Separator/>
-                            <MenuItem Header="Delete From Database" Command="commands:UICommands.DeleteFromDb"/>
+                            <MenuItem Header="Delete From Database" Command="commands:UICommands.DeleteFromDb"/-->
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                     <DataGrid.Columns>
@@ -157,8 +157,8 @@
                         </StackPanel>
                 </Border>
                 </StackPanel>
-                <Button Content="Change" Command="commands:UICommands.ChangeCmd" />
-                <Button Content="Save" Command="commands:UICommands.SaveDb"/>
+                <!--Button Content="Change" Command="commands:UICommands.ChangeCmd" />
+                <Button Content="Save" Command="commands:UICommands.SaveDb"/-->
             </StackPanel>
             <Grid DockPanel.Dock="Bottom">
                 <Grid.ColumnDefinitions>
@@ -194,8 +194,8 @@
                           ItemsSource="{Binding RomsToSave}" SelectedItem="{Binding RightSelected}">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Remove" Command="commands:UICommands.SwapRight2Left"/>
-                            <MenuItem Header="Reset" Command="commands:UICommands.ResetRight" />
+                            <!-- MenuItem Header="Remove" Command="commands:UICommands.SwapRight2Left"/>
+                            <MenuItem Header="Reset" Command="commands:UICommands.ResetRight" / -->
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                     <DataGrid.Columns>

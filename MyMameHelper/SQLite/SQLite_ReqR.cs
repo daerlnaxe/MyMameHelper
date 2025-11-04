@@ -13,6 +13,9 @@ using PProp = MyMameHelper.Properties.Settings;
 
 namespace MyMameHelper.SQLite
 {
+    /// <summary>
+    /// ??, ouvrir une connexion
+    /// </summary>
     public sealed partial class SQLite_Req
     {
         #region commun
@@ -979,6 +982,15 @@ namespace MyMameHelper.SQLite
             return Ag;
         }
 
+        #region Deprecated
+        /*
+         * 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="conds"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public List<Aff_Game> AffGames_List(SqlCond[] conds = null, SqlOrder order = null)
         {
             List<Aff_Game> lGames = new List<Aff_Game>();
@@ -1013,6 +1025,8 @@ namespace MyMameHelper.SQLite
 
             return lGames;
         }
+        */
+        #endregion Deprecated
 
         /// <summary>
         /// Récupère l'id des jeux en fonction d'une de ses roms

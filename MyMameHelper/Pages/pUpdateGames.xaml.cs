@@ -102,6 +102,7 @@ namespace MyMameHelper.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            /* A revoir
             using (SQLite_Req sqReq = new SQLite_Req())
             {
                 DbGames.ChangeContent = sqReq.AffGames_List(order: new SqlOrder("Game_Name"));
@@ -110,6 +111,7 @@ namespace MyMameHelper.Pages
                 Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Companies, all: true));
                 Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true));
             }
+            */
         }
 
         private void Select_All(object sender, ExecutedRoutedEventArgs e)
@@ -239,6 +241,7 @@ namespace MyMameHelper.Pages
 
         private void UpdateGames(object sender, ExecutedRoutedEventArgs e)
         {
+            /* A revoir
             UpdateDbGames<Aff_Game> sDb = new UpdateDbGames<Aff_Game>();
             sDb.Update_GamesTable(GamesModified);
 
@@ -247,6 +250,7 @@ namespace MyMameHelper.Pages
                 DbGames.ChangeContent = sqReq.AffGames_List();
             }
             GamesModified.Clear();
+            */
         }
         #endregion
 
@@ -441,6 +445,7 @@ namespace MyMameHelper.Pages
 
         private void DeleteGames(object sender, ExecutedRoutedEventArgs e)
         {
+            /* A revoir
             if (MessageBox.Show("Delete this games from database ?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
 
@@ -458,7 +463,7 @@ namespace MyMameHelper.Pages
                 }
 
             }
-
+            */
         }
 
 

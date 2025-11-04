@@ -118,11 +118,12 @@ namespace MyMameHelper.Windows
 
             SqlCond[] sqlConds = conditions.Count == 0 ? null : conditions.ToArray();
 
-
+            throw new NotImplementedException("A revoir");
+            /* 
             using (SQLite_Req sqReq = new SQLite_Req())
             {
                 GamesFound.ChangeContent = sqReq.AffGames_List(sqlConds, new SqlOrder(new string[] { "Game_Name" }));
-            }
+            }*/
         }
 
         private void btFeed_Click(object sender, RoutedEventArgs e)

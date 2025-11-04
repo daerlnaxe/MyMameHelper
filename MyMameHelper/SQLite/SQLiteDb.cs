@@ -6,6 +6,8 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,10 +15,18 @@ using PProp = MyMameHelper.Properties.Settings;
 
 namespace MyMameHelper.SQLite
 {
+    /// <summary>
+    /// Contient les instructions pour créer la structure de la table
+    /// </summary>
     class SQLiteDb
     {
         static SQLiteConnection _MaConn;
 
+        /// <summary>
+        /// Création de la connexion
+        /// </summary>
+        /// <param name="dbLink"></param>
+        /// <exception cref="NotImplementedException"></exception>
         public static void Create(string dbLink)
         {
             try
@@ -61,6 +71,10 @@ namespace MyMameHelper.SQLite
 
         }
 
+
+        /// <summary>
+        /// Création de la structure de la base
+        /// </summary>
         private static void Create_Structure()
         {
             string tGames = Properties.Settings.Default.T_Games;
@@ -73,19 +87,35 @@ namespace MyMameHelper.SQLite
             string tRoms = Properties.Settings.Default.T_Roms;
             string tempRoms = Properties.Settings.Default.T_TempRoms;
 
+            // Création du minimum
+            // Table Games (Elle permet des options en plus, personnalisables, pour les roms. Elle est liée à roms, genres)
             CreateTable($"CREATE Table [{tGames}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Game_Name] VARCHAR UNIQUE);");
+            // Bios
             CreateTable($"CREATE Table [{tBios}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Bios_Name] VARCHAR UNIQUE);");
+            // Mechanicals
             CreateTable($"CREATE Table [{tMechanicals}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Meca_Name] VARCHAR UNIQUE);");
+            // Constructeurs
             CreateTable($"CREATE TABLE [{tConstructeurs}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            // Companies
             CreateTable($"CREATE TABLE [{tCompanies}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            // Genres (liée à Games)
             CreateTable($"CREATE TABLE [{tGenres}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            // Machines
             CreateTable($"CREATE TABLE [{tMachines}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            // Roms (Contenu réel des roms, feedé par l'utilisateur)
             CreateTable($"CREATE TABLE [{tRoms}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Archive_Name] VARCHAR UNIQUE);");
+            // Table temporaire, feedée depuis un xml de M.A.M.E
             CreateTable($"CREATE TABLE [{tempRoms}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Name] VARCHAR UNIQUE);");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName"></param>
         internal static void Update_Structure(string fileName)
         {
+            throw new NotImplementedException("A identifier");
+
             using (StreamReader stream = new StreamReader(fileName))
             {
                 string[] lines = File.ReadAllLines(fileName);
@@ -119,6 +149,10 @@ namespace MyMameHelper.SQLite
             }
         }
 
+
+        /// <summary>
+        /// Rajoute les champs supplémentaires aux tables
+        /// </summary>
         private static void Alter_Structure()
         {
             string tGames = Properties.Settings.Default.T_Games;
@@ -131,13 +165,17 @@ namespace MyMameHelper.SQLite
 
             AlterTable($"ALTER TABLE [{tGames}] ADD [Machine] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [Description] VARCHAR");
-            AlterTable($"ALTER TABLE [{tGames}] ADD [Roms] VARCHAR");
+            #region Ancien système, délégué à présent à la table Roms
+            //AlterTable($"ALTER TABLE [{tGames}] ADD [Roms] VARCHAR");
+            #endregion
             AlterTable($"ALTER TABLE [{tGames}] ADD [Unwanted] BOOLEAN");
             AlterTable($"ALTER TABLE [{tGames}] ADD [Developer] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [Rate] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [Genre] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [IsMahJong] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [IsQuizz] INTEGER");
+            AlterTable($"ALTER TABLE [{tGames}] ADD [IsPinball] INTEGER");
+            AlterTable($"ALTER TABLE [{tGames}] ADD [IsFruit] INTEGER");
             // AlterTable($"ALTER TABLE [{tGames}] ADD [Description] VARCHAR");
             //AlterTable($"ALTER TABLE [{tGames}] ADD [Year] VARCHAR");
 
@@ -147,7 +185,7 @@ namespace MyMameHelper.SQLite
             // mecanics
             AlterTable($"ALTER TABLE [{tMechanicals}] ADD [Description] INTEGER");
 
-            //
+            // machines
             AlterTable($"ALTER TABLE [{tMachines}] ADD [Revision] VARCHAR;");
             AlterTable($"ALTER TABLE [{tMachines}] ADD [Constructeur] INTEGER");
             AlterTable($"ALTER TABLE [{tMachines}] ADD [Year] INTEGER;");
@@ -155,6 +193,9 @@ namespace MyMameHelper.SQLite
 
             // roms
             AlterTable($"ALTER TABLE [{tRoms}] ADD [Description] VARCHAR;");
+            #region Nouveau système, c'est ici qu'on va lier à games
+            AlterTable($"ALTER TABLE [{tRoms}] ADD [Game] INTEGER;");
+            #endregion
             AlterTable($"ALTER TABLE [{tRoms}] ADD [Year] VARCHAR;");
             AlterTable($"ALTER TABLE [{tRoms}] ADD [Manufacturer] INTEGER;");
             AlterTable($"ALTER TABLE [{tRoms}] ADD [Unwanted] BOOLEAN;");
@@ -193,7 +234,7 @@ namespace MyMameHelper.SQLite
                 $"('Shoot Them Up')," +
                 $"('Fight');");
 
-
+            // Table Constructeur
             CT_Constructeur ct = Query_One<CT_Constructeur>(CT_Constructeur.Result2Class, $"SELECT [ID] FROM [{tConstructeurs}] WHERE [Nom]='Sega'");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 1',  {ct.ID}, 1983)");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Appoooh',  {ct.ID}, 1984)");

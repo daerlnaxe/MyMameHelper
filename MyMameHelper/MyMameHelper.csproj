@@ -136,17 +136,8 @@
     <Compile Include="Pages\pPopulateTemp.xaml.cs">
       <DependentUpon>pPopulateTemp.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\PrepareGames - Copier.xaml.cs">
-      <DependentUpon>PrepareGames - Copier.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\pBuildRoms.xaml.cs">
       <DependentUpon>pBuildRoms.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\pUpdateRoms.xaml.cs">
-      <DependentUpon>pUpdateRoms.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\pWorkOnGames.xaml.cs">
-      <DependentUpon>pWorkOnGames.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\pBuildGames.xaml.cs">
       <DependentUpon>pBuildGames.xaml</DependentUpon>
@@ -190,15 +181,9 @@
     <Compile Include="Pages\pAccueil.xaml.cs">
       <DependentUpon>pAccueil.xaml</DependentUpon>
     </Compile>
-    <None Include="Pages\pMoveATXFiles.xaml.cs">
-      <DependentUpon>pMoveATXFiles.xaml</DependentUpon>
-    </None>
     <Compile Include="Pages\pUpdateGames.xaml.cs">
       <DependentUpon>pUpdateGames.xaml</DependentUpon>
     </Compile>
-    <None Include="Pages\pWorkPage.xaml.cs">
-      <DependentUpon>pWorkPage.xaml</DependentUpon>
-    </None>
     <Compile Include="SQLite\SQLite_ReqDel.cs" />
     <Compile Include="Windows\AsyncWindowProgress.xaml.cs">
       <DependentUpon>AsyncWindowProgress.xaml</DependentUpon>
@@ -265,10 +250,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <None Include="Pages\pMoveATXFiles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </None>
     <Page Include="Pages\pCompare_Games.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -277,24 +258,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <None Include="Pages\pWorkPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <Page Include="Pages\PrepareGames - Copier.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Pages\pBuildRoms.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\pUpdateRoms.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\pWorkOnGames.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\pBuildGames.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -323,10 +289,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Pages\PrepareGames.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\pFileManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -393,9 +355,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Pages\PrepareGames.xaml.cs">
-      <DependentUpon>PrepareGames.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\pFileManager.xaml.cs">
       <DependentUpon>pFileManager.xaml</DependentUpon>
     </Compile>

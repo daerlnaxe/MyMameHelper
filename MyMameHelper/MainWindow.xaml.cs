@@ -197,7 +197,7 @@ namespace MyMameHelper
         public static readonly RoutedCommand AddGames = new RoutedCommand("Add Games", typeof(MainWindow));
         public static readonly RoutedCommand Compare = new RoutedCommand("Compare", typeof(MainWindow));
         // public static readonly RoutedCommand MoveAllGames = new RoutedCommand("Move All Games", typeof(MainWindow));
-        public static readonly RoutedCommand FileManager = new RoutedCommand("Move All Games", typeof(MainWindow));
+        public static readonly RoutedCommand FileManager = new RoutedCommand("Manage files", typeof(MainWindow));
         public static readonly RoutedCommand MoveGames1 = new RoutedCommand("Move Games1", typeof(MainWindow));
         public static readonly RoutedCommand ModifyGames = new RoutedCommand("Modify Games", typeof(MainWindow));
 
@@ -208,7 +208,7 @@ namespace MyMameHelper
 
         private void Ex_AddGames(object sender, ExecutedRoutedEventArgs e)
         {
-            Active_Page = new PrepareGames();// Pages["PrepareGames"];
+            //Active_Page = new PrepareGames();// Pages["PrepareGames"];
         }
 
         private void Can_Compare(object sender, CanExecuteRoutedEventArgs e)
@@ -222,14 +222,14 @@ namespace MyMameHelper
 
         }
 
-        private void Can_MoveAllGames(object sender, CanExecuteRoutedEventArgs e)
+        private void Can_ManageFiles(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = DatabaseOk;
         }
 
-        private void Ex_MoveAllGames(object sender, ExecutedRoutedEventArgs e)
+        private void Ex_ManageFiles(object sender, ExecutedRoutedEventArgs e)
         {
-            //Active_Page = new pCopyFiles();
+            Active_Page = new pFileManager();
         }
 
         private void Can_MoveGames1(object sender, CanExecuteRoutedEventArgs e)
@@ -262,7 +262,7 @@ namespace MyMameHelper
 
         private void Ex_ModifyRoms(object sender, ExecutedRoutedEventArgs e)
         {
-            Active_Page = new pUpdateRoms(); 
+            //Active_Page = new pUpdateRoms(); 
         }
         #endregion 
 

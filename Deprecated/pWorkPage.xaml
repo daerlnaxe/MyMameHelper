@@ -1,0 +1,123 @@
+﻿<Page x:Class="MyMameHelper.Pages.pWorkPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MyMameHelper.Pages"
+      xmlns:commands="clr-namespace:MyMameHelper.Commands"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="pWorkPage" Loaded="Page_Loaded">
+    <Page.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style TargetType="ComboBox">
+
+            <Setter Property="Visibility" Value="Visible"/>
+            <Style.Triggers>
+                <DataTrigger Value="0" Binding="{Binding RelativeSource={RelativeSource Self}, Path=ItemsSource.Count}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+
+        </Style>
+    </Page.Resources>
+    <Page.CommandBindings>
+        <CommandBinding Command="commands:UICommands.Select_AllCmd" Executed="Select_All" CanExecute="AllwaysTrue"/>
+        <!--CommandBinding Command="local:pWorkPage.SimulateCmd" Executed="Ex_Simulate" CanExecute="Can_Simulate"/-->
+
+        <!--CommandBinding Command="local:pWorkPage.RemoveRightCmd" Executed="Ex_RemoveRight" CanExecute="Can_RemoveRight" /-->
+        <!--CommandBinding Command="commands:UICommands.ResetRight" Executed="Ex_ResetRight" CanExecute="Can_ResetRight" /-->
+        <CommandBinding Command="commands:UICommands.SaveGamesCmd" Executed="SaveGames" CanExecute="Can_Save"/>
+    </Page.CommandBindings>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150*"/>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="150*"/>
+        </Grid.ColumnDefinitions>
+        <DockPanel>
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Content="Data:" />
+                <Label Grid.Column="1" Content="{Binding GamesToOrganize.Count}" />
+                <Label Content="Data Selected:" Grid.Row="1"  />
+                <Label Grid.Row="1" Grid.Column="1" Content="{Binding SelectedItems, ElementName=dg2Organize}"/>
+            </Grid>
+            <DataGrid x:Name="dg2Organize" ItemsSource="{Binding GamesToOrganize}" IsReadOnly="True" AutoGenerateColumns="False" >
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Select All" Command="commands:UICommands.Select_AllCmd"/>
+                        <!--MenuItem Header="Simulate" Command="local:pWorkPage.SimulateCmd"/-->
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Archive Name" Binding="{Binding Archive_Name}" />
+                    <DataGridTextColumn Header="Game Name" Binding="{Binding Game_Name}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+        <StackPanel Grid.Column="1">
+            <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5">
+                <StackPanel Orientation="Vertical">
+                    <!-- Constructeurs -->
+                    <Label Content="Select a Constructor" />
+                    <ComboBox x:Name="cbConstructeur" ItemsSource="{Binding Constructeurs}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectionChanged="CbConstructeur_SelectionChanged" />
+                    <!-- Hardware -->
+                    <Label Content="Select a Machine"/>
+                    <ComboBox x:Name="cbMachines" ItemsSource="{Binding Machines}" DisplayMemberPath="Nom" SelectedValuePath="ID" IsEnabled="{Binding Machines}">
+                    </ComboBox>
+                </StackPanel>
+            </Border>
+            <!--Button x:Name="btSimulate" Content="Simulate" Command="local:pWorkPage.SimulateCmd"/-->
+        </StackPanel>
+        <DockPanel Grid.Column="2" >
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Content="Data:" />
+                <Label Grid.Column="1" Content="{Binding GamesSelected.Count}" />
+                <Label Content="Data Selected:" Grid.Row="1"  />
+                <Label Grid.Row="1" Grid.Column="1" Content="{Binding SelectedItems, ElementName=dg2Organize}"/>
+            </Grid>
+            <StackPanel DockPanel.Dock="Right" Width="108">
+                <Button Content="Save" Command="commands:UICommands.SaveGamesCmd"/>
+            </StackPanel>
+            <DataGrid x:Name="dgRight"  ItemsSource="{Binding GamesModified}" IsReadOnly="True" AutoGenerateColumns="False" >
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <!--MenuItem Header="Remove"/-->
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Archive Name" Binding="{Binding Archive_Name}" />
+                    <DataGridTextColumn Header="Game Name" Binding="{Binding Game_Name}" />
+                    <DataGridTextColumn Header="Machine" Binding="{Binding Aff_Machine}" />
+                    <DataGridTextColumn Header="Manufacturer" Binding="{Binding Aff_Manu}" />
+                    <DataGridTextColumn Header="Genre" Binding="{Binding Aff_Genre}" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+        </DockPanel>
+    </Grid>
+</Page>

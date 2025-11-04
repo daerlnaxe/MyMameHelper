@@ -15,29 +15,30 @@
     </Window.Resources>
     <Window.CommandBindings>
         <!-- Build -->
-        <!-- CommandBinding Command="local:MainWindow.AddByXML" Executed="Ex_AddByXML"/ -->
-        <!-- CommandBinding Command="local:MainWindow.Build_Developers" Executed="Ex_BuildDeveloper" CanExecute="Can_BuildDeveloper"/-->
-        <!-- CommandBinding Command="local:MainWindow.Build_Manufacturers"  Executed="Ex_BuildManus" CanExecute="Can_BuildManus"/ -->
-        <!-- CommandBinding Command="local:MainWindow.Build_Roms" Executed="Ex_BuildRoms" CanExecute="Can_BuildRoms"/ -->
-        <!-- CommandBinding Command="local:MainWindow.RomManager" Executed="Ex_RomManager" CanExecute="Can_Manage"/ -->
-        <!-- CommandBinding Command="local:MainWindow.AddGames" CanExecute="Can_AddGames" Executed="Ex_AddGames"/-->
+        <CommandBinding Command="local:MainWindow.AddByXML" Executed="Ex_AddByXML"/>
+        <CommandBinding Command="local:MainWindow.Build_Developers" Executed="Ex_BuildDeveloper" CanExecute="Can_BuildDeveloper"/>
+        <CommandBinding Command="local:MainWindow.Build_Manufacturers"  Executed="Ex_BuildManus" CanExecute="Can_BuildManus"/>
+        <CommandBinding Command="local:MainWindow.Build_Roms" Executed="Ex_BuildRoms" CanExecute="Can_BuildRoms"/>
+        <CommandBinding Command="local:MainWindow.RomManager" Executed="Ex_RomManager" CanExecute="Can_Manage"/>
+        <CommandBinding Command="local:MainWindow.AddGames" CanExecute="Can_AddGames" Executed="Ex_AddGames"/>
         <!-- Work -->
-        <!-- CommandBinding Command="local:MainWindow.Compare" CanExecute="Can_Compare" Executed="Ex_Compare"/-->
-        <!-- CommandBinding Command="local:MainWindow.MoveAllGames" CanExecute="Can_MoveAllGames" Executed="Ex_MoveAllGames"/-->
-        <!-- CommandBinding Command="local:MainWindow.MoveGames1" CanExecute="Can_MoveGames1" Executed="Ex_MoveGames1"/-->
-        <!-- CommandBinding Command="local:MainWindow.ModifyGames" CanExecute="Can_ModifyGames" Executed="Ex_ModifyGames"/-->
-        <!-- CommandBinding Command="local:MainWindow.ModifyRoms" CanExecute="Can_ModifyRoms" Executed="Ex_ModifyRoms"/ -->
+        <CommandBinding Command="local:MainWindow.Compare" CanExecute="Can_Compare" Executed="Ex_Compare"/>
+        <!--CommandBinding Command="local:MainWindow.MoveAllGames" CanExecute="Can_MoveAllGames" Executed="Ex_MoveAllGames"/-->
+        <CommandBinding Command="local:MainWindow.FileManager" CanExecute="Can_ManageFiles" Executed="Ex_ManageFiles"/>
+        <CommandBinding Command="local:MainWindow.MoveGames1" CanExecute="Can_MoveGames1" Executed="Ex_MoveGames1"/>
+        <CommandBinding Command="local:MainWindow.ModifyGames" CanExecute="Can_ModifyGames" Executed="Ex_ModifyGames"/>
+        <CommandBinding Command="local:MainWindow.ModifyRoms" CanExecute="Can_ModifyRoms" Executed="Ex_ModifyRoms"/>
     </Window.CommandBindings>
     <DockPanel>
         <StackPanel DockPanel.Dock="Left">
             <Expander Header="Build" IsExpanded="False">
                 <StackPanel>
-                    <!-- Button Content="Populate Temp" Command="local:MainWindow.AddByXML" ToolTip="Load XML File to populate the temp part of the Database"/ -->
-                    <!-- Button Content="Build Developers" Command="local:MainWindow.Build_Developers" ToolTip="Populate the Game Developer table by using temporary roms table"/ -->
+                    <!-- Button Content="Populate Temp" Command="local:MainWindow.AddByXML" ToolTip="Load XML File to populate the temp part of the Database"/-->
+                    <!-- Button Content="Build Developers" Command="local:MainWindow.Build_Developers" ToolTip="Populate the Game Developer table by using temporary roms table"/-->
                     <!-- Button Content="Build Constructors" Command="local:MainWindow.Build_Manufacturers" ToolTip="Populate the Game Constructeurs table by using temporary roms table"/-->
-                    <!-- Button Content="Build Roms" Command="local:MainWindow.Build_Roms" / -->
+                    <!-- Button Content="Build Roms" Command="local:MainWindow.Build_Roms" /-->
                     <!-- Button Content="Rom Manager" Command="local:MainWindow.RomManager" /-->
-                    <!-- Button Content="Add Games1" Command="local:MainWindow.AddGames"/ -->
+                    <!-- Button Content="Add Games1" Command="local:MainWindow.AddGames"/-->
                 </StackPanel>
             </Expander>
             <Expander Header="Work">
@@ -45,13 +46,13 @@
             </Expander>
             <!-- Button Content="Compare" Command="local:MainWindow.Compare"/ -->
             <Separator />
-            <!-- Button Content="File Manager" Command="local:MainWindow.MoveAllGames"/ -->
-            <!-- Button Content="Move Games1" Command="local:MainWindow.MoveGames1"/ -->
+            <!-- Button Content="File Manager" Command="local:MainWindow.FileManager"/-->
+            <!-- Button Content="Move Games1" Command="local:MainWindow.MoveGames1"/-->
             <Separator />
             <Expander Header="Manage">
                 <StackPanel>
-                    <!-- Button Content="Modify Roms" Command="local:MainWindow.ModifyRoms"/ -->
-                    <!-- Button Content="Modify Games" Command="local:MainWindow.ModifyGames"/ -->
+                    <!-- Button Content="Modify Roms" Command="local:MainWindow.ModifyRoms"/-->
+                    <!-- Button Content="Modify Games" Command="local:MainWindow.ModifyGames"/-->
                 </StackPanel>
             </Expander>
             <Separator />

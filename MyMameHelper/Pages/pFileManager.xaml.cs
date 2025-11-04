@@ -204,6 +204,7 @@ namespace MyMameHelper.Pages
 
         private void Proceed_Roms(object sender, ExecutedRoutedEventArgs e)
         {
+
             if (System.Windows.MessageBox.Show("Are you sure ?", "", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                 return;
 
@@ -211,20 +212,34 @@ namespace MyMameHelper.Pages
             _DirFiles = Directory.GetFiles(PProp.Default.RomSource);
 
             // Récupérer les données de la base, table roms
+            /*
             using (SQLite_Req sqReq = new SQLite_Req())
             {
                 DbGames.ChangeContent = sqReq.AffGames_List();
 
-            }
+            }*/
 
             // Méthode
             string methodChoosen = (string)cbMethod.SelectionBoxItem;
 
 
+
+            // Construction des répertoires
             foreach (Aff_Game dbG in DbGames)
             {
-                string dbgFile = Path.Combine(PProp.Default.RomSource, $"{dbG.Parent_Name}.zip");
+//                string dbgFile = Path.Combine(PProp.Default.RomSource, $"{dbG.Parent_Name}.zip");
                 string destPath = null;
+
+                Console.WriteLine($"{dicMachines[Convert.ToUInt32(dbG.Machine)].Constructeur} | {dbG.Aff_Machine} | {dbG.Game_Name}");
+
+                // Vérifie que le fichier existe
+                //Debug.WriteLine("Test présence "+dbgFile);
+                /*if (!File.Exists(dbgFile))
+                {
+                    MissingGames.Add(dbG);
+                    continue;
+                }*/
+
 
                 if (MoveFiles == true)
                 {
@@ -241,17 +256,7 @@ namespace MyMameHelper.Pages
             {
 
                 /*
-                string dbgFile = Path.Combine(PProp.Default.RomSource, $"{dbG.Parent_Name}.zip");
-                string destPath = null;
 
-                Console.WriteLine($"{dicMachines[Convert.ToUInt32(dbG.Machine)].Constructeur} | {dbG.Aff_Machine} | {dbG.Game_Name}");
-
-                //Debug.WriteLine("Test présence "+dbgFile);
-                if (!File.Exists(dbgFile))
-                {
-                    MissingGames.Add(dbG);
-                    continue;
-                }
 
                 // Construction du chemin de destination
                 string dest = "0-Miscellaneous";
@@ -289,7 +294,11 @@ namespace MyMameHelper.Pages
         }
 
 
-
+        /// <summary>
+        /// Formate un path en combinant 
+        /// </summary>
+        /// <param name="dbG"></param>
+        /// <returns></returns>
         private string Get_Path4Machine(Aff_Game dbG)
         {
             string dest = null;
