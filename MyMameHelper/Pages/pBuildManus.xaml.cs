@@ -38,35 +38,45 @@ namespace MyMameHelper.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-
-
             if (MessageBox.Show("Begin Build Manufacturers processing ?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                List<RawMameRom> gManu = new List<RawMameRom>();
+                List<RawMameRom> gDev = new List<RawMameRom>();
                 List<CT_Constructeur> companies;
 
                 using (SQLite_Req sqReq = new SQLite_Req())
                 {
-                    Obj_Select obsDev = new Obj_Select(PProp.Default.T_Constructeurs, all:true);
+                    #region Collection of Devs
+                    Obj_Select obsDev = new Obj_Select(PProp.Default.T_Manufacturers, all: true);
                     companies = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, obsDev);
+                    #endregion
 
+                    #region Collection of Temporary Roms
                     Obj_Select obsJ = new Obj_Select(table: PProp.Default.T_TempRoms, colonnes: new string[] { "Manufacturer" }, groups: new string[] { "Manufacturer" });
-                    obsJ.Conditions = new SqlCond[] { new SqlCond(colonne: "Is_Bios", eWhere.Equal, "False"), new SqlCond(link: Linker.And, colonne: "Is_Mechanical", eWhere.Equal, "True"), new SqlCond(Linker.And, "Manufacturer", eWhere.Is_Not, "null") };
-
-                    gManu = sqReq.GetListOf<RawMameRom>(RawMameRom.Result2Class, obsJ);
+                    obsJ.Conditions = new SqlCond[] { new SqlCond(colonne: "Is_Bios", eWhere.Equal, "False"), new SqlCond(link: Linker.And, colonne: "Is_Mechanical", eWhere.Equal, "False"), new SqlCond(Linker.And, "Manufacturer", eWhere.Not_Equal, "null") };
+                    gDev = sqReq.GetListOf<RawMameRom>(RawMameRom.Result2Class, obsJ);
+                    #endregion
                 }
 
-                for(int i=0; i< gManu.Count; i++)
+
+                for (int i = 0; i < gDev.Count; i++)
                 {
-                    RawMameRom rom = gManu[i];
-                    if(companies.FirstOrDefault(x => x.Nom.Equals(rom.Manufacturer))!= null)
+                    RawMameRom rom = gDev[i];
+
+                    // Recherche dans companies du manufacturer, enlève de la liste des Manufacturer à rajouter
+                    if (companies.FirstOrDefault(x => x.Nom.Equals(rom.Manufacturer)) != null)
                     {
-                        gManu.RemoveAt(i);
+                        gDev.RemoveAt(i);
                         i--;
                     }
                 }
 
-                GameManufacturers.ChangeContent = gManu;
+                // 
+                foreach(var c in companies)
+                    Manufacturers.Add(c);
+                
+                
+
+                GameManufacturers.ChangeContent = gDev;
             }
             else
             {
@@ -76,7 +86,7 @@ namespace MyMameHelper.Pages
 
         }
 
-        #region Swap Right To Left
+        #region Swap Left To Right
         private void Can_SL2R(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = GameManufacturers.Count > 0;
@@ -103,15 +113,15 @@ namespace MyMameHelper.Pages
         }
         private void Ex_SR2L(object sender, ExecutedRoutedEventArgs e)
         {
-            List<CT_Constructeur> selectedManus = dgDevs.SelectedItems.Cast<CT_Constructeur>().ToList();
-            foreach (CT_Constructeur constructor in selectedManus)
+            List<CT_Constructeur> selectedDevs = dgDevs.SelectedItems.Cast<CT_Constructeur>().ToList();
+            foreach (CT_Constructeur constructor in selectedDevs)
             {
                 RawMameRom rom = new RawMameRom();
                 rom.Manufacturer = constructor.Nom;
                 GameManufacturers.Add(rom);
             }
 
-            Manufacturers.RemoveSilentRange(selectedManus);
+            Manufacturers.RemoveSilentRange(selectedDevs);
         }
         #endregion
 
@@ -121,7 +131,7 @@ namespace MyMameHelper.Pages
             e.CanExecute = Manufacturers.Count > 0;
         }
 
-
+        
         private void Ex_RR(object sender, ExecutedRoutedEventArgs e)
         {
             foreach (CT_Constructeur constructor in Manufacturers)
@@ -191,23 +201,33 @@ namespace MyMameHelper.Pages
 
             using (SQLite_Req sqReq = new SQLite_Req())
             {
-                MainWindow.NumberOf_Manus = sqReq.Count(PProp.Default.T_Constructeurs);
+                MainWindow.NumberOf_Dev = sqReq.Count(PProp.Default.T_Manufacturers);
             }
-
         }
 
-        private void Save_DoWork(AsyncWindowProgress window)
+        private void Save_DoWork(AsyncWindowProgress windows)
         {
             using (SQLite_Req sqReq = new SQLite_Req())
             {
-                sqReq.UpdateProgress += ((x, y) => window.AsyncUpProgressPercent(y));
-                sqReq.Insert_Manus(Manufacturers);
+                sqReq.UpdateProgress += ((x, y) => windows.AsyncUpProgressPercent(y));
+                sqReq.Insert_Manus(Manufacturers, true);
             }
         }
+
 
 
         #endregion
 
+        #region Select All
+        private void Can_SelectAll(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = GameManufacturers.Count > 0;
+        }
 
+        private void Ex_SelectAll(object sender, ExecutedRoutedEventArgs e)
+        {
+            dgManus.SelectAll();
+        }
+        #endregion
     }
 }

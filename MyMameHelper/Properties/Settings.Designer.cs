@@ -106,15 +106,6 @@ namespace MyMameHelper.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Constructeurs")]
-        public string T_Constructeurs {
-            get {
-                return ((string)(this["T_Constructeurs"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("TempRoms")]
         public string T_TempRoms {
             get {
@@ -185,6 +176,15 @@ namespace MyMameHelper.Properties {
         public string T_Mechanics {
             get {
                 return ((string)(this["T_Mechanics"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Manufacturers")]
+        public string T_Manufacturers {
+            get {
+                return ((string)(this["T_Manufacturers"]));
             }
         }
     }

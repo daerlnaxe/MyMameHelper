@@ -6,8 +6,8 @@
       xmlns:local="clr-namespace:MyMameHelper.Pages"
       xmlns:commands="clr-namespace:MyMameHelper.Commands"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="pBuildDevs" Loaded="Page_Loaded">
+      d:DesignHeight="450" d:DesignWidth="800" d:Background="White"
+      Title="pBuildManus" Loaded="Page_Loaded">
     <Page.Resources>
         <Style TargetType="Button">
             <Setter Property="Margin" Value="5"/>
@@ -19,6 +19,7 @@
     </Page.Resources>
     <Page.CommandBindings>
         <CommandBinding Command="commands:UICommands.SwapLeft2Right" CanExecute="Can_SL2R" Executed="Ex_SL2R"/>
+        <CommandBinding Command="commands:UICommands.Select_AllCmd" CanExecute="Can_SelectAll" Executed="Ex_SelectAll"/>
         <CommandBinding Command="commands:UICommands.SwapRight2Left" CanExecute="Can_SR2L" Executed="Ex_SR2L"/>
         <CommandBinding Command="commands:UICommands.ResetRight" CanExecute="Can_RR" Executed="Ex_RR"/>
         <CommandBinding Command="commands:UICommands.SaveCmd" CanExecute="Can_Save" Executed="Ex_Save"/>
@@ -29,6 +30,11 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
 
         <!-- Raw -->
         <DockPanel Grid.RowSpan="2">
@@ -43,10 +49,13 @@
                 <Button Content="Remove Null" Click="Remove_Null"/>
 
             </StackPanel>
-            <DataGrid x:Name="dgManus" ItemsSource="{Binding GameManufacturers}" AutoGenerateColumns="False" IsReadOnly="True">
+            <!-- Left Grid --> 
+            <DataGrid x:Name="dgManus" ItemsSource="{Binding GameManufacturers}"
+                      AutoGenerateColumns="False" IsReadOnly="True" SelectionUnit="FullRow">
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Command="commands:UICommands.SwapLeft2Right"/>
+                        <MenuItem Command="commands:UICommands.Select_AllCmd"/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
@@ -56,7 +65,7 @@
             </DataGrid>
 
         </DockPanel>
-        <!-- TO Database-->
+        <!-- TO Database -->
         <DockPanel Grid.Column="2">
             <Label Content="Developers to Add:" DockPanel.Dock="Top"/>
             <StackPanel DockPanel.Dock="Right">

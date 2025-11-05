@@ -53,7 +53,7 @@ namespace MyMameHelper.Windows
 
             using (SQLite_Req sqReq = new SQLite_Req())
             {
-                Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Constructeurs, all: true));
+                Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
             }
         }
 

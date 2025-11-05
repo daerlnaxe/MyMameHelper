@@ -7,6 +7,20 @@
 
 <br>
 
+## Purpose
+I think there is two big aspect with MyMameHelper
+- Organizing roms
+- Set a Games library adding informations
+
+<br>
+
+When you finished it, the advantage is you keep it forever.
+I will probably add some possibilities to share some informations between people, like the list of pinball.
+
+> :warning: I say that, because you could be lost with the ihm at the begining. But in reality you build your rom table to move roms; then if you want you can add some more informations in `Games` section, but it's not mandatory.
+
+
+<br>
 
 # But
 - Identifier les roms de types:

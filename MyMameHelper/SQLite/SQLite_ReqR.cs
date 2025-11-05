@@ -201,7 +201,7 @@ namespace MyMameHelper.SQLite
         {
             ObservableCollection<CT_Constructeur> collec = new ObservableCollection<CT_Constructeur>();
 
-            Obj_Select objSelect = new Obj_Select(table: PProp.Default.T_Constructeurs, all: true);
+            Obj_Select objSelect = new Obj_Select(table: PProp.Default.T_Manufacturers, all: true);
             objSelect.Conditions = new SqlCond[] { new SqlCond { Colonne = "ID", Operateur = eWhere.Equal, Valeur = id.ToString() } };
             objSelect.Orders = new SqlOrder("Nom");
 
@@ -839,7 +839,7 @@ namespace MyMameHelper.SQLite
         #region Aff Machine
         private SQLiteDataReader AffMachine_SQL(SqlCond[] conds, SqlOrder order)
         {
-            string constructeurs = PProp.Default.T_Constructeurs;
+            string constructeurs = PProp.Default.T_Manufacturers;
             string machines = PProp.Default.T_Machines;
 
             Dictionary<string, short> dicCol;

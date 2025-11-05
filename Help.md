@@ -61,8 +61,8 @@ With a db AND Developers built
 
 ----
 # Menu
-## Build Developers
-You can feed the Developers table with the field `manufacturer` from the temporary roms table.
+## Build Manufacturers
+You can feed the Manufacturers table with the field `manufacturer` from the temporary roms table.
 
 <br>
 
@@ -82,7 +82,7 @@ You can feed the Constructeurs table with the temporary roms table.
 
 ## Build Roms
 > :warning: Unavailable until TempRoms table is populated  
-> :warning: Unavailable until Developers table is populated  
+> :warning: Unavailable until Manufacturers table is populated  
 
 > :warning: refactorisation en cours.
 
@@ -127,7 +127,7 @@ Need to revisiting the code behind.
 - Populate temp 
     - Load XML with MyMameHelper
     - Save it
-- Build Developers
+- Build Manufacturers
 - Now you have the list of the games you can add in the rom table
 
 > :warning: Work In Progress

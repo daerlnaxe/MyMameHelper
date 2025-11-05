@@ -7,5 +7,5 @@
 ### Manufacturer
 - Champ Manufacturer de TempRoms
 - Champ Manufacturer de Roms
-- Sert à la construction de la table `Companies` via les données de la table `temproms`.
-- La table `Companies` est utilisée par la table `Games`
+- Sert à la construction de la table `Manufacturers` via les données de la table `temproms`.
+- ~~La table `Companies` est utilisée par la table `Games`~~

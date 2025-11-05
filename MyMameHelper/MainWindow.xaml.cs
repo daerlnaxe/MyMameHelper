@@ -146,7 +146,7 @@ namespace MyMameHelper
             {
                 NumberOf_TempRoms = sqReq.Count(PProp.Default.T_TempRoms);
                 NumberOf_Dev = sqReq.Count(PProp.Default.T_Developers);
-                NumberOf_Manus = sqReq.Count(PProp.Default.T_Constructeurs);
+                NumberOf_Manus = sqReq.Count(PProp.Default.T_Manufacturers);
                 NumberOf_Roms = sqReq.Count(PProp.Default.T_Roms);
             }
 
@@ -277,33 +277,34 @@ namespace MyMameHelper
 
 
 
-        #region Build Developer
-        public static readonly RoutedUICommand Build_Developers = new RoutedUICommand("Build Developers", "Build_Developers", typeof(MainWindow));
-
-        private void Can_BuildDeveloper(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = NumberOf_TempRoms > 0;
-        }
-
-        private void Ex_BuildDeveloper(object sender, ExecutedRoutedEventArgs e)
-        {
-            Active_Page = new pBuildDevs();
-        }
-
-        #endregion
-
-        #region Build Developers
-        public static readonly RoutedUICommand Build_Manufacturers = new RoutedUICommand("Build Manufacturers", "Build_Manus", typeof(MainWindow));
-
+        #region Build Manufacturers
+        public static readonly RoutedUICommand Build_Manufacturers = new RoutedUICommand("Build Developers", "Build_Developers", typeof(MainWindow));
         private void Can_BuildManus(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = NumberOf_TempRoms > 0;
         }
 
+
         private void Ex_BuildManus(object sender, ExecutedRoutedEventArgs e)
         {
             Active_Page = new pBuildManus();
         }
+
+        #endregion
+
+        #region Build Developers
+        /*
+        public static readonly RoutedUICommand Build_Developers = new RoutedUICommand("Build Developers", "Build_Manus", typeof(MainWindow));
+
+
+        private void Can_BuildDeveloper(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = NumberOf_TempRoms > 0;
+        }
+        private void Ex_BuildDevelopper(object sender, ExecutedRoutedEventArgs e)
+        {
+            Active_Page = new pBuildDevelopper();
+        }*/
         #endregion
 
         #region Build Roms

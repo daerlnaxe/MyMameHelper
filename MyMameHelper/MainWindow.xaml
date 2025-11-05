@@ -16,7 +16,7 @@
     <Window.CommandBindings>
         <!-- Build -->
         <CommandBinding Command="local:MainWindow.AddByXML" Executed="Ex_AddByXML"/>
-        <CommandBinding Command="local:MainWindow.Build_Developers" Executed="Ex_BuildDeveloper" CanExecute="Can_BuildDeveloper"/>
+        <CommandBinding Command="local:MainWindow.Build_Manufacturers" Executed="Ex_BuildManus" CanExecute="Can_BuildManus"/>
         <CommandBinding Command="local:MainWindow.Build_Manufacturers"  Executed="Ex_BuildManus" CanExecute="Can_BuildManus"/>
         <CommandBinding Command="local:MainWindow.Build_Roms" Executed="Ex_BuildRoms" CanExecute="Can_BuildRoms"/>
         <CommandBinding Command="local:MainWindow.RomManager" Executed="Ex_RomManager" CanExecute="Can_Manage"/>
@@ -34,7 +34,7 @@
             <Expander Header="Build" IsExpanded="False">
                 <StackPanel>
                     <Button Content="Populate Temp" Command="local:MainWindow.AddByXML" ToolTip="Load XML File to populate the temp part of the Database"/>
-                    <Button Content="Build Developers" Command="local:MainWindow.Build_Developers" ToolTip="Populate the Game Developer table by using temporary roms table"/>
+                    <Button Content="Build Manufacturers" Command="local:MainWindow.Build_Manufacturers" ToolTip="Populate the Game Developer table by using temporary roms table"/>
                     <!-- Button Content="Build Constructors" Command="local:MainWindow.Build_Manufacturers" ToolTip="Populate the Game Constructeurs table by using temporary roms table"/-->
                     <Button Content="Build Roms" Command="local:MainWindow.Build_Roms" />
                     <!-- Button Content="Rom Manager" Command="local:MainWindow.RomManager" /-->

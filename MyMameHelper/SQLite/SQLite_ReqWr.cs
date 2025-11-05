@@ -41,7 +41,7 @@ namespace MyMameHelper.SQLite
         {
             Debug.WriteLine($"Insertion du constructeur: {ctC.Nom}");
 
-            string sql = $"INSERT INTO [{PProp.Default.T_Constructeurs}] ([Nom]) VALUES (@Nom)";
+            string sql = $"INSERT INTO [{PProp.Default.T_Manufacturers}] ([Nom]) VALUES (@Nom)";
             SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
             sqlCmd.Parameters.Add("@Nom", DbType.String).Value = ctC.Nom;
 
@@ -220,15 +220,17 @@ namespace MyMameHelper.SQLite
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
+            // Add ignore if asked
+            string sqlIgnore = "";
+            if (ignore)
+                sqlIgnore = "OR IGNORE";
+
             for (int i = 0; i < developers.Count; i++)
             {
                 CT_Constructeur dev = developers[i];
                 //  string vals = null;
 
-                // Add ignore if asked
-                string sqlIgnore = "";
-                if (ignore)
-                    sqlIgnore = "OR IGNORE";
+
 
 
                 // 
@@ -269,8 +271,8 @@ namespace MyMameHelper.SQLite
         /// <summary>
         /// Insère une collection de manufacturers
         /// </summary>
-        /// <param name="developers"></param>
-        public void Insert_Manus(ObservableCollection<CT_Constructeur> developers)
+        /// <param name=""></param>
+        public void Insert_Manus(ObservableCollection<CT_Constructeur> manufacturers, bool ignore)
         {
             uint max = 50;
             Debug.WriteLine($"Insertion de la collection de developpeurs");
@@ -279,17 +281,23 @@ namespace MyMameHelper.SQLite
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            for (int i = 0; i < developers.Count; i++)
+            // Add ignore if asked
+            string sqlIgnore = "";
+            if (ignore)
+                sqlIgnore = "OR IGNORE";
+
+
+            for (int i = 0; i < manufacturers.Count; i++)
             {
-                CT_Constructeur dev = developers[i];
+                CT_Constructeur dev = manufacturers[i];
                 //  string vals = null;
-                sqlCmd.CommandText = $"Insert INTO [{PProp.Default.T_Constructeurs}] (" +
+                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{PProp.Default.T_Manufacturers}] (" +
                                         "[Nom] " +
                                         ") VALUES ";
 
                 for (int j = 0; j < max; j++)
                 {
-                    if (i == developers.Count)
+                    if (i == manufacturers.Count)
                         break;
                     if (j != 0)
                         sqlCmd.CommandText += ", ";
@@ -298,7 +306,7 @@ namespace MyMameHelper.SQLite
                                           $"@Nom{j} " +
                                           $")";
 
-                    sqlCmd.Parameters.Add($"@Nom{j}", DbType.String).Value = developers[i].Nom;
+                    sqlCmd.Parameters.Add($"@Nom{j}", DbType.String).Value = manufacturers[i].Nom;
 
                     // a surveiller si bug
                     if (j < max - 1)
@@ -308,7 +316,7 @@ namespace MyMameHelper.SQLite
                 //Trace.WriteLine($"Requete: {sqlCmd.CommandText}");
 
                 ExecNQ(sqlCmd);
-                UpdateProgress?.Invoke(this, i * 100 / developers.Count);
+                UpdateProgress?.Invoke(this, i * 100 / manufacturers.Count);
                 Debug.WriteLine($"{i} - {sw.ElapsedMilliseconds}");
             }
             Debug.WriteLine($"{sw.ElapsedMilliseconds}");
@@ -604,7 +612,7 @@ namespace MyMameHelper.SQLite
             Debug.WriteLine($"Update de {ctConst.Nom}");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
-            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Constructeurs}] SET [Nom]=@Nom WHERE ID=@ID";
+            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Manufacturers}] SET [Nom]=@Nom WHERE ID=@ID";
 
             sqlCmd.Parameters.Add($"@Nom", DbType.String).Value = ctConst.Nom;
 

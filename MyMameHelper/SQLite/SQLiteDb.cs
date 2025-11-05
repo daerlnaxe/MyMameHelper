@@ -80,8 +80,8 @@ namespace MyMameHelper.SQLite
             string tGames = Properties.Settings.Default.T_Games;
             string tBios = Properties.Settings.Default.T_Bios;
             string tMechanicals = Properties.Settings.Default.T_Mechanics;
-            string tConstructeurs = Properties.Settings.Default.T_Constructeurs;
-            string tCompanies = Properties.Settings.Default.T_Developers;
+            string tManufacturers = Properties.Settings.Default.T_Manufacturers;
+            string tDeveloppers = Properties.Settings.Default.T_Developers;
             string tGenres = Properties.Settings.Default.T_Genres;
             string tMachines = Properties.Settings.Default.T_Machines;
             string tRoms = Properties.Settings.Default.T_Roms;
@@ -95,9 +95,9 @@ namespace MyMameHelper.SQLite
             // Mechanicals
             CreateTable($"CREATE Table [{tMechanicals}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Meca_Name] VARCHAR UNIQUE);");
             // Constructeurs
-            CreateTable($"CREATE TABLE [{tConstructeurs}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            CreateTable($"CREATE TABLE [{tManufacturers}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
             // Companies
-            CreateTable($"CREATE TABLE [{tCompanies}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            CreateTable($"CREATE TABLE [{tDeveloppers}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
             // Genres (liée à Games)
             CreateTable($"CREATE TABLE [{tGenres}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
             // Machines
@@ -158,7 +158,7 @@ namespace MyMameHelper.SQLite
             string tGames = Properties.Settings.Default.T_Games;
             string tBios = Properties.Settings.Default.T_Bios;
             string tMechanicals = Properties.Settings.Default.T_Mechanics;
-            string tConstructeurs = Properties.Settings.Default.T_Constructeurs;
+            string tManufacturers = Properties.Settings.Default.T_Manufacturers;
             string tMachines = Properties.Settings.Default.T_Machines;
             string tRoms = Properties.Settings.Default.T_Roms;
             string tempRoms = Properties.Settings.Default.T_TempRoms;
@@ -218,11 +218,11 @@ namespace MyMameHelper.SQLite
 
         private static void Fill_Basics_Data()
         {
-            string tConstructeurs = Properties.Settings.Default.T_Constructeurs;
+            string tDeveloppers = Properties.Settings.Default.T_Developers;
             string tGenres = Properties.Settings.Default.T_Genres;
             string tMachines = Properties.Settings.Default.T_Machines;
 
-            RequeteNonQuery($"INSERT INTO [{tConstructeurs}] ([Nom])" +
+            RequeteNonQuery($"INSERT INTO [{tDeveloppers}] ([Nom])" +
                 $"VALUES" +
                 $"('Capcom')," +
                 $"('Konami')," +
@@ -235,7 +235,7 @@ namespace MyMameHelper.SQLite
                 $"('Fight');");
 
             // Table Constructeur
-            CT_Constructeur ct = Query_One<CT_Constructeur>(CT_Constructeur.Result2Class, $"SELECT [ID] FROM [{tConstructeurs}] WHERE [Nom]='Sega'");
+            CT_Constructeur ct = Query_One<CT_Constructeur>(CT_Constructeur.Result2Class, $"SELECT [ID] FROM [{tDeveloppers}] WHERE [Nom]='Sega'");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 1',  {ct.ID}, 1983)");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Appoooh',  {ct.ID}, 1984)");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 2',  {ct.ID}, 1985)");

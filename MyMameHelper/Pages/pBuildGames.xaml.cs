@@ -85,7 +85,7 @@ namespace MyMameHelper.Pages
 
             using (SQLite_Req sqReq = new SQLite_Req())
             {
-                Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Constructeurs, all: true, orders: new SqlOrder("Nom")));
+                Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true, orders: new SqlOrder("Nom")));
                 Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true, orders: new SqlOrder("Nom")));
                 dbGames = sqReq.Get_ListOf_Games(new Obj_Select(all: true));
             }

@@ -94,8 +94,8 @@
         - Les déplacements de fichiers auront lieu sur Roms au lieu de Games (plus logique)
     - Le feed de `roms` feedera aussi `games` en prenant une partie de la description (sans les `()` par exemple).
     - L'utilisateur pourra revenir dessus, mais globalement games est différent au sens qu'il rajoute une couche d'options dessus, il est contournable à présent.
-- La table Companies est renommée Developers
-- La page des Developers prend le contenu de la table au chargement, pas simplement la partie provenant des roms
+- La table Companies est renommée Manufacturers
+- La page des Manufacturers prend le contenu de la table au chargement, pas simplement la partie provenant des roms
 
 
 # -
