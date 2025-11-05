@@ -71,6 +71,13 @@ You can feed the Developers table with the field `manufacturer` from the tempora
 
 You can feed the Constructeurs table with the temporary roms table.
 
+- Remove bootlegs: remove all manufacturer with `bootleg` in the name.
+- Remove hacks: remove all manufacturer with `hack` in the name.
+
+<br>
+
+> :information_source: Duplicates are ignored when added, in all cases there is a UNIQUE constraint.
+
 <br>
 
 ## Build Roms

@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:MyMameHelper.Pages"
       xmlns:commands="clr-namespace:MyMameHelper.Commands"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="800" d:Background="White"
       Title="pBuildDevs" Loaded="Page_Loaded">
     <Page.Resources>
         <Style TargetType="Button">

@@ -41,10 +41,14 @@
                     <!-- Button Content="Add Games1" Command="local:MainWindow.AddGames"/-->
                 </StackPanel>
             </Expander>
+            <!--#region Manager -->
+            <Expander Header="Manager" ToolTip="">
+            <!--#endregion-->    
+            </Expander>
             <Expander Header="Work">
 
             </Expander>
-            <!-- Button Content="Compare" Command="local:MainWindow.Compare"/ -->
+            <Button Content="Compare" Command="local:MainWindow.Compare" ToolTip="Compare between 2 list of files"/>
             <Separator />
             <!-- Button Content="File Manager" Command="local:MainWindow.FileManager"/-->
             <!-- Button Content="Move Games1" Command="local:MainWindow.MoveGames1"/-->

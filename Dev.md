@@ -96,3 +96,14 @@
     - L'utilisateur pourra revenir dessus, mais globalement games est différent au sens qu'il rajoute une couche d'options dessus, il est contournable à présent.
 - La table Companies est renommée Developers
 - La page des Developers prend le contenu de la table au chargement, pas simplement la partie provenant des roms
+
+
+# -
+## Build Roms
+Chargement de la page:
+- Récupération des tables:
+    - Developers
+    - TempRoms
+
+Passage de gauche à droite:
+- Conversion du nom du manufacturer en Id Developper

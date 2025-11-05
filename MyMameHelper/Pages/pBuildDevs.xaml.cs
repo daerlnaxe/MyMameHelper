@@ -210,7 +210,7 @@ namespace MyMameHelper.Pages
             using (SQLite_Req sqReq = new SQLite_Req())
             {
                 sqReq.UpdateProgress += ((x, y) => windows.AsyncUpProgressPercent(y));
-                sqReq.Insert_Devs(Developers);
+                sqReq.Insert_Devs(Developers, true);
             }
         }
 

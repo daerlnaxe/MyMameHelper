@@ -44,9 +44,6 @@ namespace MyMameHelper.ContTable
 
 
 
-        private CT_Gen Result2Class(Dictionary<string, object> dico)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }

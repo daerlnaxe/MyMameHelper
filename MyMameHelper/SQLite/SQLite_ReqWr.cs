@@ -211,7 +211,7 @@ namespace MyMameHelper.SQLite
         /// Insère une collection de devs
         /// </summary>
         /// <param name="developers"></param>
-        public void Insert_Devs(ObservableCollection<CT_Constructeur> developers)
+        public void Insert_Devs(ObservableCollection<CT_Constructeur> developers, bool ignore)
         {
             uint max = 50;
             Debug.WriteLine($"Insertion de la collection de developpeurs");
@@ -224,7 +224,15 @@ namespace MyMameHelper.SQLite
             {
                 CT_Constructeur dev = developers[i];
                 //  string vals = null;
-                sqlCmd.CommandText = $"Insert INTO [{PProp.Default.T_Developers}] (" +
+
+                // Add ignore if asked
+                string sqlIgnore = "";
+                if (ignore)
+                    sqlIgnore = "OR IGNORE";
+
+
+                // 
+                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO  [{PProp.Default.T_Developers}] (" +
                                         "[Nom] " +
                                         ") VALUES ";
 

@@ -75,6 +75,7 @@ namespace MyMameHelper.Pages
         {
             if (MessageBox.Show("Load Roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
+                // Chargement de la table des développeurs
                 using (SQLite_Req sqReq = new SQLite_Req())
                 {
                     Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
@@ -83,13 +84,17 @@ namespace MyMameHelper.Pages
                 }
 
                 AsyncWindowProgress aLoad = new AsyncWindowProgress();
-                aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncProceed);
+                aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoadTempRoms);
                 aLoad.ShowDialog();
                 RawRomsCollec.ChangeContent = ListRoms;
             }
         }
 
-        private void AsyncProceed(AsyncWindowProgress aLoad)
+        /// <summary>
+        /// Chargement des roms temporaires
+        /// </summary>
+        /// <param name="aLoad"></param>
+        private void AsyncLoadTempRoms(AsyncWindowProgress aLoad)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -118,6 +123,8 @@ namespace MyMameHelper.Pages
             Console.WriteLine(sw.ElapsedMilliseconds);
         }
 
+
+        
         private void Select_All(object sender, ExecutedRoutedEventArgs e)
         {
             dg2Organize.SelectAll();
@@ -176,7 +183,7 @@ namespace MyMameHelper.Pages
         */
 
         /// <summary>
-        /// 
+        /// obsolète ?
         /// </summary>
         /// <param name="machine"></param>
         /// <param name="selectedGames"></param>
@@ -209,6 +216,7 @@ namespace MyMameHelper.Pages
 
         private ObservableCollection<Aff_Game> Asynctest2(ObservableCollection<Aff_Game> copyGames, IList selectedGames)
         {
+            throw new NotImplementedException("A identifier");
             int old_percent = 0;
             for (int i = 0; i < selectedGames.Count; i++)
             {
@@ -282,34 +290,39 @@ namespace MyMameHelper.Pages
             List<CT_Rom> childrenToSave = new List<CT_Rom>();
             List<CT_Rom> romsTS = (List<CT_Rom>)window.Arguments[0];
 
+            // HAndler pour spliter les roms parents et les roms enfants
             foreach (CT_Rom rom in romsTS)
                 if (rom.IsParent == true)
                     parentsToSave.Add(rom);
                 else
                     childrenToSave.Add(rom);
 
+
+            // Sauvegarde des roms parents
             List<CT_Rom> sParentsRoms = null;
             using (SQLite_Req sqReq = new SQLite_Req())
             {
                 sqReq.UpdateProgress += ((x, y) => window.AsyncUpProgressPercent(y));
 
-                window.AsyncMessage("Insertion of Roms Parent");
+                window.AsyncMessage("Insertion of Parent Roms");
                 sqReq.Insert_Roms(parentsToSave);
 
                 Obj_Select oSel = new Obj_Select(PProp.Default.T_Roms, all: true, conditions: new SqlCond[] { new SqlCond("IsParent", eWhere.Is, 1) });
                 sParentsRoms = sqReq.GetListOf<CT_Rom>(CT_Rom.Result2Class, oSel);
             }
 
+            // Assignation de la rom parent
             foreach (CT_Rom child in childrenToSave)
             {
                 CT_Rom parRom = sParentsRoms.First(x => x.Archive_Name.Equals(child.Aff_Clone_Of));
                 child.Clone_Of = parRom.ID;
             }
 
+            // Sauvegarde des roms enfants
             using (SQLite_Req sqReq = new SQLite_Req())
             {
                 sqReq.UpdateProgress += ((x, y) => window.AsyncUpProgressPercent(y));
-                window.AsyncMessage("Insertion of Roms Children");
+                window.AsyncMessage("Insertion of Children Roms");
                 sqReq.Insert_Roms(childrenToSave);
             }
         }
@@ -328,7 +341,10 @@ namespace MyMameHelper.Pages
             TransRaw2Rom(rawRomsSelected);
         }
 
-
+        /// <summary>
+        /// Transforme une rom temporaire en rom (avec les jonctions)
+        /// </summary>
+        /// <param name="rawRomsSelected"></param>
         private void TransRaw2Rom(List<RawMameRom> rawRomsSelected)
         {
             //rah
@@ -475,7 +491,9 @@ namespace MyMameHelper.Pages
         #endregion
 
         #region Filtre de gauche
+
         private string LeftRomMode;
+
         private string _LeftFilter;
         public string LeftFilter
         {
@@ -677,7 +695,7 @@ namespace MyMameHelper.Pages
         #endregion
 
         #region Filtre de Droite
-        private string RightRomMode;
+        //private string RightRomMode;
         private string _RightFilter;
         public string RightFilter
         {
@@ -706,14 +724,14 @@ namespace MyMameHelper.Pages
             }
         }
 
-
+        /*
         private void RightMode_Changed(object sender, RoutedEventArgs e)
         {
             LeftRomMode = ((RadioButton)sender).Content.ToString();
             if (LeftFilter != null)
                 Select_Right();
-        }
-
+        }*/
+        /*
         private void Select_Right()
         {
             if (RightRomMode == "Mode Game")
@@ -725,7 +743,7 @@ namespace MyMameHelper.Pages
             {
                 dgRight.ScrollIntoView(dgRight.SelectedItem);
             }
-        }
+        }*/
 
         private void RListView_KeyUp(object sender, KeyEventArgs e)
         {
@@ -758,7 +776,7 @@ namespace MyMameHelper.Pages
                 RightFilter += k;
 
 
-            Select_Right();
+            //Select_Right();
         }
         #endregion
 
@@ -889,6 +907,6 @@ namespace MyMameHelper.Pages
             }
         }
 
-
+ 
     }
 }
