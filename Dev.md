@@ -87,7 +87,7 @@
 
 
 # Versions
-04/11/2025 : 0.3.0.0
+06/11/2025 : 0.3.0.0
 - Refactorisation et réintégration du système "Games" avec automatisation.
     - Le but était de: 
         - Lever une page de plus dans la construction des roms
@@ -96,7 +96,7 @@
     - L'utilisateur pourra revenir dessus, mais globalement games est différent au sens qu'il rajoute une couche d'options dessus, il est contournable à présent.
 - La table Companies est renommée Manufacturers
 - La page des Manufacturers prend le contenu de la table au chargement, pas simplement la partie provenant des roms
-
+- L'ajout de rom de la liste de gauche à droite bénéficie maintenant d'une fenêtre de progression car le temps de traitement peut aller à 5 minutes.
 
 # -
 ## Build Roms
