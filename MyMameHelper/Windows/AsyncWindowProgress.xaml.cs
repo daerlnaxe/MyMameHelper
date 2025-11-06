@@ -103,6 +103,7 @@ namespace MyMameHelper.Windows
         private void AsyncWork()
         {
             AsyncCallback ra = new AsyncCallback(Finished);
+            
             go?.BeginInvoke(this, ra, null);
 
             return;

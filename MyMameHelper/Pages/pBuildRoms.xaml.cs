@@ -347,27 +347,117 @@ namespace MyMameHelper.Pages
         /// <param name="rawRomsSelected"></param>
         private void TransRaw2Rom(List<RawMameRom> rawRomsSelected)
         {
+
+            //Contenu de LinkRoms
+
+            /*
+
+                // Recherche des roms en relation
+                foreach (RawMameRom rom in RawRomsCollec)
+            {
+                foreach (RawMameRom selRom in rawRomsSelected)
+                {
+                    /*
+                    if (selRom == rom)
+                        continue;
+                        */
+            /*
+        if (rawRomsSelected.FirstOrDefault(x => x.ID == rom.ID) != null)
+            continue;
+
+        if (selRom.Clone_Of.Equals(rom.Name))
+            tmp.Add(rom);
+
+
+        if (string.IsNullOrEmpty(rom.Clone_Of))
+            continue;
+
+
+        /*  if (rom.Clone_Of.Equals(selRom.Name))
+              tmp.Add(rom);
+
+
+          if (!string.IsNullOrEmpty(selRom.Clone_Of) && selRom.Clone_Of.Equals(rom.Clone_Of))
+              tmp.Add(rom);*/
+
+            /*
+                    if (selRom.Clone_Of.Equals(rom.Name))
+                        tmp.Add(rom);
+
+                    if (rom.Clone_Of.Equals(selRom.Clone_Of))
+                        tmp.Add(rom);
+                }
+            }*/
+            //rawRomsSelected.AddRange(tmp);
+
+            /* foreach (var rom in tmp)
+                 Console.WriteLine($"{rom.ID} | {rom.Name}");
+
+             rawRomsSelected = tmp;*/
+
+            AsyncWindowProgress window;
+            
+            window = new AsyncWindowProgress();
+            window.Total = rawRomsSelected.Count;
+
+
+            window.Arguments = new List<object>() { rawRomsSelected };
+
+            #region 2025/11/06 split pour async
+            window.go += new AsyncWindowProgress.AsyncAction(LinkRoms);
+            window.ShowDialog();
+
+            #endregion
+
+
+
+
+            window = new AsyncWindowProgress();
+            window.Arguments = new List<object>() { rawRomsSelected };
+            window.go += new AsyncWindowProgress.AsyncAction(AsyncLeft2Right);
+//          
+            window.ShowDialog();
+
+            RomsToSave.SignalChange();
+            RawRomsCollec.SignalChange();
+        }
+
+
+
+        private void LinkRoms(AsyncWindowProgress window)
+        {
+            List<RawMameRom> rawRomsSelected = (List<RawMameRom>)window.Arguments[0]; // ajouté en splittant vers de l'async
+
+
+            Stopwatch swTotal = new Stopwatch();
+            swTotal.Start();
             //rah
             List<RawMameRom> tmp = new List<RawMameRom>();
             tmp.AddRange(rawRomsSelected);
 
+            int i = 0;
             foreach (RawMameRom selRom in rawRomsSelected)
             {
-                if(string.IsNullOrEmpty(selRom.Clone_Of))
+                Stopwatch sw1 = new Stopwatch();
+                sw1.Start();
+
+                if (string.IsNullOrEmpty(selRom.Clone_Of))
                 {
                     // on récupère tous les enfants
                     IEnumerable<RawMameRom> children = RawRomsCollec.Where(x => x.Clone_Of.Equals(selRom.Name));
 
+
                     // Ajoute ceux qqui ne sont pas présents
                     foreach (var child in children)
                     {
-                        if(tmp.FirstOrDefault(x => x.ID == child.ID) == null)                        
+                        if (tmp.FirstOrDefault(x => x.ID == child.ID) == null)
                             tmp.Add(child);
                     }
+                    Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (if),  temps: {sw1.ElapsedMilliseconds} ms");
                 }
                 else
                 {
-                    
+
                     // on récupère tous les parents
                     RawMameRom parent = RawRomsCollec.FirstOrDefault(x => x.Name.Equals(selRom.Clone_Of));
 
@@ -382,6 +472,7 @@ namespace MyMameHelper.Pages
                     if (tmp.FirstOrDefault(x => x.ID == parent.ID) == null)
                         tmp.Add(parent);
 
+                  //  Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des parents (else),  temps: {sw1.ElapsedMilliseconds} ms");
 
                     // on récupère tous les enfants
                     IEnumerable<RawMameRom> children = RawRomsCollec.Where(x => x.Clone_Of.Equals(selRom.Clone_Of));
@@ -391,62 +482,18 @@ namespace MyMameHelper.Pages
                         if (tmp.FirstOrDefault(x => x.ID == child.ID) == null)
                             tmp.Add(child);
                     }
+                  //  Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (else),  temps: {sw1.ElapsedMilliseconds} ms");
                 }
+                Debug.WriteLine($"Fin pour {selRom.Name},  temps: {sw1.ElapsedMilliseconds} ms");
+                sw1.Stop();
+
+                // lié au passage asynchrone
+                window.AsyncUpProgressPercent(i);
+                i++;
             }
 
-            
-            /*
-
-                // Recherche des roms en relation
-                foreach (RawMameRom rom in RawRomsCollec)
-            {
-                foreach (RawMameRom selRom in rawRomsSelected)
-                {
-                    /*
-                    if (selRom == rom)
-                        continue;
-                        */
-                        /*
-                    if (rawRomsSelected.FirstOrDefault(x => x.ID == rom.ID) != null)
-                        continue;
-
-                    if (selRom.Clone_Of.Equals(rom.Name))
-                        tmp.Add(rom);
-
-
-                    if (string.IsNullOrEmpty(rom.Clone_Of))
-                        continue;
-
-
-                    /*  if (rom.Clone_Of.Equals(selRom.Name))
-                          tmp.Add(rom);
-
-
-                      if (!string.IsNullOrEmpty(selRom.Clone_Of) && selRom.Clone_Of.Equals(rom.Clone_Of))
-                          tmp.Add(rom);*/
-
-            /*
-                    if (selRom.Clone_Of.Equals(rom.Name))
-                        tmp.Add(rom);
-
-                    if (rom.Clone_Of.Equals(selRom.Clone_Of))
-                        tmp.Add(rom);
-                }
-            }*/
-            rawRomsSelected.AddRange(tmp);
-
-            foreach (var rom in tmp)
-                Console.WriteLine($"{rom.ID} | {rom.Name}");
-
-            rawRomsSelected = tmp;
-
-            AsyncWindowProgress window = new AsyncWindowProgress();
-            window.go += new AsyncWindowProgress.AsyncAction(AsyncLeft2Right);
-            window.Arguments = new List<object>() { rawRomsSelected };
-            window.ShowDialog();
-
-            RomsToSave.SignalChange();
-            RawRomsCollec.SignalChange();
+            Debug.WriteLine($"Fin Total,  temps: {swTotal.ElapsedMilliseconds} ms");
+            swTotal.Stop();
         }
 
 
@@ -783,6 +830,7 @@ namespace MyMameHelper.Pages
 
         private void Ex_Search(object sender, ExecutedRoutedEventArgs e)
         {
+            throw new NotImplementedException("Vérifier la compatibilité après le spit de transraw2rom");
             RawRomSearch sp = new RawRomSearch();
             if (sp.ShowDialog() == true)
             {
