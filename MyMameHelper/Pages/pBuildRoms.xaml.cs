@@ -406,8 +406,10 @@ namespace MyMameHelper.Pages
             #region 2025/11/06 split pour async
             window.go += new AsyncWindowProgress.AsyncAction(LinkRoms);
             window.ShowDialog();
-
+            rawRomsSelected = (List<RawMameRom>)window.Arguments[0];
             #endregion
+
+
 
 
 
@@ -476,6 +478,7 @@ namespace MyMameHelper.Pages
 
                     // on récupère tous les enfants
                     IEnumerable<RawMameRom> children = RawRomsCollec.Where(x => x.Clone_Of.Equals(selRom.Clone_Of));
+
                     // Ajoute ceux qqui ne sont pas présents
                     foreach (var child in children)
                     {
@@ -491,6 +494,8 @@ namespace MyMameHelper.Pages
                 window.AsyncUpProgressPercent(i);
                 i++;
             }
+
+            window.Arguments[0] = tmp;
 
             Debug.WriteLine($"Fin Total,  temps: {swTotal.ElapsedMilliseconds} ms");
             swTotal.Stop();
@@ -742,7 +747,7 @@ namespace MyMameHelper.Pages
         #endregion
 
         #region Filtre de Droite
-        //private string RightRomMode;
+        private string RightRomMode;
         private string _RightFilter;
         public string RightFilter
         {
@@ -771,14 +776,15 @@ namespace MyMameHelper.Pages
             }
         }
 
-        /*
+
         private void RightMode_Changed(object sender, RoutedEventArgs e)
         {
             LeftRomMode = ((RadioButton)sender).Content.ToString();
             if (LeftFilter != null)
                 Select_Right();
-        }*/
-        /*
+        }
+        
+        
         private void Select_Right()
         {
             if (RightRomMode == "Mode Game")
@@ -790,7 +796,7 @@ namespace MyMameHelper.Pages
             {
                 dgRight.ScrollIntoView(dgRight.SelectedItem);
             }
-        }*/
+        }
 
         private void RListView_KeyUp(object sender, KeyEventArgs e)
         {
