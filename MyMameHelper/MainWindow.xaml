@@ -37,17 +37,16 @@
                     <Button Content="Build Manufacturers" Command="local:MainWindow.Build_Manufacturers" ToolTip="Populate the Game Developer table by using temporary roms table"/>
                     <!-- Button Content="Build Constructors" Command="local:MainWindow.Build_Manufacturers" ToolTip="Populate the Game Constructeurs table by using temporary roms table"/-->
                     <Button Content="Build Roms" Command="local:MainWindow.Build_Roms" />
+                    <Button Content="Mapping to Games" />
                     <!-- Button Content="Rom Manager" Command="local:MainWindow.RomManager" /-->
                     <!-- Button Content="Add Games1" Command="local:MainWindow.AddGames"/-->
                 </StackPanel>
             </Expander>
-            <!--#region Manager -->
-            <Expander Header="Manager" ToolTip="">
-            <!--#endregion-->    
-            </Expander>
+            <!--  -->
             <Expander Header="Work">
 
             </Expander>
+            <!-- -->
             <Button Content="Compare" Command="local:MainWindow.Compare" ToolTip="Compare between 2 list of files"/>
             <Separator />
             <!-- Button Content="File Manager" Command="local:MainWindow.FileManager"/-->
