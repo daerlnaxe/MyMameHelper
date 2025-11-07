@@ -42,6 +42,18 @@ namespace MyMameHelper.Pages
 
         //  public MyObservableCollection<Aff_Game> DbGames { get; set; } = new MyObservableCollection<Aff_Game>();
 
+        #region pas en fonction pour le moment
+        /// <summary>
+        /// Active la recherche de parent quand on ajoute aux roms à sauvegarder
+        /// </summary>
+        public Boolean ParentChecked { get; set; } = true;
+
+        /// <summary>
+        /// Active la recherche de frêres quand on ajoute aux roms à sauvegarder
+        /// </summary>
+        public Boolean BrothersChecked { get; set; } =true;
+        #endregion
+
 
         public MyObservableCollection<CT_Constructeur> Constructeurs { get; set; } = new MyObservableCollection<CT_Constructeur>();
 
@@ -124,11 +136,15 @@ namespace MyMameHelper.Pages
         }
 
 
-        
+
         private void Select_All(object sender, ExecutedRoutedEventArgs e)
         {
-            dg2Organize.SelectAll();
+            Mouse.OverrideCursor = Cursors.Wait;
+            dg2Organize.SelectAll(); // utile ?
+            Mouse.OverrideCursor = Cursors.Arrow;
         }
+
+
 
         private void AllwaysTrue(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -341,6 +357,21 @@ namespace MyMameHelper.Pages
             TransRaw2Rom(rawRomsSelected);
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// Ne va pas sélectionner à gauche comme avec Select All
+        /// </remarks>
+        private void Add_All(object sender, ExecutedRoutedEventArgs e)
+        {
+            List<RawMameRom> rawRomsSelected = dg2Organize.SelectedItems.Cast<RawMameRom>().ToList();
+            TransRaw2Rom(RawRomsCollec.ToList());
+        }
+
         /// <summary>
         /// Transforme une rom temporaire en rom (avec les jonctions)
         /// </summary>
@@ -396,16 +427,23 @@ namespace MyMameHelper.Pages
              rawRomsSelected = tmp;*/
 
             AsyncWindowProgress window;
-            
-            window = new AsyncWindowProgress();
-            window.Total = rawRomsSelected.Count;
 
 
-            window.Arguments = new List<object>() { rawRomsSelected };
 
             #region 2025/11/06 split pour async
-            window.go += new AsyncWindowProgress.AsyncAction(LinkRoms);
+
+
+            window = new AsyncWindowProgress();
+
+            window.Total = rawRomsSelected.Count;
+            window.Arguments = new List<object>() { rawRomsSelected };
+            window.Message_Value = "Linking Roms";
+
+
+
+            window.go += new AsyncWindowProgress.AsyncAction(Link2Roms);
             window.ShowDialog();
+
             rawRomsSelected = (List<RawMameRom>)window.Arguments[0];
             #endregion
 
@@ -416,20 +454,25 @@ namespace MyMameHelper.Pages
 
             window = new AsyncWindowProgress();
             window.Arguments = new List<object>() { rawRomsSelected };
+            window.Message_Value = "Moving Left to Right";
             window.go += new AsyncWindowProgress.AsyncAction(AsyncLeft2Right);
-//          
+            //          
             window.ShowDialog();
 
             RomsToSave.SignalChange();
             RawRomsCollec.SignalChange();
         }
 
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="window"></param>
+        /// <remarks>
+        /// ~ 5 minutes
+        /// </remarks>
         private void LinkRoms(AsyncWindowProgress window)
         {
             List<RawMameRom> rawRomsSelected = (List<RawMameRom>)window.Arguments[0]; // ajouté en splittant vers de l'async
-
 
             Stopwatch swTotal = new Stopwatch();
             swTotal.Start();
@@ -449,7 +492,7 @@ namespace MyMameHelper.Pages
                     IEnumerable<RawMameRom> children = RawRomsCollec.Where(x => x.Clone_Of.Equals(selRom.Name));
 
 
-                    // Ajoute ceux qqui ne sont pas présents
+                    // Ajoute ceux qui ne sont pas présents
                     foreach (var child in children)
                     {
                         if (tmp.FirstOrDefault(x => x.ID == child.ID) == null)
@@ -474,7 +517,7 @@ namespace MyMameHelper.Pages
                     if (tmp.FirstOrDefault(x => x.ID == parent.ID) == null)
                         tmp.Add(parent);
 
-                  //  Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des parents (else),  temps: {sw1.ElapsedMilliseconds} ms");
+                    //  Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des parents (else),  temps: {sw1.ElapsedMilliseconds} ms");
 
                     // on récupère tous les enfants
                     IEnumerable<RawMameRom> children = RawRomsCollec.Where(x => x.Clone_Of.Equals(selRom.Clone_Of));
@@ -485,7 +528,98 @@ namespace MyMameHelper.Pages
                         if (tmp.FirstOrDefault(x => x.ID == child.ID) == null)
                             tmp.Add(child);
                     }
-                  //  Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (else),  temps: {sw1.ElapsedMilliseconds} ms");
+                    //  Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (else),  temps: {sw1.ElapsedMilliseconds} ms");
+                }
+                Debug.WriteLine($"Fin pour {selRom.Name},  temps: {sw1.ElapsedMilliseconds} ms");
+                sw1.Stop();
+
+                // lié au passage asynchrone
+                window.AsyncUpProgressPercent(i);
+                i++;
+            }
+
+            window.Arguments[0] = tmp;
+
+            Debug.WriteLine($"Fin Total,  temps: {swTotal.ElapsedMilliseconds} ms");
+            swTotal.Stop();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="window"></param>
+        private void Link2Roms(AsyncWindowProgress window)
+        {
+            List<RawMameRom> rawRomsSelected = (List<RawMameRom>)window.Arguments[0]; // ajouté en splittant vers de l'async
+
+            // Make a list with only the clone of
+            List<RawMameRom> cloneof_list = new List<RawMameRom>(RawRomsCollec.Where(x => !string.IsNullOrEmpty(x.Clone_Of)));
+            List<RawMameRom> parent_list = new List<RawMameRom>(RawRomsCollec.Where(x => string.IsNullOrEmpty(x.Clone_Of)));
+
+
+
+            Stopwatch swTotal = new Stopwatch();
+            swTotal.Start();
+            //rah
+            List<RawMameRom> tmp = new List<RawMameRom>();
+            tmp.AddRange(rawRomsSelected);
+
+            int i = 0;
+            foreach (RawMameRom selRom in rawRomsSelected)
+            {
+                Stopwatch sw1 = new Stopwatch();
+                sw1.Start();
+
+
+                // Cas d'un parent
+                if (string.IsNullOrEmpty(selRom.Clone_Of))
+                {
+                    if (ParentChecked)
+                    {
+                        // on récupère tous les enfants
+                        for (int k = 0; k < cloneof_list.Count; k++)
+                        {
+                            if (cloneof_list[k].Clone_Of == selRom.Name)
+                            {
+                                tmp.Add(cloneof_list[k]);
+                                cloneof_list.RemoveAt(k);
+                                k--;
+                            }
+                        }
+
+                    }
+                    Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (if),  temps: {sw1.ElapsedMilliseconds} ms");
+                }
+                else
+                {
+                    if (ParentChecked)
+                    {
+                        RawMameRom parent = null;
+                        // on récupère tous les parents
+                        for (int k = 0; k < parent_list.Count; k++)
+                        {
+                            if (parent_list[k].Name == selRom.Clone_Of)
+                            {
+                                parent = parent_list[k];
+
+                                tmp.Add(parent_list[k]);
+
+                                // si on lève, les autres roms enfants n'auront plus la possibilité de se lier. Mais nous n'avons pas de liaison ici à faire.
+                                parent_list.RemoveAt(k);
+                                //k--;
+                                // normalement un seul parent.
+                                break;
+                            }
+                        }
+
+                        if (parent == null)
+                        {
+                            Console.WriteLine("la rom parent a probablement déjà été levée");
+                        }
+                    }
+
+
+                    Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (else),  temps: {sw1.ElapsedMilliseconds} ms");
                 }
                 Debug.WriteLine($"Fin pour {selRom.Name},  temps: {sw1.ElapsedMilliseconds} ms");
                 sw1.Stop();
@@ -783,8 +917,8 @@ namespace MyMameHelper.Pages
             if (LeftFilter != null)
                 Select_Right();
         }
-        
-        
+
+
         private void Select_Right()
         {
             if (RightRomMode == "Mode Game")
@@ -961,6 +1095,6 @@ namespace MyMameHelper.Pages
             }
         }
 
- 
+
     }
 }

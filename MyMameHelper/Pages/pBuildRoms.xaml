@@ -34,6 +34,7 @@
         <!-- Panneau de gauche -->
         <CommandBinding Command="commands:UICommands.SearchCmd" Executed="Ex_Search" />
         <CommandBinding Command="commands:UICommands.Select_AllCmd" Executed="Select_All"/>
+        <CommandBinding Command="commands:UICommands.Add_AllCmd" Executed="Add_All"/>
         <CommandBinding Command="commands:UICommands.SwapLeft2Right" Executed="Ex_Left2Right" CanExecute="Can_Left2Right"/>
 
         <!-- Panneau de droite -->
@@ -92,18 +93,23 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <RadioButton GroupName="Mode" Content="Mode Archive" Checked="RightMode_Changed" VerticalAlignment="Top" Margin="5" ToolTip="Select by Archive Name"/>
-                    <RadioButton GroupName="Mode" Content="Mode Game" Grid.Row="1" Checked="RightMode_Changed" VerticalAlignment="Top" Margin="5" IsChecked="True" ToolTip="Select by Description"/>
+                    <RadioButton GroupName="Mode" Content="Mode Game" Grid.Column="1" Checked="RightMode_Changed" VerticalAlignment="Top" Margin="5" IsChecked="True" ToolTip="Select by Description"/>
+                    <!--CheckBox Content="GetChildren" Grid.Row="1" ToolTip="Add Parent of children" IsChecked="{Binding GetChildren}"/-->
+                    <!--CheckBox Content="Horizontal link" Grid.Column="1" Grid.Row="1" ToolTip="Add Brothers" IsChecked="{Binding BrothersChecked}"/-->
                     <Label Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Content="{Binding LeftFilter}" KeyUp="LListView_KeyUp" />
                 </Grid>
                 <!-- grille gauche (central) -->
                 <DataGrid x:Name="dg2Organize" KeyUp="LListView_KeyUp"  IsReadOnly="True"  AutoGenerateColumns="False"
-                          ItemsSource="{Binding RawRomsCollec}" SelectedItem="{Binding LeftSelected}" >
+                          ItemsSource="{Binding RawRomsCollec}" SelectedItem="{Binding LeftSelected}"  >
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Select All" Command="commands:UICommands.Select_AllCmd"/>
                             <MenuItem Header="Add" Command="commands:UICommands.SwapLeft2Right"/>
+                            <MenuItem Header="Add All" Command="commands:UICommands.Add_AllCmd"/>
                             <Separator/>
                             <MenuItem Header="Delete From Database" Command="commands:UICommands.DeleteFromDb"/>
                         </ContextMenu>

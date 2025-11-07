@@ -18,6 +18,7 @@ namespace MyMameHelper.Commands
         //public static readonly RoutedUICommand RemoveItem = new RoutedUICommand("Remove Item", "RemoveItem", typeof(UICommands));
 
         public static readonly RoutedUICommand Select_AllCmd = new RoutedUICommand("Select All", "Select_AllCmd", typeof(UICommands));
+        public static readonly RoutedUICommand Add_AllCmd = new RoutedUICommand("Add All", "Add", typeof(UICommands));
 
         public static readonly RoutedUICommand SearchCmd = new RoutedUICommand("Search", "SearchCmd",  typeof(UICommands));
         public static readonly RoutedUICommand ChangeCmd = new RoutedUICommand("Change", "ChangeCmd",  typeof(UICommands));
