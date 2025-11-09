@@ -1066,17 +1066,23 @@ namespace MyMameHelper.SQLite
         #endregion
 
         #region Aff Roms
+        /// <summary>
+        /// Selection des roms avec jointure à gauche avec les développers.
+        /// </summary>
+        /// <param name="conds"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
         private SQLiteDataReader AffRoms_SQL(SqlCond[] conds, SqlOrder order)
         {
             //string constructeurs = PProp.Default.T_Constructeurs;
-            string tCompany = PProp.Default.T_Developers;
+            string tManufacturers = PProp.Default.T_Manufacturers;
             string tRom = PProp.Default.T_Roms;
             //   string tMachine = PProp.Default.T_Machines;
 
             Dictionary<string, short> dicCol;
-            string sql = $"SELECT *, [{tCompany}].Nom AS Aff_Manufacturer " +
+            string sql = $"SELECT [{tRom}].*, [{tManufacturers}].Nom AS Aff_Manufacturer " +
                             $"FROM [{tRom}] " +
-                            $"LEFT JOIN [{tCompany}] ON Manufacturer = [{tCompany}].ID " +
+                            $"LEFT JOIN [{tManufacturers}] ON Manufacturer = [{tManufacturers}].ID " +
 
                            "";
 
@@ -1105,7 +1111,17 @@ namespace MyMameHelper.SQLite
             Ag.Archive_Name = Trans.GetString("Archive_Name", reader);
             Ag.Description = Trans.GetString("Description", reader);
             Ag.Year = Trans.GetString("Year", reader);
+
+            // Modifié le 09/11/2025 car transformation en objet
             Ag.Manufacturer = Trans.GetUInt("Manufacturer", reader);
+
+            /*
+            CT_Constructeur ctc = new CT_Constructeur()
+            {
+                Trans.GetUInt()
+            }
+            */
+
             Ag.Unwanted = Trans.GetBool("Unwanted", reader);
             Ag.IsParent = Trans.GetBool("IsParent", reader);
             Ag.Clone_Of = Trans.GetUInt("Clone_Of", reader);
@@ -1116,6 +1132,12 @@ namespace MyMameHelper.SQLite
             return Ag;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="conds"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public List<CT_Rom> AffRoms_List(SqlCond[] conds = null, SqlOrder order = null)
         {
             List<CT_Rom> lGames = new List<CT_Rom>();

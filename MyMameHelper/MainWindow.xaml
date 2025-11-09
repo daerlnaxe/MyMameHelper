@@ -17,10 +17,10 @@
         <!-- Build -->
         <CommandBinding Command="local:MainWindow.AddByXML" Executed="Ex_AddByXML"/>
         <CommandBinding Command="local:MainWindow.Build_Manufacturers" Executed="Ex_BuildManus" CanExecute="Can_BuildManus"/>
-        <CommandBinding Command="local:MainWindow.Build_Manufacturers"  Executed="Ex_BuildManus" CanExecute="Can_BuildManus"/>
+        <!--CommandBinding Command="local:MainWindow.Build_Manufacturers"  Executed="Ex_BuildManus" CanExecute="Can_BuildManus"/-->
         <CommandBinding Command="local:MainWindow.Build_Roms" Executed="Ex_BuildRoms" CanExecute="Can_BuildRoms"/>
         <CommandBinding Command="local:MainWindow.RomManager" Executed="Ex_RomManager" CanExecute="Can_Manage"/>
-        <CommandBinding Command="local:MainWindow.AddGames" CanExecute="Can_AddGames" Executed="Ex_AddGames"/>
+        <CommandBinding Command="local:MainWindow.MapGames" CanExecute="Can_MapGames" Executed="Ex_MapGames"/>
         <!-- Work -->
         <CommandBinding Command="local:MainWindow.Compare" CanExecute="Can_Compare" Executed="Ex_Compare"/>
         <!--CommandBinding Command="local:MainWindow.MoveAllGames" CanExecute="Can_MoveAllGames" Executed="Ex_MoveAllGames"/-->
@@ -37,7 +37,7 @@
                     <Button Content="Build Manufacturers" Command="local:MainWindow.Build_Manufacturers" ToolTip="Populate the Game Developer table by using temporary roms table"/>
                     <!-- Button Content="Build Constructors" Command="local:MainWindow.Build_Manufacturers" ToolTip="Populate the Game Constructeurs table by using temporary roms table"/-->
                     <Button Content="Build Roms" Command="local:MainWindow.Build_Roms" />
-                    <Button Content="Mapping to Games" />
+                    <Button Content="Mapping to Games" Command="local:MainWindow.MapGames"/>
                     <!-- Button Content="Rom Manager" Command="local:MainWindow.RomManager" /-->
                     <!-- Button Content="Add Games1" Command="local:MainWindow.AddGames"/-->
                 </StackPanel>

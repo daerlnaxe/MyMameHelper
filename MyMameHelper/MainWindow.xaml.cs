@@ -194,22 +194,16 @@ namespace MyMameHelper
             TestTable();
         }
 
-        public static readonly RoutedCommand AddGames = new RoutedCommand("Add Games", typeof(MainWindow));
         public static readonly RoutedCommand Compare = new RoutedCommand("Compare", typeof(MainWindow));
         // public static readonly RoutedCommand MoveAllGames = new RoutedCommand("Move All Games", typeof(MainWindow));
         public static readonly RoutedCommand FileManager = new RoutedCommand("Manage files", typeof(MainWindow));
         public static readonly RoutedCommand MoveGames1 = new RoutedCommand("Move Games1", typeof(MainWindow));
         public static readonly RoutedCommand ModifyGames = new RoutedCommand("Modify Games", typeof(MainWindow));
 
-        private void Can_AddGames(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = DatabaseOk;
-        }
 
-        private void Ex_AddGames(object sender, ExecutedRoutedEventArgs e)
-        {
-            //Active_Page = new PrepareGames();// Pages["PrepareGames"];
-        }
+        
+
+
 
         private void Can_Compare(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -278,7 +272,7 @@ namespace MyMameHelper
 
 
         #region Build Manufacturers
-        public static readonly RoutedUICommand Build_Manufacturers = new RoutedUICommand("Build Developers", "Build_Developers", typeof(MainWindow));
+        public static readonly RoutedUICommand Build_Manufacturers = new RoutedUICommand("Build Manufacturers", "Build_Manufacturers", typeof(MainWindow));
         private void Can_BuildManus(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = NumberOf_TempRoms > 0;
@@ -290,6 +284,22 @@ namespace MyMameHelper
             Active_Page = new pBuildManus();
         }
 
+        #endregion
+
+
+        #region Games
+        //public static readonly RoutedCommand MapGames = new RoutedCommand("Map Games", typeof(MainWindow));
+        public static readonly RoutedUICommand MapGames = new RoutedUICommand("Map Games", "Map_Games", typeof(MainWindow));
+
+        private void Can_MapGames(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = DatabaseOk && NumberOf_Roms>0;
+        }
+
+        private void Ex_MapGames(object sender, ExecutedRoutedEventArgs e)
+        {
+            Active_Page = new pMapGames();// Pages["PrepareGames"];
+        }
         #endregion
 
         #region Build Developers

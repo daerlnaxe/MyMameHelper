@@ -401,18 +401,27 @@ namespace MyMameHelper.SQLite
         }
 
 
-        public void Insert_Roms<T>(List<T> Roms) where T : iCT_Rom
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Roms"></param>
+        public void Insert_Roms<T>(List<T> Roms, bool ignore ) where T : iCT_Rom
         {
             ushort max = 50;
 
             Debug.WriteLine($"Insertion de la collection de roms brutes");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
+            string strIgnore="";
+            if (ignore)
+                strIgnore = "OR IGNORE";
+
             for (int i = 0; i < Roms.Count; i++)
             {
                 T rom = Roms[i];
                 //  string vals = null;
-                sqlCmd.CommandText = $"Insert INTO [{PProp.Default.T_Roms}] (" +
+                sqlCmd.CommandText = $"Insert {strIgnore} INTO [{PProp.Default.T_Roms}] (" +
                                         "[Archive_Name], " +
                                         "[Description], " +
                                         "[Unwanted]," +

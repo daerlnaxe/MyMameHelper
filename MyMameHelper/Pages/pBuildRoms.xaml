@@ -29,7 +29,7 @@
     </Page.Resources>
     <Page.CommandBindings>
         <CommandBinding Command="commands:UICommands.SaveDb" Executed="SaveRoms" CanExecute="Can_Save"/>
-        <CommandBinding Command="commands:UICommands.ChangeCmd" Executed="Ex_Change" CanExecute="Can_Change"/>
+        <!--CommandBinding Command="commands:UICommands.ChangeCmd" Executed="Ex_Change" CanExecute="Can_Change"/-->
         <!--CommandBinding Command="commands:UICommands.DeleteFromDb" Executed="DeleteGames" CanExecute="Can_Delete"/-->
         <!-- Panneau de gauche -->
         <CommandBinding Command="commands:UICommands.SearchCmd" Executed="Ex_Search" />

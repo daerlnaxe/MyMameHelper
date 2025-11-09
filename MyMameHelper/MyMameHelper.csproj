@@ -123,12 +123,16 @@
     <Compile Include="Methods\Keyboard.cs" />
     <None Include="Methods\MameXMLParser.cs" />
     <Compile Include="Methods\MameXMLRaw.cs" />
+    <Compile Include="Methods\SaveInDB.cs" />
     <Compile Include="Methods\UpdateDbRoms.cs" />
     <Compile Include="Pages\pBuildManus.xaml.cs">
       <DependentUpon>pBuildManus.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\pHandleRoms.xaml.cs">
       <DependentUpon>pHandleRoms.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\pMapGames.xaml.cs">
+      <DependentUpon>pMapGames.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\pPopulateTemp.xaml.cs">
       <DependentUpon>pPopulateTemp.xaml</DependentUpon>
@@ -138,6 +142,9 @@
     </Compile>
     <Compile Include="Pages\pBuildGames.xaml.cs">
       <DependentUpon>pBuildGames.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PrepareGames.xaml.cs">
+      <DependentUpon>PrepareGames.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\AsyncLoading.xaml.cs">
       <DependentUpon>AsyncLoading.xaml</DependentUpon>
@@ -239,6 +246,10 @@
     <Page Include="Pages\pHandleRoms.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\pMapGames.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\pPopulateTemp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -246,6 +257,10 @@
     <Page Include="Pages\pCompare_Games.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\PrepareGames.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\pUpdateGames.xaml">
       <Generator>MSBuild:Compile</Generator>

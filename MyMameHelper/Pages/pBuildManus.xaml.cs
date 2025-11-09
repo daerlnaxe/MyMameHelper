@@ -1,4 +1,5 @@
 ﻿using MyMameHelper.ContTable;
+using MyMameHelper.Methods;
 using MyMameHelper.SQLite;
 using MyMameHelper.Windows;
 using System;
@@ -195,27 +196,8 @@ namespace MyMameHelper.Pages
         }
         private void Ex_Save(object sender, ExecutedRoutedEventArgs e)
         {
-            AsyncWindowProgress awP = new AsyncWindowProgress();
-            awP.go += new AsyncWindowProgress.AsyncAction(Save_DoWork);
-            awP.ShowDialog();
-
-            using (SQLite_Req sqReq = new SQLite_Req())
-            {
-                MainWindow.NumberOf_Dev = sqReq.Count(PProp.Default.T_Manufacturers);
-            }
+            var res=SaveInDB.Insert_Manus(Manufacturers);
         }
-
-        private void Save_DoWork(AsyncWindowProgress windows)
-        {
-            using (SQLite_Req sqReq = new SQLite_Req())
-            {
-                sqReq.UpdateProgress += ((x, y) => windows.AsyncUpProgressPercent(y));
-                sqReq.Insert_Manus(Manufacturers, true);
-            }
-        }
-
-
-
         #endregion
 
         #region Select All

@@ -26,11 +26,12 @@ namespace MyMameHelper.ContTable
 
         public string Year { get; set; }
 
+        
         private uint _Manufacturer;
         /// <summary>
         /// Developpeur
         /// </summary>
-        public uint Manufacturer
+        public uint Manufacturer// => 09/11/2025 on passe en objet plutôt
         {
             get { return _Manufacturer; }
             set
@@ -42,6 +43,31 @@ namespace MyMameHelper.ContTable
                 }
             }
         }
+
+
+/*
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Ajout le 09/11/2025 pour changement
+        /// </remarks>
+        private CT_Constructeur _Manufacturer;
+        public CT_Constructeur Manufacturer
+        {
+            get => _Manufacturer;
+            set
+            {
+                if (value != _Manufacturer)
+                {
+                    _Manufacturer = value;
+                    NotifyPropertyChanged();
+                }
+
+            }
+        }*/
+
+
 
         public bool IsParent { get; set; }
 
@@ -111,6 +137,19 @@ namespace MyMameHelper.ContTable
             rom.Unwanted = Trans.GetBool("Unwanted", dico);
 
             return rom;
+        }
+
+        public static implicit operator CT_Rom(RawMameRom rawRom)
+        {
+            return new CT_Rom()
+            {
+
+                Archive_Name = rawRom.Name,
+                Description = rawRom.Description,
+                Aff_Clone_Of = rawRom.Clone_Of,
+                SourceFile = rawRom.Source_File,
+                
+            };
         }
     }
 }

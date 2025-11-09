@@ -20,6 +20,7 @@ namespace MyMameHelper.ContTable
         string Year { get; set; }
 
         uint Manufacturer { get; set; }
+       // CT_Constructeur Manufacturer { get; set; }
 
 
         bool IsParent { get; set; }
