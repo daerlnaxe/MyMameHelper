@@ -275,7 +275,7 @@ namespace MyMameHelper.SQLite
         public void Insert_Manus(ObservableCollection<CT_Constructeur> manufacturers, bool ignore)
         {
             uint max = 50;
-            Debug.WriteLine($"Insertion de la collection de developpeurs");
+            Debug.WriteLine($"Insertion de la collection de manufactureurs");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
             Stopwatch sw = new Stopwatch();

@@ -1091,27 +1091,68 @@ namespace MyMameHelper.Pages
             e.CanExecute = RomsToSave.Count > 0;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// Sémantiquement parlant on part du principe d'amener les questions une par une mais d'interrompre le processus si la chaine n'est pas validée.
+        /// </remarks>
         private void SaveRoms(object sender, ExecutedRoutedEventArgs e)
         {
-            if (MessageBox.Show("Would you want to save this roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            // Sauvegarde des manufactureurs manquant
+            MyObservableCollection<CT_Constructeur> manuToAdd = new MyObservableCollection<CT_Constructeur>();
+            for (int i = 0; i < RomsToSave.Count; i++)
             {
-                // Sauvegarde des manufactureurs manquant
-                MyObservableCollection<CT_Constructeur> manuToAdd = new MyObservableCollection<CT_Constructeur>();
-                for (int i = 0; i < RomsToSave.Count; i++)
+                var rom = RomsToSave[i];
+
+                if (Constructeurs.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null)
+                    // Ajout à la liste des constructeurs à sauvegarder
+                    manuToAdd.Add(new CT_Constructeur()
+                    {
+                        Nom = rom.Aff_Manufacturer,
+                    });
+            }
+
+            Debug.WriteLine("Ajout des constructeurs");
+            // Sauvegarde des constructeurs
+            if (manuToAdd.Count > 0 && MessageBox.Show("Would you want to save missing manufacturers. Refusing it, will stop all the process.", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                // Sauvegarde dans la base
+                SaveInDB.Insert_Manus(manuToAdd);
+
+
+                // Mise à jour de la liste des constructeurs
+                using (SQLite_Req sqReq = new SQLite_Req())
                 {
-                    var rom = RomsToSave[i];
-
-
-                    if (Constructeurs.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null)
-                        // Ajout à la liste des constructeurs à sauvegarder
-                        manuToAdd.Add(new CT_Constructeur()
-                        {
-                            Nom = rom.Aff_Manufacturer,
-                        });
-
+                    Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
                 }
 
 
+            }
+            else
+            {
+                return;
+            }
+
+            Debug.WriteLine("Construction de la liaison");
+            // Construction de la liaison
+            for (int i = 0; i < RomsToSave.Count; i++)
+            {
+                var rom = RomsToSave[i];
+                if (rom.Manufacturer == 0)
+                {
+                    var tmp = Constructeurs.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer);
+                    rom.Manufacturer = tmp.ID;
+                    rom.Aff_Manufacturer = tmp.Nom;
+                }
+            }
+
+
+            // Sauvegarde des roms
+            if (MessageBox.Show("Would you want to save this roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
                 // Sauvegarde des roms
                 AsyncWindowProgress window = new AsyncWindowProgress();
                 window.Arguments.Add(RomsToSave.ToList());
@@ -1120,6 +1161,11 @@ namespace MyMameHelper.Pages
             }
             RomsToSave.Clear();
         }
+
+
+
+
+
 
 
         /// <summary>
@@ -1134,7 +1180,7 @@ namespace MyMameHelper.Pages
 
             #region Ajout des manufacturers non présents
             //IEnumerable<string> manus = rawRomsSelected.Select(x => x.Manufacturer);
-            MyObservableCollection<CT_Constructeur> manuToAdd = new MyObservableCollection<CT_Constructeur>();
+            // MyObservableCollection<CT_Constructeur> manuToAdd = new MyObservableCollection<CT_Constructeur>();
 
             /*foreach (var rom in romsTS)
             {
@@ -1159,11 +1205,6 @@ namespace MyMameHelper.Pages
                 else
                     childrenToSave.Add(rom);
             }
-
-            // Liaison avec les manufacturers
-            //- Vérification de la présence dans les manufacturers
-
-
 
             // Sauvegarde des roms parents
             List<CT_Rom> sParentsRoms = null;
