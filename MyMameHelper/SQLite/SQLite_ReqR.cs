@@ -9,6 +9,8 @@ using System.Linq;
 
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Media;
 using PProp = MyMameHelper.Properties.Settings;
 
 namespace MyMameHelper.SQLite
@@ -19,6 +21,11 @@ namespace MyMameHelper.SQLite
     public sealed partial class SQLite_Req
     {
         #region commun
+        string tManufacturer = PProp.Default.T_Manufacturers;
+        string tRom = PProp.Default.T_Roms;
+        string tGenre = PProp.Default.T_Genres;
+        string tMachine = PProp.Default.T_Machines;
+        string tGame = PProp.Default.T_Games;
         #endregion
 
         #region 1 Element
@@ -834,17 +841,19 @@ namespace MyMameHelper.SQLite
         }
         #endregion
 
+
+
         #region Spéciaux
 
         #region Aff Machine
         private SQLiteDataReader AffMachine_SQL(SqlCond[] conds, SqlOrder order)
         {
             string constructeurs = PProp.Default.T_Manufacturers;
-            string machines = PProp.Default.T_Machines;
+            //string machines = PProp.Default.T_Machines;
 
             Dictionary<string, short> dicCol;
-            string sql = $"SELECT *, [{constructeurs}].[Nom] AS [Aff_Constructeur] FROM [{machines}] " +
-                            $"LEFT JOIN [{constructeurs}] ON [{machines}].[Constructeur] = [{constructeurs}].[ID] ";
+            string sql = $"SELECT *, [{constructeurs}].[Nom] AS [Aff_Constructeur] FROM [{tMachine}] " +
+                            $"LEFT JOIN [{constructeurs}] ON [{tMachine}].[Constructeur] = [{constructeurs}].[ID] ";
 
 
             SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
@@ -927,21 +936,128 @@ namespace MyMameHelper.SQLite
 
         #region AffGames
 
-        private SQLiteDataReader AffGames_SQL(SqlCond[] conds, SqlOrder order)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        /// <remarks>
+        /// Il n'y a pas de mise en forme complexe, on reste basique car il va y avoir énormément de null.
+        /// Si je mets toutes les roms sur la ligne des games, je vais avoir 2km... Ca offre un intérêt que pour une vue déjà construire, pas au build.
+        /// Il serait selon possible de grouper les roms selon le parent mais c'est couteux et pas super utile.
+        /// </remarks>
+        internal List<Map_RomGame> Build4Game_List()
+        {
+            List<Map_RomGame> lGames = new List<Map_RomGame>();
+            SQLiteDataReader reader = AffGames_SQL(null, null);
+
+            if (reader.HasRows)
+            {
+                //dicCol = Get_Poss(reader);
+
+                while (reader.Read())
+                {
+                    Map_RomGame mr = new Map_RomGame()
+                    {
+                        
+                       
+                    };
+                    mr.ID = Trans.GetUInt("ID", reader);
+                    mr.Archive_Name = Trans.GetString("Archive_Name", reader);
+                    mr.Game_Name = Trans.GetString("Game_Name", reader);
+                    
+
+                    //Ag.Game_Name = Trans.GetString("Game_Name", reader);
+                    lGames.Add(mr);
+                }
+            }
+
+            return lGames;
+        }
+
+
+
+        /*
+        internal SQLiteDataReader AffGamesLink_SQL()
         {
             //string constructeurs = PProp.Default.T_Constructeurs;
-            string tCompany = PProp.Default.T_Developers;
-            string tGame = PProp.Default.T_Games;
-            string tGenre = PProp.Default.T_Genres;
-            string tMachine = PProp.Default.T_Machines;
+            //string tManufacturer = PProp.Default.T_Manufacturers;                            
 
             Dictionary<string, short> dicCol;
-            string sql = $"SELECT *, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
-                            $"FROM [{tGame}] " +
-                            $"LEFT JOIN [{tMachine}] ON Machine = [{tMachine}].ID " +
-                            $"LEFT JOIN [{tGenre}] ON Genre = [{tGenre}].ID " +
-                           // $"LEFT JOIN [{tCompany}] ON Developer = [{tCompany}].ID";
-                           "";
+            //string sql = $"SELECT [{tRoms}]*, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
+            string sql = $"SELECT [{tRoms}].*, " +
+                            $" FROM [{tRoms}]" +
+                            $"";
+            /*$"LEFT JOIN [{tMachine}] ON Machine = [{tMachine}].ID " +
+            $"LEFT JOIN [{tGenre}] ON Genre = [{tGenre}].ID " +*/
+
+        /*
+
+            SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
+            Condition_TreatMt(sqlCMD, conds);
+            Order_TreatMt(sqlCMD, order);
+
+            Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");
+
+            try
+            {
+                return sqlCMD.ExecuteReader();
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine(exc.Message);
+                return null;
+            }
+        }*/
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        internal SQLiteDataReader SimpleGames_SQL()
+        {
+            string sql = $"Select [{tGame}].* " +
+                $"FROM [{tGame}]";
+
+            SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
+
+            Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");
+
+
+            try
+            {
+                return sqlCMD.ExecuteReader();
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine(exc.Message);
+                return null;
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="conds"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        internal SQLiteDataReader AffGames_SQL(SqlCond[] conds, SqlOrder order)
+        {
+            //string constructeurs = PProp.Default.T_Constructeurs;
+            string tManufacturer = PProp.Default.T_Manufacturers;            
+
+
+            Dictionary<string, short> dicCol;
+            //string sql = $"SELECT [{tRoms}]*, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
+            string sql = $"SELECT [{tRom}].*,[{tGame}].Game_Name,  [{tManufacturer}].Nom AS Aff_Machine" +
+                            $" FROM [{tRom}]" +
+                            $" LEFT JOIN [{tManufacturer}] ON [{tRom}].Manufacturer = [{tManufacturer}].ID" + 
+                            $" LEFT  JOIN [{tGame}] ON [{tGame}].ID = [{tRom}].Game";
+            /*$"LEFT JOIN [{tMachine}] ON Machine = [{tMachine}].ID " +
+            $"LEFT JOIN [{tGenre}] ON Genre = [{tGenre}].ID " +*/
+
+
 
             SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
             Condition_TreatMt(sqlCMD, conds);
@@ -968,8 +1084,11 @@ namespace MyMameHelper.SQLite
             Aff_Game Ag = new Aff_Game();
 
             Ag.ID = Trans.GetUInt("ID", reader);
+            
             Ag.Game_Name = Trans.GetString("Game_Name", reader);
-            Ag.Description = Trans.GetString("Description", reader);
+
+
+            /*Ag.Description = Trans.GetString("Description", reader);
             Ag.Machine = Trans.GetUInt("Machine", reader);
             Ag.Unwanted = Trans.GetBool("Unwanted", reader);
             Ag.Aff_Machine = Trans.GetString("Aff_Machine", reader);
@@ -978,7 +1097,7 @@ namespace MyMameHelper.SQLite
             Ag.Aff_Genre = Trans.GetString("Aff_Genre", reader);
             Ag.IsMahjong = Trans.GetBoolFalse("IsMahjong", reader);
             Ag.IsMahjong = Trans.GetBoolFalse("IsQuizz", reader);
-
+            */
             return Ag;
         }
 
@@ -1075,9 +1194,8 @@ namespace MyMameHelper.SQLite
         private SQLiteDataReader AffRoms_SQL(SqlCond[] conds, SqlOrder order)
         {
             //string constructeurs = PProp.Default.T_Constructeurs;
-            string tManufacturers = PProp.Default.T_Manufacturers;
-            string tRom = PProp.Default.T_Roms;
-            //   string tMachine = PProp.Default.T_Machines;
+            string tManufacturers = PProp.Default.T_Manufacturers;            
+            
 
             Dictionary<string, short> dicCol;
             string sql = $"SELECT [{tRom}].*, [{tManufacturers}].Nom AS Aff_Manufacturer " +
@@ -1132,6 +1250,10 @@ namespace MyMameHelper.SQLite
             return Ag;
         }
 
+
+
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -1157,6 +1279,9 @@ namespace MyMameHelper.SQLite
 
             return lGames;
         }
+
+
+
 
         //public CT_Game
         #endregion

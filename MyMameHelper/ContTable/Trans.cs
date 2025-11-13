@@ -23,10 +23,21 @@ namespace MyMameHelper.ContTable
 
         public static string GetString(string key, SQLiteDataReader reader)
         {
-            if (reader[key] is DBNull)
-                return null;
+            try
+            {
 
-            return reader[key].ToString();
+
+                if (reader[key] is DBNull)
+                    return null;
+
+                return reader[key].ToString();
+            }
+            catch
+            {
+                throw new Exception($"Column {key} missing, Database alteration");
+            
+            }
+
         }
 
         /// <summary>

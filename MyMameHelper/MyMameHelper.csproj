@@ -111,6 +111,7 @@
     <Compile Include="Commands\UICommands.cs" />
     <Compile Include="Commands\SaveToVracCommand.cs" />
     <Compile Include="Commands\SearchCommand.cs" />
+    <Compile Include="ContTable\Map_RomGame.cs" />
     <Compile Include="ContTable\CT_Bios.cs" />
     <Compile Include="ContTable\CT_Genre.cs" />
     <Compile Include="ContTable\CT_Mechanical.cs" />

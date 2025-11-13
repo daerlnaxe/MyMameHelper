@@ -1,4 +1,5 @@
 ﻿
+using MyMameHelper.ContTable;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -109,5 +110,7 @@ namespace MyMameHelper.SQLite
 
             ExecNQ(command);
         }
+
+
     }
 }

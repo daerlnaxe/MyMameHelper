@@ -20,6 +20,7 @@ namespace MyMameHelper
                 foreach (T element in value)
                     this.Add(element);
             }
+            
         }
 
         /*

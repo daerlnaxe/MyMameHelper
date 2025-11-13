@@ -92,7 +92,30 @@ namespace MyMameHelper.SQLite
 
             ExecNQ(sqlCmd);
         }
+
+        /// <summary>
+        /// 13/11/2025
+        /// </summary>
+        /// <param name="ctG"></param>
+        public void Insert_Game(CT_Game ctG)
+        {
+            Debug.WriteLine($"Insertion du jeu: {ctG.Game_Name}");
+
+            string sql = $"INSERT INTO [{tGame}] " +
+                            $"([Game_Name])" +
+                            $"VALUES " +
+                            $"(@Nom)";
+
+            SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
+            sqlCmd.Parameters.Add("@Nom", DbType.String).Value = ctG.Game_Name;
+            
+
+            ExecNQ(sqlCmd);
+        }
         #endregion
+
+
+
 
         #region insertion de collection
 

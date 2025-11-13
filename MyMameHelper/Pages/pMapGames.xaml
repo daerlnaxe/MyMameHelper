@@ -8,8 +8,10 @@
       d:DesignHeight="450" d:DesignWidth="800" d:Background="White"
       Title="pMapGames" Loaded="Page_Loaded">
 
-    <Grid>
-        <DataGrid x:Name="lvGames" ItemsSource="{Binding RomsToMap}" SelectedItem="{Binding Selected4List}" IsReadOnly="True" AutoGenerateColumns="False"  SelectionMode="Extended">
+    <DockPanel>
+
+        <!-- Roms -->
+        <DataGrid x:Name="lvRomsToMap"  ItemsSource="{Binding RomsToMap}" SelectionChanged="RomsSelectionChanged"  IsReadOnly="True" AutoGenerateColumns="False"  SelectionMode="Extended">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <!--MenuItem Header="Add To Selected" Command="commands:UICommands.SwapLeft2Right" />
@@ -19,11 +21,40 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Archive Name" Binding="{Binding Archive_Name}" SortDirection="Ascending"/>
                 <DataGridTextColumn Header="Game Name" Binding="{Binding Game_Name}"/>
-                <DataGridTextColumn Header="Description (Rom)" Binding="{Binding Description}"/>
+                <!--DataGridTextColumn Header="Description (Rom)" Binding="{Binding Description}"/>
                 <DataGridTextColumn Header="Year" Binding="{Binding Year}"/>
-                <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}"/>
+                <DataGridTextColumn Header="Manufacturer" Binding="{Binding Aff_Machine}"/-->
+                
+                <!-- Data Grid customs -->
+                <!--pas possibleDataGridTemplateColumn Header="Roms">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding Roms}">
+                            </ItemsControl>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn-->
             </DataGrid.Columns>
 
         </DataGrid>
-    </Grid>
+
+
+        <StackPanel DockPanel.Dock="Right" >
+            <!-- Add - We add a new game in the list -->
+            <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5" >
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Add a game:" MinWidth="100"/>
+                    <TextBox MinWidth="300" Text="{Binding GameToAdd}"/>
+                </StackPanel>
+            </Border>
+            <!-- Liste -->
+            <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5" >
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Assign a Game:" MinWidth="100"/>
+                    <ComboBox ItemsSource="{Binding Games}" DisplayMemberPath="Game_Name" SelectedValuePath="ID" SelectedItem="{Binding GameSelected}" MinWidth="300"/>
+                    <Button Content="OK" Click="Assign_Game"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </DockPanel>
 </Page>
