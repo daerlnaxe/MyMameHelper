@@ -634,26 +634,25 @@ namespace MyMameHelper.Pages
                 // Transformation du Constructeur
                 CT_Constructeur dev = Constructeurs.FirstOrDefault(x => x.Nom.Equals(rawRom.Manufacturer));
 
-
-                /*if (dev == null)
-                {
-                    dev = new CT_Constructeur(rawRom.Manufacturer);
-                }*/
-
-                //
-
+                // Le constructeur existe dans la table et correspond à celui affiché par la rawrom
                 if (dev != null)
                 {
-                    aRom.Manufacturer = dev.ID;
+                    //aRom.Manufacturer = dev.ID;
                     //aRom.Aff_Manufacturer = dev.Nom;
+                    aRom.Manufacturer = dev;
                 }
+                // Le constructeur n'a jamais été entré
                 else
                 {
-
+                    // rawRom.Manufacturer;
+                    aRom.Manufacturer = new CT_Constructeur()
+                    {
+                        Nom = rawRom.Manufacturer,
+                    }; 
                 }
 
 
-                aRom.Aff_Manufacturer = rawRom.Manufacturer;
+
                 #endregion
 
                 RomsToSave.AddSilent(aRom);
@@ -1101,17 +1100,20 @@ namespace MyMameHelper.Pages
         /// </remarks>
         private void SaveRoms(object sender, ExecutedRoutedEventArgs e)
         {
+            #region Constructeur
             // Sauvegarde des manufactureurs manquant
             MyObservableCollection<CT_Constructeur> manuToAdd = new MyObservableCollection<CT_Constructeur>();
             for (int i = 0; i < RomsToSave.Count; i++)
             {
                 var rom = RomsToSave[i];
 
-                if (Constructeurs.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null)
+                //if (Constructeurs.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null)
+                if (Constructeurs.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null)
                     // Ajout à la liste des constructeurs à sauvegarder
                     manuToAdd.Add(new CT_Constructeur()
                     {
-                        Nom = rom.Aff_Manufacturer,
+                        //Nom = rom.Aff_Manufacturer,
+                        Nom = rom.Manufacturer.Nom,
                     });
             }
 
@@ -1128,26 +1130,43 @@ namespace MyMameHelper.Pages
                 {
                     Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
                 }
-
-
             }
             else
             {
                 return;
             }
 
+            #endregion Constructeur
+
+
+            #region Games
+            /*for (int i = 0; i < RomsToSave.Count; i++)
+            {
+                CT_Rom rom = RomsToSave[i];
+                
+            }*/
+            #endregion
+
+
             Debug.WriteLine("Construction de la liaison");
             // Construction de la liaison
             for (int i = 0; i < RomsToSave.Count; i++)
             {
                 var rom = RomsToSave[i];
-                if (rom.Manufacturer == 0)
+                if (rom.Manufacturer.ID == 0)
                 {
+                    /*
                     var tmp = Constructeurs.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer);
                     rom.Manufacturer = tmp.ID;
                     rom.Aff_Manufacturer = tmp.Nom;
+                    */
+                    var tmp = Constructeurs.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom);
+                    rom.Manufacturer = tmp;
+
                 }
             }
+
+
 
 
             // Sauvegarde des roms

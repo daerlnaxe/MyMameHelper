@@ -17,6 +17,10 @@ namespace MyMameHelper.ContTable
         }
 
         public uint ID { get; set; }
+
+        /// <summary>
+        /// Nom du fichier de la rom
+        /// </summary>
         public string Archive_Name { get; set; }
 
         /// <summary>
@@ -26,7 +30,7 @@ namespace MyMameHelper.ContTable
 
         public string Year { get; set; }
 
-        
+        /*
         private uint _Manufacturer;
         /// <summary>
         /// Developpeur
@@ -43,9 +47,9 @@ namespace MyMameHelper.ContTable
                 }
             }
         }
+        */
 
 
-/*
         /// <summary>
         /// 
         /// </summary>
@@ -65,7 +69,7 @@ namespace MyMameHelper.ContTable
                 }
 
             }
-        }*/
+        }
 
 
 
@@ -96,7 +100,7 @@ namespace MyMameHelper.ContTable
         // public List<CT_Rom> Roms { get; set; } = new List<CT_Rom>();
 
         // Affichages
-        public string Aff_Manufacturer { get; set; }
+        //public string Aff_Manufacturer { get; set; }
 
         public string Aff_Clone_Of { get; set; }
 
@@ -118,7 +122,9 @@ namespace MyMameHelper.ContTable
             this.Description = another.Description;
             this.Aff_Clone_Of = another.Aff_Clone_Of;
             this.Clone_Of = another.Clone_Of;
-            this.Aff_Manufacturer = another.Aff_Manufacturer;
+
+            //this.Aff_Manufacturer = another.Aff_Manufacturer;
+            
             this.Manufacturer = another.Manufacturer;
             this.Unwanted = another.Unwanted;
             this.Year = another.Year;

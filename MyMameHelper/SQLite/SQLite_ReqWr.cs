@@ -480,7 +480,8 @@ namespace MyMameHelper.SQLite
                     sqlCmd.Parameters.Add($"@Description{j}", DbType.String).Value = Roms[i].Description;
                     sqlCmd.Parameters.Add($"@Year{j}", DbType.String).Value = Roms[i].Year;
                     sqlCmd.Parameters.Add($"@Unwanted{j}", DbType.Boolean).Value = Roms[i].Unwanted;
-                    sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.String).Value = Roms[i].Manufacturer;
+                    //sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.String).Value = Roms[i].Manufacturer;
+                    sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.UInt32).Value = Roms[i].Manufacturer.ID;
                     sqlCmd.Parameters.Add($"@IsParent{j}", DbType.Boolean).Value = Roms[i].IsParent;
                     sqlCmd.Parameters.Add($"@Clone_Of{j}", DbType.UInt32).Value = Roms[i].Clone_Of;
                     Trace.WriteLine(Roms[i].Archive_Name);
@@ -498,6 +499,11 @@ namespace MyMameHelper.SQLite
 
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="biosCollec"></param>
         internal void Insert_BiosInTemp(MyObservableCollection<CT_Bios> biosCollec)
         {
             uint max = 50;

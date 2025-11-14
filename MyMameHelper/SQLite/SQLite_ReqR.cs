@@ -1231,7 +1231,7 @@ namespace MyMameHelper.SQLite
             Ag.Year = Trans.GetString("Year", reader);
 
             // Modifié le 09/11/2025 car transformation en objet
-            Ag.Manufacturer = Trans.GetUInt("Manufacturer", reader);
+            //Ag.Manufacturer = Trans.GetUInt("Manufacturer", reader);
 
             /*
             CT_Constructeur ctc = new CT_Constructeur()
@@ -1244,7 +1244,7 @@ namespace MyMameHelper.SQLite
             Ag.IsParent = Trans.GetBool("IsParent", reader);
             Ag.Clone_Of = Trans.GetUInt("Clone_Of", reader);
             //
-            Ag.Aff_Manufacturer = Trans.GetString("Aff_Manufacturer", reader);
+            //Ag.Aff_Manufacturer = Trans.GetString("Aff_Manufacturer", reader);
 
 
             return Ag;

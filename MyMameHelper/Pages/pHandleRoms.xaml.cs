@@ -118,7 +118,8 @@ namespace MyMameHelper.Pages
                 // On récupère la rom parent
                 CT_Rom romParent = savedRoms.FirstOrDefault(x => x.Archive_Name == rawRom.Name);
                 romParent.SourceFile = rawRom.Source_File;
-                romParent.Aff_Manufacturer = rawRom.Manufacturer;
+                //romParent.Aff_Manufacturer = rawRom.Manufacturer;
+                romParent.Manufacturer.Nom = rawRom.Manufacturer;
 
 
                 // Travail sur les bios
@@ -186,7 +187,8 @@ namespace MyMameHelper.Pages
                     // On récupère la rom enfant qui correspond
                     CT_Rom romChild = savedRoms.FirstOrDefault(x => x.Archive_Name == rawRom.Name);
                     romChild.SourceFile = rawRom.Source_File;
-                    romChild.Aff_Manufacturer = rawRom.Manufacturer;
+                    //romChild.Aff_Manufacturer = rawRom.Manufacturer;
+                    romChild.Manufacturer.Nom = rawRom.Manufacturer;
 
                     // Travail sur les bios
                     if (rawRom.Is_Bios)
