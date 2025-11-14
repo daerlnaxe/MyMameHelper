@@ -107,3 +107,20 @@ Chargement de la page:
 
 Passage de gauche à droite:
 - Conversion du nom du manufacturer en Id Developper
+
+
+## Map To Roms
+- Lister les jeux:
+    - ❌ Ils n'existent pas sauf si le build roms crée une base minimale => n'afficherait rien
+    - ❌ Toutes les roms non linkées vont polluer une entrée "null".
+    - ✅ Il y a moins de jeux que de roms et on peut mettre les roms comme de petites collections dans une case.
+- Lister les roms ...
+    - ❌ Plus de roms que de jeux
+    - ✅ Plus simple.
+    - ❌ Travail beaucoup plus important pour l'utilisateur
+
+
+Dans l'intérêt de l'utilisateur, si l'on part sur lister les jeux:
+- Au build de rom faire un pseudo build de games basé sur la description (until `()`)
+- Au map to game je récupère les roms avec une jonction valide sinon rien.
+- Je récupère une liste à droite qui contient les roms non linkées

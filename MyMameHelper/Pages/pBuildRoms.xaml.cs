@@ -1167,8 +1167,6 @@ namespace MyMameHelper.Pages
             }
 
 
-
-
             // Sauvegarde des roms
             if (MessageBox.Show("Would you want to save this roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
