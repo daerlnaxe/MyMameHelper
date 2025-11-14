@@ -196,7 +196,7 @@ namespace MyMameHelper.Pages
         }
         private void Ex_Save(object sender, ExecutedRoutedEventArgs e)
         {
-            var res=SaveInDB.Insert_Manus(Manufacturers);
+            var res=SaveInDB.Insert_Manus(Manufacturers.ToList());
         }
         #endregion
 

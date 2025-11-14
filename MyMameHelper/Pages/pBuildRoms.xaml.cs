@@ -648,7 +648,7 @@ namespace MyMameHelper.Pages
                     aRom.Manufacturer = new CT_Constructeur()
                     {
                         Nom = rawRom.Manufacturer,
-                    }; 
+                    };
                 }
 
 
@@ -1100,13 +1100,18 @@ namespace MyMameHelper.Pages
         /// </remarks>
         private void SaveRoms(object sender, ExecutedRoutedEventArgs e)
         {
-            #region Constructeur
+            #region Etat des lieux
+
             // Sauvegarde des manufactureurs manquant
-            MyObservableCollection<CT_Constructeur> manuToAdd = new MyObservableCollection<CT_Constructeur>();
+            List<CT_Constructeur> manuToAdd = new List<CT_Constructeur>();
+            List<CT_Game> gameToAdd = new List<CT_Game>();
+
+            //
             for (int i = 0; i < RomsToSave.Count; i++)
             {
                 var rom = RomsToSave[i];
 
+                // Constructeurs
                 //if (Constructeurs.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null)
                 if (Constructeurs.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null)
                     // Ajout à la liste des constructeurs à sauvegarder
@@ -1115,25 +1120,43 @@ namespace MyMameHelper.Pages
                         //Nom = rom.Aff_Manufacturer,
                         Nom = rom.Manufacturer.Nom,
                     });
+
+                // Games
+                var posPar = rom.Description.IndexOf('(');
+                var gameName = posPar > 0 ? rom.Description.Substring(0, posPar).Trim() : rom.Description;
+                Debug.WriteLine(gameName);
+
+                if (gameToAdd.FirstOrDefault(x => x.Game_Name.Equals( gameName)) == null)
+                {
+                    gameToAdd.Add(
+                        new CT_Game
+                        {
+                            Game_Name= gameName,
+                        });
+                }
             }
 
             Debug.WriteLine("Ajout des constructeurs");
             // Sauvegarde des constructeurs
-            if (manuToAdd.Count > 0 && MessageBox.Show("Would you want to save missing manufacturers. Refusing it, will stop all the process.", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (manuToAdd.Count > 0)
             {
-                // Sauvegarde dans la base
-                SaveInDB.Insert_Manus(manuToAdd);
-
-
-                // Mise à jour de la liste des constructeurs
-                using (SQLite_Req sqReq = new SQLite_Req())
+                if (MessageBox.Show("Would you want to save missing manufacturers. Refusing it, will stop all the process.", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
+                    // Sauvegarde dans la base
+                    SaveInDB.Insert_Manus(manuToAdd);
+
+
+                    // Mise à jour de la liste des constructeurs
+                    using (SQLite_Req sqReq = new SQLite_Req())
+                    {
+                        Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
+                    }
                 }
-            }
-            else
-            {
-                return;
+                else
+                {
+                    return;
+                }
+
             }
 
             #endregion Constructeur
@@ -1152,6 +1175,7 @@ namespace MyMameHelper.Pages
             // Construction de la liaison
             for (int i = 0; i < RomsToSave.Count; i++)
             {
+                // Liaison manufacturers
                 var rom = RomsToSave[i];
                 if (rom.Manufacturer.ID == 0)
                 {
@@ -1164,6 +1188,9 @@ namespace MyMameHelper.Pages
                     rom.Manufacturer = tmp;
 
                 }
+
+
+
             }
 
 

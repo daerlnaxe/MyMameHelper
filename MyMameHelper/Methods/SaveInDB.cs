@@ -17,7 +17,7 @@ namespace MyMameHelper.Methods
     /// </summary>
     internal static class SaveInDB
     {
-        internal static bool Insert_Manus(MyObservableCollection<CT_Constructeur> manufacturers)
+        internal static bool Insert_Manus(List<CT_Constructeur> manufacturers)
         {
             AsyncWindowProgress awP = new AsyncWindowProgress();
             awP.Arguments = new List<object>() { manufacturers };
