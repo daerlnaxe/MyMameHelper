@@ -72,6 +72,27 @@ namespace MyMameHelper.ContTable
         }
 
 
+        /// <summary>
+        /// Liaison avec les jeux
+        /// </summary>
+        /// <remarks>
+        /// Ajout le 15/11/2025 pour changement
+        /// </remarks>
+        private CT_Game _Game = new CT_Game();
+        public CT_Game Game
+        {
+            get => _Game;
+            set
+            {
+                if (value != _Game)
+                {
+                    _Game = value;
+                    NotifyPropertyChanged();
+                }
+
+            }
+        }
+
 
         public bool IsParent { get; set; }
 

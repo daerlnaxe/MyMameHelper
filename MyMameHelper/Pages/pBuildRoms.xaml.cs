@@ -87,6 +87,7 @@ namespace MyMameHelper.Pages
         private List<CT_Game> _GamesInDB;
 
         private List<RawMameRom> rawRomsDeleted = new List<RawMameRom>();
+
         //private List<RawMameRom> rawRomsSelected;
         //      private List<Aff_Rom> romsList;
         private List<CT_Rom> romsSelected;
@@ -566,7 +567,6 @@ namespace MyMameHelper.Pages
                                 k--;
                             }
                         }
-
                     }
                     Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (if),  temps: {sw1.ElapsedMilliseconds} ms");
                 }
@@ -639,15 +639,9 @@ namespace MyMameHelper.Pages
                 if (string.IsNullOrEmpty(rawRom.Clone_Of))
                     aRom.IsParent = true;
 
-                // 2025/11/09 Transformation vers une simplification du CT_Constructeur avec id nulle, délégation de l'ajout en base lors de la sauvegarde.
-                /*CT_Constructeur dev = new CT_Constructeur()
-                {
-                    Nom =rawRom.Manufacturer
-                };*/
 
 
-                #region annulé car sémantiquement faux
-
+                #region 
                 // Transformation du Constructeur
                 CT_Constructeur dev = Constructeurs.FirstOrDefault(x => x.Nom.Equals(rawRom.Manufacturer));
 
@@ -667,10 +661,8 @@ namespace MyMameHelper.Pages
                         Nom = rawRom.Manufacturer,
                     };
                 }
-
-
-
                 #endregion
+
 
                 RomsToSave.AddSilent(aRom);
                 rawRomsDeleted.Add(rawRom);
@@ -1116,7 +1108,7 @@ namespace MyMameHelper.Pages
         /// Sémantiquement parlant on part du principe d'amener les questions une par une mais d'interrompre le processus si la chaine n'est pas validée.
         /// Les manufacturers et les jeux ont deux logiques différentes.
         ///     Le manufacturer existe en liaison avec la rawrom, on s'appuie dessus
-        ///     Le Jeu existe peut être en base mais directement avec la rawrom
+        ///     Le Jeu existe peut être en base mais directement avec la rawrom, par contre une fois la rom entrée on ne la verra plus par rapport au différentiel au chargement.
         /// </remarks>
         private void SaveRoms(object sender, ExecutedRoutedEventArgs e)
         {
@@ -1194,17 +1186,19 @@ namespace MyMameHelper.Pages
             using (SQLite_Op sqOp = new SQLite_Op())
             {
                 sqOp.Insert_CollecInGames(gameToAdd);
+                _GamesInDB = sqOp.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, colonnes: new[] { "ID", "Game_Name" }, all: true));
             }
             #endregion
 
 
+
             Debug.WriteLine("Construction des liaisons");
-            /* Construction des liaisons
-             *      Inutile de le faire pour games, on a de toute manière un souci avec les rawroms */ 
+            /* Construction des liaisons 
+             *      On le fait aussi pour les games, puisqu'une fois sauvé on ne verra plus dans la liste ensuite */ 
             for (int i = 0; i < RomsToSave.Count; i++)
             {
                 // Liaison manufacturers
-                var rom = RomsToSave[i];
+                CT_Rom rom = RomsToSave[i];
                 if (rom.Manufacturer.ID == 0)
                 {
                     /*
@@ -1217,7 +1211,16 @@ namespace MyMameHelper.Pages
 
                 }
 
-                
+                // Liaison des games                
+                if (rom.Game.ID == 0)
+                {
+                    var posPar = rom.Description.IndexOf('(');
+                    var gameName = posPar > 0 ? rom.Description.Substring(0, posPar).Trim() : rom.Description;
+
+                    var tmp = _GamesInDB.FirstOrDefault(x => x.Game_Name.Equals(gameName));
+                    rom.Game = tmp;
+                }
+
 
             }
 

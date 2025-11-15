@@ -448,6 +448,7 @@ namespace MyMameHelper.SQLite
                 sqlCmd.CommandText = $"Insert {strIgnore} INTO [{PProp.Default.T_Roms}] (" +
                                         "[Archive_Name], " +
                                         "[Description], " +
+                                        "[Game]," +
                                         "[Unwanted]," +
                                         "[Year], " +
                                         "[Manufacturer], " +
@@ -470,6 +471,7 @@ namespace MyMameHelper.SQLite
                     sqlCmd.CommandText += $"(" +
                                           $"@Archive_Name{j}, " +
                                           $"@Description{j}, " +
+                                          $"@Game{j}, " +
                                           $"@Unwanted{j}, " +
                                           $"@Year{j}, " +
                                           $"@Manufacturer{j}, " +
@@ -479,7 +481,10 @@ namespace MyMameHelper.SQLite
 
                     sqlCmd.Parameters.Add($"@Archive_Name{j}", DbType.String).Value = Roms[i].Archive_Name;
                     sqlCmd.Parameters.Add($"@Description{j}", DbType.String).Value = Roms[i].Description;
-                    sqlCmd.Parameters.Add($"@Year{j}", DbType.String).Value = Roms[i].Year;
+                    // Game
+                    sqlCmd.Parameters.Add($"@Game{j}", DbType.UInt32).Value = Roms[i].Game.ID;
+
+                    sqlCmd.Parameters.Add($"@Year{j}", DbType.String).Value = Roms[i].Year;                    
                     sqlCmd.Parameters.Add($"@Unwanted{j}", DbType.Boolean).Value = Roms[i].Unwanted;
                     //sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.String).Value = Roms[i].Manufacturer;
                     sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.UInt32).Value = Roms[i].Manufacturer.ID;
