@@ -59,7 +59,7 @@ namespace MyMameHelper.Pages
             List<CT_Mechanical> MecasList;
 
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 // Chargement des roms de temp
                 aLoad.AsyncMessage("Loading Temp Roms...");
@@ -376,7 +376,7 @@ namespace MyMameHelper.Pages
         {
             object myArgument = e.Argument;
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 sqReq.UpdateProgress += ((x, y) => sender.SetProgress(y));
 
@@ -492,7 +492,7 @@ namespace MyMameHelper.Pages
             bool res = false;
             if (System.Windows.MessageBox.Show("Reset The Table Containing Temporary Roms ?", "Reset", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                     res = sqReq.Flush_TempRoms();
             }
 

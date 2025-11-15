@@ -36,7 +36,7 @@ namespace MyMameHelper.Windows
             InitializeComponent();
             DataContext = this;
 
-            using(SQLite_Req sqlReq = new SQLite_Req())
+            using(SQLite_Op sqlReq = new SQLite_Op())
             {
                 Constructeurs.ChangeContent = sqlReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(PProp.Default.T_Manufacturers, all:true)); ;
                 Machines.ChangeContent = sqlReq.GetListOf<CT_Machine>(CT_Machine.Result2Class, new Obj_Select(PProp.Default.T_Machines, all:true)); ;

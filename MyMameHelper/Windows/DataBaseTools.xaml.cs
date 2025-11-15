@@ -90,7 +90,7 @@ namespace MyMameHelper.Windows
         {
             try
             {
-                using (SQLite_Req sqRead = new SQLite_Req())
+                using (SQLite_Op sqRead = new SQLite_Op())
                 {
                     // Liste des tables
                     lTables = sqRead.GET_TablesName();
@@ -211,7 +211,7 @@ namespace MyMameHelper.Windows
                 return;
 
             // Liste des machines
-            using (SQLite_Req sqRead = new SQLite_Req())
+            using (SQLite_Op sqRead = new SQLite_Op())
             {
                 SqlCond[] conditions = new SqlCond[] { new SqlCond(colonne: "Constructeurs.ID", eWhere.Equal, selConstructor.ID) };
                 Machines.ChangeContent = sqRead.List_MachinesJoin(conditions);
@@ -229,7 +229,7 @@ namespace MyMameHelper.Windows
             LambdaValue lval = new LambdaValue();
             if (lval.ShowDialog() == true)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     sqReq.Insert_Genre(new CT_Genre() { Nom = lval.Valeur });
                     Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true, orders: new SqlOrder("Nom")));
@@ -254,7 +254,7 @@ namespace MyMameHelper.Windows
             {
                 ctGenre.Nom = lval.Valeur;
 
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     sqReq.Update_Genre(ctGenre);
                     Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true, orders: new SqlOrder("Nom")));
@@ -272,7 +272,7 @@ namespace MyMameHelper.Windows
             CT_Genre ctGenre = (CT_Genre)dgGenres.SelectedItem;
             if (System.Windows.MessageBox.Show($"Remove {ctGenre.Nom} ?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     SqlCond cond = new SqlCond("ID", eWhere.Equal, ctGenre.ID);
                     sqReq.Delete_Genre(new SqlCond[] { cond });
@@ -294,7 +294,7 @@ namespace MyMameHelper.Windows
             LambdaValue lval = new LambdaValue();
             if (lval.ShowDialog() == true)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     sqReq.Insert_Constructeur(new CT_Constructeur() { Nom = lval.Valeur });
                     Constructors.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
@@ -318,7 +318,7 @@ namespace MyMameHelper.Windows
             {
                 ctConst.Nom = lval.Valeur;
 
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     sqReq.Update_Constructeur(ctConst);
                     Constructors.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
@@ -336,7 +336,7 @@ namespace MyMameHelper.Windows
             CT_Constructeur ctConst = (CT_Constructeur)dgConstructors.SelectedItem;
             if (System.Windows.MessageBox.Show($"Remove {ctConst.Nom} ?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     SqlCond cond = new SqlCond("ID", eWhere.Equal, ctConst.ID);
                     sqReq.Delete_Constructor(new SqlCond[] { cond });
@@ -365,7 +365,7 @@ namespace MyMameHelper.Windows
 
             if (wMach.ShowDialog() == true)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     sqReq.Insert_Machine(wMach.Machine);
                     SqlCond condition = new SqlCond("Constructeur", eWhere.Like, wMach.Machine.IDConstructeur);
@@ -396,7 +396,7 @@ namespace MyMameHelper.Windows
 
             if (wMach.ShowDialog() == true)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     /*ctMachine.Nom = lval.MachineName;
                     ctMachine.IDConstructeur = ((CT_Constructeur)lval.SelectedConstructeur).ID;
@@ -423,7 +423,7 @@ namespace MyMameHelper.Windows
 
             if (System.Windows.MessageBox.Show($"Remove {ctMachine.Nom} ?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     SqlCond cond = new SqlCond("ID", eWhere.Equal, ctMachine.ID);
                     sqReq.Delete_Machine(new SqlCond[] { cond });
@@ -439,7 +439,7 @@ namespace MyMameHelper.Windows
             wLinkMachine linkMachine = new wLinkMachine();
             if (linkMachine.ShowDialog() == true)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     var ctMachine = linkMachine.Machine;
                     sqReq.Update_Machine(ctMachine);
@@ -463,7 +463,7 @@ namespace MyMameHelper.Windows
             LambdaValue lval = new LambdaValue();
             if (lval.ShowDialog() == true)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     sqReq.Insert_Companie(new CT_Constructeur() { Nom = lval.Valeur });
                     Manufacturers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
@@ -487,7 +487,7 @@ namespace MyMameHelper.Windows
             {
                 ctManu.Nom = lval.Valeur;
 
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     sqReq.Update_Company(ctManu);
                     Manufacturers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
@@ -506,7 +506,7 @@ namespace MyMameHelper.Windows
 
             if (System.Windows.MessageBox.Show($"Remove {ctManu.Nom} ?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     SqlCond cond = new SqlCond("ID", eWhere.Equal, ctManu.ID);
                     sqReq.Delete_Companie(new SqlCond[] { cond });
@@ -523,7 +523,7 @@ namespace MyMameHelper.Windows
             bool res = false;
             if (System.Windows.MessageBox.Show("Reset The Table Containing Temporary Roms ?", "Reset", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                     res = sqReq.Flush_TempRoms();
             }
 

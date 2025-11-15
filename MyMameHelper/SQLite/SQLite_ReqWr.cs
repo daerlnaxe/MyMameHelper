@@ -18,7 +18,7 @@ using PProp = MyMameHelper.Properties.Settings;
 
 namespace MyMameHelper.SQLite
 {
-    public sealed partial class SQLite_Req
+    public sealed partial class SQLite_Op
     {
 
         #region insertion unique
@@ -119,7 +119,7 @@ namespace MyMameHelper.SQLite
 
         #region insertion de collection
 
-        public void Insert_CollecInGames<T>(ObservableCollection<T> Games) where T : iCT_Games
+        public void Insert_CollecInGames<T>(IList<T> Games) where T : iCT_Games
         {
             uint max = 100;
             Debug.WriteLine($"Insertion de la collection");
@@ -130,7 +130,7 @@ namespace MyMameHelper.SQLite
                 T game = Games[i];
 
                 sqlCmd.CommandText = $"Insert INTO [{PProp.Default.T_Games}] " +
-                                        $"([Game_Name],  [Description], [Roms], [Unwanted],[Machine], [Genre], [IsMahjong], [IsQuizz], [Rate]) " +
+                                        $"([Game_Name],  [Description], [Unwanted],[Machine], [Genre], [IsMahjong], [IsQuizz], [Rate]) " + // J'ai levé Roms, ça n'en fait plus partie
                                         $"VALUES ";
 
                 for (int j = 0; j < max; j++)
@@ -140,7 +140,7 @@ namespace MyMameHelper.SQLite
                     if (j != 0)
                         sqlCmd.CommandText += ", ";
 
-                    sqlCmd.CommandText += $"(@Game_Name{j}, @Description{j}, @Roms{j}, @Unwanted{j},@Machine{j}, @Genre{j}, @IsMahjong{j}, @IsQuizz{j}, @Rate{j})";
+                    sqlCmd.CommandText += $"(@Game_Name{j}, @Description{j}, @Unwanted{j},@Machine{j}, @Genre{j}, @IsMahjong{j}, @IsQuizz{j}, @Rate{j})";// J'ai levé Roms, ça n'en fait plus partie
                     // parametres
                     sqlCmd.Parameters.Add($"@Game_Name{j}", DbType.String).Value = Games[i].Game_Name;
                     sqlCmd.Parameters.Add($"@Description{j}", DbType.String).Value = Games[i].Description;
@@ -151,6 +151,7 @@ namespace MyMameHelper.SQLite
                     sqlCmd.Parameters.Add($"@IsMahjong{j}", DbType.Boolean).Value = Games[i].IsMahjong;
                     sqlCmd.Parameters.Add($"@IsQuizz{j}", DbType.Boolean).Value = Games[i].IsQuizz;
                     // roms
+                    /* Rom est levé
                     string romsString = string.Empty;
                     foreach (CT_Rom rom in Games[i].Roms)
                     {
@@ -160,7 +161,7 @@ namespace MyMameHelper.SQLite
                         romsString += rom.ID;
                     }
 
-                    sqlCmd.Parameters.Add($"@Roms{j}", DbType.String).Value = romsString;
+                    sqlCmd.Parameters.Add($"@Roms{j}", DbType.String).Value = romsString;*/
 
                     // a surveiller si bug
                     if (j < max - 1)

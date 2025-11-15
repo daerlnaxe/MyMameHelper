@@ -129,7 +129,7 @@ namespace MyMameHelper.Pages
             ComboBox cb = (ComboBox)sender;
             int idConstruct = Convert.ToInt32(cb.SelectedValue);
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 Machines.ChangeContent = sqReq.GetListOf(
                    CT_Machine.Result2Class,

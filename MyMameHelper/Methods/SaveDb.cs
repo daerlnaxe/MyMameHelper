@@ -53,7 +53,7 @@ namespace MyMameHelper.Methods
             //get the provided argument as usual
             object myArgument = e.Argument;
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 sqReq.UpdateProgress += ((x, y) => sender.SetProgress(y));
                 sqReq.Insert_CollecInGames(_Games);
@@ -65,7 +65,7 @@ namespace MyMameHelper.Methods
             //get the provided argument as usual
             object myArgument = e.Argument;
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 sqReq.UpdateProgress += ((x, y) => sender.SetProgress(y));
                // sqReq.Insert_CollecInVrac(_Games);

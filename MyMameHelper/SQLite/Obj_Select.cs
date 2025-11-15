@@ -18,6 +18,19 @@ namespace MyMameHelper.SQLite
 
         public string Requete { get; private set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="all"></param>
+        /// <param name="colonnes"></param>
+        /// <param name="conditions"></param>
+        /// <param name="groups"></param>
+        /// <param name="orders"></param>
+        /// <param name="limit"></param>
+        /// <example>
+        /// order: new []{}
+        /// </example>
         public Obj_Select(string table = null, bool all = false, string[] colonnes = null, SqlCond[] conditions = null, string[] groups = null, SqlOrder orders = null, uint? limit = null)
         {
             Table = table;

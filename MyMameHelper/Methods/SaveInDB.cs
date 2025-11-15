@@ -27,7 +27,7 @@ namespace MyMameHelper.Methods
             awP.go += new AsyncWindowProgress.AsyncAction(Insert_AsyncManus);
             awP.ShowDialog();
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 MainWindow.NumberOf_Dev = sqReq.Count(PProp.Default.T_Manufacturers);
                 return true;
@@ -47,7 +47,7 @@ namespace MyMameHelper.Methods
         {
             MyObservableCollection<CT_Constructeur> Manufacturers = (MyObservableCollection<CT_Constructeur>)windows.Arguments[0];
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 sqReq.UpdateProgress += ((x, y) => windows.AsyncUpProgressPercent(y));
                 sqReq.Insert_Manus(Manufacturers, true);

@@ -60,8 +60,10 @@ namespace MyMameHelper.Pages
         /// </summary>
         public MyObservableCollection<CT_Constructeur> Constructeurs { get; set; } = new MyObservableCollection<CT_Constructeur>();
 
+        // A Lever ? 2025
         public MyObservableCollection<CT_Machine> Machines { get; set; } = new MyObservableCollection<CT_Machine>();
 
+        // A lever ? 2025
         public MyObservableCollection<CT_Constructeur> Developers { get; set; } = new MyObservableCollection<CT_Constructeur>();
 
         public MyObservableCollection<CT_Rom> RomsToSave { get; set; } = new MyObservableCollection<CT_Rom>();
@@ -70,7 +72,19 @@ namespace MyMameHelper.Pages
 
         public CT_Constructeur CbDeveloper_Selected { get; set; }
 
+        
+        /// <summary>
+        /// Liste des roms en base
+        /// </summary>
+        /// <remarks>
+        /// Utilisé pour faire le différentiel avec les rawroms.
+        /// </remarks>
         private List<CT_Rom> _RomsInDb;
+
+        /// <summary>
+        /// 2025, utilisé à la sauvegarde
+        /// </summary>
+        private List<CT_Game> _GamesInDB;
 
         private List<RawMameRom> rawRomsDeleted = new List<RawMameRom>();
         //private List<RawMameRom> rawRomsSelected;
@@ -78,6 +92,8 @@ namespace MyMameHelper.Pages
         private List<CT_Rom> romsSelected;
 
         private List<RawMameRom> ListRoms { get; set; }
+
+
 
         public pBuildRoms()
         {
@@ -91,11 +107,12 @@ namespace MyMameHelper.Pages
             if (MessageBox.Show("Load Roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 // Chargement de la table des développeurs
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
-                    Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
+                    //2025 levé Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
                     Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
                     _RomsInDb = sqReq.AffRoms_List();
+                    _GamesInDB = sqReq.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, colonnes: new[] {"ID", "Game_Name"}, all: true   ));
                 }
 
                 // Chargement asynchrone des roms
@@ -116,7 +133,7 @@ namespace MyMameHelper.Pages
             sw.Start();
 
             aLoad.AsyncMessage("Loading Roms...");
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 Obj_Select objSel = new Obj_Select(table: PProp.Default.T_TempRoms, all: true);
 
@@ -1072,7 +1089,7 @@ namespace MyMameHelper.Pages
             ComboBox cb = (ComboBox)sender;
             int idConstruct = Convert.ToInt32(cb.SelectedValue);
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 Machines.ChangeContent = sqReq.GetListOf(
                    CT_Machine.Result2Class,
@@ -1097,6 +1114,9 @@ namespace MyMameHelper.Pages
         /// <param name="e"></param>
         /// <remarks>
         /// Sémantiquement parlant on part du principe d'amener les questions une par une mais d'interrompre le processus si la chaine n'est pas validée.
+        /// Les manufacturers et les jeux ont deux logiques différentes.
+        ///     Le manufacturer existe en liaison avec la rawrom, on s'appuie dessus
+        ///     Le Jeu existe peut être en base mais directement avec la rawrom
         /// </remarks>
         private void SaveRoms(object sender, ExecutedRoutedEventArgs e)
         {
@@ -1104,6 +1124,8 @@ namespace MyMameHelper.Pages
 
             // Sauvegarde des manufactureurs manquant
             List<CT_Constructeur> manuToAdd = new List<CT_Constructeur>();
+
+            // Sauvegarde des jeux manquants
             List<CT_Game> gameToAdd = new List<CT_Game>();
 
             //
@@ -1126,7 +1148,8 @@ namespace MyMameHelper.Pages
                 var gameName = posPar > 0 ? rom.Description.Substring(0, posPar).Trim() : rom.Description;
                 Debug.WriteLine(gameName);
 
-                if (gameToAdd.FirstOrDefault(x => x.Game_Name.Equals( gameName)) == null)
+                // Vérification pour éviter les doublons dans les gamesToAdd  + jeux en base (_GamesInDB). 
+                if (gameToAdd.FirstOrDefault(x => x.Game_Name.Equals(gameName)) == null && _GamesInDB.FirstOrDefault(x => x.Game_Name.Equals(gameName))== null  )
                 {
                     gameToAdd.Add(
                         new CT_Game
@@ -1135,9 +1158,12 @@ namespace MyMameHelper.Pages
                         });
                 }
             }
+            #endregion Etat des lieux
 
+
+
+            #region Sauvegarde des constructeurs
             Debug.WriteLine("Ajout des constructeurs");
-            // Sauvegarde des constructeurs
             if (manuToAdd.Count > 0)
             {
                 if (MessageBox.Show("Would you want to save missing manufacturers. Refusing it, will stop all the process.", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -1147,7 +1173,7 @@ namespace MyMameHelper.Pages
 
 
                     // Mise à jour de la liste des constructeurs
-                    using (SQLite_Req sqReq = new SQLite_Req())
+                    using (SQLite_Op sqReq = new SQLite_Op())
                     {
                         Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
                     }
@@ -1158,21 +1184,23 @@ namespace MyMameHelper.Pages
                 }
 
             }
+            #endregion Sauvegarde des constructeurs
 
-            #endregion Constructeur
+
 
 
             #region Games
-            /*for (int i = 0; i < RomsToSave.Count; i++)
+            // Ajout de la collection.
+            using (SQLite_Op sqOp = new SQLite_Op())
             {
-                CT_Rom rom = RomsToSave[i];
-                
-            }*/
+                sqOp.Insert_CollecInGames(gameToAdd);
+            }
             #endregion
 
 
-            Debug.WriteLine("Construction de la liaison");
-            // Construction de la liaison
+            Debug.WriteLine("Construction des liaisons");
+            /* Construction des liaisons
+             *      Inutile de le faire pour games, on a de toute manière un souci avec les rawroms */ 
             for (int i = 0; i < RomsToSave.Count; i++)
             {
                 // Liaison manufacturers
@@ -1189,7 +1217,7 @@ namespace MyMameHelper.Pages
 
                 }
 
-
+                
 
             }
 
@@ -1252,7 +1280,7 @@ namespace MyMameHelper.Pages
 
             // Sauvegarde des roms parents
             List<CT_Rom> sParentsRoms = null;
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 sqReq.UpdateProgress += ((x, y) => window.AsyncUpProgressPercent(y));
 
@@ -1271,7 +1299,7 @@ namespace MyMameHelper.Pages
             }
 
             // Sauvegarde des roms enfants
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 sqReq.UpdateProgress += ((x, y) => window.AsyncUpProgressPercent(y));
                 window.AsyncMessage("Insertion of Children Roms");

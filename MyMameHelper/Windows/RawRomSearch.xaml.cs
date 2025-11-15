@@ -52,7 +52,7 @@ namespace MyMameHelper.Windows
             InitializeComponent();
             DataContext = this;
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 Obj_Select objDev = new Obj_Select(PProp.Default.T_TempRoms, colonnes: new string[] { "Manufacturer" }, groups: new string[] { "Manufacturer" }, conditions: new SqlCond[] { new SqlCond("Manufacturer", eWhere.Not_Like, "Null" ) });
                 Developers.ChangeContent = sqReq.GetStringOf(objDev);
@@ -138,7 +138,7 @@ namespace MyMameHelper.Windows
             SqlCond[] sqlConds = conditions.Count == 0 ? null : conditions.ToArray();
 
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 Obj_Select objSel = new Obj_Select(PProp.Default.T_TempRoms, all: true, conditions: sqlConds, orders: new SqlOrder(new string[] { "Name" }));
                 RomsFound.ChangeContent = sqReq.GetListOf<RawMameRom>(RawMameRom.Result2Class, objSel);

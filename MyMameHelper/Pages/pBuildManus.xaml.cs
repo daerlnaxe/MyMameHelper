@@ -44,7 +44,7 @@ namespace MyMameHelper.Pages
                 List<RawMameRom> gDev = new List<RawMameRom>();
                 List<CT_Constructeur> companies;
 
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     #region Collection of Devs
                     Obj_Select obsDev = new Obj_Select(PProp.Default.T_Manufacturers, all: true);

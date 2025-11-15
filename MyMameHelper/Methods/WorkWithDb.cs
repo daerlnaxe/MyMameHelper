@@ -25,7 +25,7 @@ namespace MyMameHelper.Methods
             {
 
                 List<CT_Game> gamesSaved;
-                using (SQLite_Req sqReq = new SQLite_Req())
+                using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     gamesSaved = sqReq.Get_ListOf_Games(new Obj_Select(all:true));
                 }

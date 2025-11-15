@@ -18,7 +18,7 @@ namespace MyMameHelper.SQLite
     /// <summary>
     /// ??, ouvrir une connexion
     /// </summary>
-    public sealed partial class SQLite_Req
+    public sealed partial class SQLite_Op
     {
         #region commun
         string tManufacturer = PProp.Default.T_Manufacturers;
@@ -486,12 +486,8 @@ namespace MyMameHelper.SQLite
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="method">Methode d'interprétation des données</param>
-        /// <param name="table">Table à interroger</param>
-        /// <param name="All">A activer, en laissant les colonnes vides pour récupérer toutes les colonnes</param>
-        /// <param name="colonnes">Colonnes dont on veut la valeur</param>
-        /// <param name="conditions">Conditions de la requête (Where)</param>
-        /// <param name="groups">Groupe de la requête (Group by)</param>
-        /// <remarks>Filtre les nulls</remarks>
+        /// <param name="objSelect">L'objet qui va lancer la requête</param>
+        /// <remarks>Filtre les nulls?</remarks>
         /// <returns></returns>
         public List<T> GetListOf<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect)
         {
@@ -526,6 +522,7 @@ namespace MyMameHelper.SQLite
 
             return lCollec;
         }
+
 
         /// <summary>
         /// 

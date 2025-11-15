@@ -22,6 +22,11 @@ namespace MyMameHelper.ContTable
             Nom = n;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dico"></param>
+        /// <returns></returns>
         public static CT_Constructeur Result2Class(Dictionary<string, object> dico)
         {
             CT_Constructeur cTC = new CT_Constructeur();

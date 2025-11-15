@@ -12,7 +12,7 @@ using PProp = MyMameHelper.Properties.Settings;
 
 namespace MyMameHelper.SQLite
 {
-    public sealed partial class SQLite_Req
+    public sealed partial class SQLite_Op
     {
 
         public void Delete_Game(SqlCond[] conditions)

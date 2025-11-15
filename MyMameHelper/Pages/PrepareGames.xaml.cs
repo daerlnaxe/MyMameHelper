@@ -455,7 +455,7 @@ namespace MyMameHelper.Pages
             if (Games.Count > 0 && MessageBox.Show("The collection is not empty, load db ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 Obj_Select objS = new Obj_Select(table: PProp.Default.T_TempRoms, all: true);
                 Games.ChangeContent = sqReq.GetListOf<CT_Game>(CT_Game.Result2Class, objS);

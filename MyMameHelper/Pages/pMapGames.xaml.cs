@@ -104,7 +104,7 @@ namespace MyMameHelper.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             // Chargement 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 /*Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
                 /*Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));*/
@@ -139,7 +139,7 @@ namespace MyMameHelper.Pages
             List<CT_Game> games = new List<CT_Game>();
 
             aLoad.AsyncMessage("Loading Roms...");
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 SQLiteDataReader reader = sqReq.SimpleGames_SQL();
 
@@ -173,7 +173,7 @@ namespace MyMameHelper.Pages
         private void AsyncLoadMapGames(AsyncWindowProgress aLoad)
         {
             aLoad.AsyncMessage("Loading Roms...");
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 _Tmp = sqReq.Build4Game_List();
 
@@ -188,7 +188,7 @@ namespace MyMameHelper.Pages
         /// <param name="value"></param>
         private void Add_GameOnDB(string value)
         {
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 sqReq.Insert_Game(
                     new CT_Game()

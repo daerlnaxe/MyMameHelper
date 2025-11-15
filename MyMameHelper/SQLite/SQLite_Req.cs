@@ -14,7 +14,7 @@ using System.Windows;
 
 namespace MyMameHelper.SQLite
 {
-    public sealed partial class SQLite_Req : IDisposable
+    public sealed partial class SQLite_Op : IDisposable
     {
         internal const string MOT_DE_PASSE = @"jw9s4X#7~S4#4P-y65_Sk-k@GmWG}y3r~V7e476-:DC-4VxgpB";
         public delegate void SendIntValue(object sender, int value);
@@ -33,7 +33,7 @@ namespace MyMameHelper.SQLite
         /// <param name="mot_de_passe"></param>
         /// <returns></returns>
         // todo: voir pour un nombre de tentatives
-        public SQLite_Req()
+        public SQLite_Op()
         {
             // Vérification de l'existance du fichier
             if (!File.Exists(Settings.Default.DataBase_Path))

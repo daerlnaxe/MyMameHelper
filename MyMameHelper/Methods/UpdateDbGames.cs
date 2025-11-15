@@ -34,7 +34,7 @@ namespace MyMameHelper.Methods
 
         private void Update_DoWork(ProgressWindow sender, DoWorkEventArgs e)
         {
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 sqReq.UpdateProgress += ((x, y) => sender.SetProgress(y));
                 sqReq.Update_Games<T>(_Games);

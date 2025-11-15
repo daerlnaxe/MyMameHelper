@@ -142,7 +142,7 @@ namespace MyMameHelper
 
             DataContext = this;
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 NumberOf_TempRoms = sqReq.Count(PProp.Default.T_TempRoms);
                 NumberOf_Dev = sqReq.Count(PProp.Default.T_Developers);
@@ -169,7 +169,7 @@ namespace MyMameHelper
 
         private bool TestTable()
         {
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 if (sqReq.Check_Table(PProp.Default.T_TempRoms) != true)
                     return false;

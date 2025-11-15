@@ -317,7 +317,7 @@ namespace MyMameHelper.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             // Récupération des machines
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
                 List<Aff_Machine> truite = sqReq.List_MachinesJoin();
                 dicMachines = truite.ToDictionary(x => x.ID, x => x);
