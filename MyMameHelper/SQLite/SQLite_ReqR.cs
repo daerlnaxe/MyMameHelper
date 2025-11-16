@@ -933,19 +933,155 @@ namespace MyMameHelper.SQLite
 
         #region AffGames
 
+
+        /// <summary>
+        /// Request to have a list of roms with jointure on games.
+        /// </summary>
+        /// <param name="conds"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        internal SQLiteDataReader AffGames_SQL(SqlCond[] conds, SqlOrder order)
+        {
+            //string constructeurs = PProp.Default.T_Constructeurs;
+
+
+            Dictionary<string, short> dicCol;
+            //string sql = $"SELECT [{tRoms}]*, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
+            string sql = $"SELECT [{tRom}].*,[{tGame}].Game_Name,  [{tManufacturer}].Nom AS Aff_Machine" +
+                            $" FROM [{tRom}]" +
+                            $" LEFT JOIN [{tManufacturer}] ON [{tRom}].Manufacturer = [{tManufacturer}].ID" +
+                            $" LEFT  JOIN [{tGame}] ON [{tGame}].ID = [{tRom}].Game";
+            /*$"LEFT JOIN [{tMachine}] ON Machine = [{tMachine}].ID " +
+            $"LEFT JOIN [{tGenre}] ON Genre = [{tGenre}].ID " +*/
+
+
+
+            SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
+            Condition_TreatMt(sqlCMD, conds);
+            Order_TreatMt(sqlCMD, order);
+
+            Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");
+
+            try
+            {
+                return sqlCMD.ExecuteReader();
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine(exc.Message);
+                return null;
+            }
+
+
+        }
+
+
+
+        /// <summary>
+        /// Request to have a list of roms with jointure on games.
+        /// </summary>
+        /// <param name="conds"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        internal SQLiteDataReader GameWithRoms_SQL(SqlCond[] conds, SqlOrder order)
+        {                        
+            Dictionary<string, short> dicCol;
+            //string sql = $"SELECT [{tRoms}]*, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
+            string sql = $"SELECT [{tGame}].ID, [{tGame}].Game_Name  , " +
+                //$"(SELECT group_concat([{tRom}].Archive_Name, '|') " +
+                $"(SELECT group_concat(Roms.ID || '♢' || Roms.Archive_Name, '|')" + 
+                    $"FROM [{tRom}] " +
+                    $"WHERE [{tRom}].Game=[{tGame}].ID) AS \"Roms\"" +
+                $" FROM [{tGame}]";
+            
+            
+
+
+
+            SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
+            Condition_TreatMt(sqlCMD, conds);
+            Order_TreatMt(sqlCMD, order);
+
+            Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");
+
+            try
+            {
+                return sqlCMD.ExecuteReader();
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine(exc.Message);
+                return null;
+            }
+
+
+        }
+
+
+        /// <summary>
+        /// Get a list with roms
+        /// </summary>
+        /// <remarks>
+        /// Need a request with roms separated by '|'
+        /// </remarks>
+        /// <returns></returns>
+        internal List<CT_Game> QueryGameWithRoms()
+        {
+            List<CT_Game> lGames = new List<CT_Game>();
+            SQLiteDataReader reader = GameWithRoms_SQL(null, null);
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    CT_Game game = new CT_Game() { };
+
+                    game.ID = Trans.GetUInt("ID", reader);
+                    game.Game_Name = Trans.GetString("Game_Name", reader);
+
+                    //Roms
+                    var strRoms = Trans.GetString("Roms", reader);
+                    if (strRoms != null)
+                    {
+                        List<CT_Rom> tmp = new List<CT_Rom>();
+
+                        var arrTmp = strRoms.Split('|');
+                        for (int i = 0; i < arrTmp.Length; i++)
+                        {
+                            string[] curr = arrTmp[i].Split('♢');
+
+                            tmp.Add(
+                                new CT_Rom()
+                                {
+                                    ID = uint.Parse(curr[0]),
+                                    Archive_Name = curr[1]
+                                }
+                            );
+                        }
+
+                        game.Roms = tmp;
+                    }
+
+
+
+                    lGames.Add(game);
+                }
+            }
+
+            return lGames;
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         /// <remarks>
-        /// Il n'y a pas de mise en forme complexe, on reste basique car il va y avoir énormément de null.
-        /// Si je mets toutes les roms sur la ligne des games, je vais avoir 2km... Ca offre un intérêt que pour une vue déjà construire, pas au build.
-        /// Il serait selon possible de grouper les roms selon le parent mais c'est couteux et pas super utile.
         /// </remarks>
-        internal List<Map_RomGame> Build4Game_List()
+        internal List<Map_RomGame> Build4Game_List()        
         {
-            List<Map_RomGame> lGames = new List<Map_RomGame>();
+            List<Map_RomGame> lGames = new List<Map_RomGame>();            
             SQLiteDataReader reader = AffGames_SQL(null, null);
 
             if (reader.HasRows)
@@ -960,7 +1096,7 @@ namespace MyMameHelper.SQLite
                        
                     };
                     mr.ID = Trans.GetUInt("ID", reader);
-                    mr.Archive_Name = Trans.GetString("Archive_Name", reader);
+                    //mr.Archive_Name = Trans.GetString("Archive_Name", reader);
                     mr.Game_Name = Trans.GetString("Game_Name", reader);
                     
 
@@ -1033,47 +1169,6 @@ namespace MyMameHelper.SQLite
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="conds"></param>
-        /// <param name="order"></param>
-        /// <returns></returns>
-        internal SQLiteDataReader AffGames_SQL(SqlCond[] conds, SqlOrder order)
-        {
-            //string constructeurs = PProp.Default.T_Constructeurs;
-            string tManufacturer = PProp.Default.T_Manufacturers;            
-
-
-            Dictionary<string, short> dicCol;
-            //string sql = $"SELECT [{tRoms}]*, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
-            string sql = $"SELECT [{tRom}].*,[{tGame}].Game_Name,  [{tManufacturer}].Nom AS Aff_Machine" +
-                            $" FROM [{tRom}]" +
-                            $" LEFT JOIN [{tManufacturer}] ON [{tRom}].Manufacturer = [{tManufacturer}].ID" + 
-                            $" LEFT  JOIN [{tGame}] ON [{tGame}].ID = [{tRom}].Game";
-            /*$"LEFT JOIN [{tMachine}] ON Machine = [{tMachine}].ID " +
-            $"LEFT JOIN [{tGenre}] ON Genre = [{tGenre}].ID " +*/
-
-
-
-            SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
-            Condition_TreatMt(sqlCMD, conds);
-            Order_TreatMt(sqlCMD, order);
-
-            Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");
-
-            try
-            {
-                return sqlCMD.ExecuteReader();
-            }
-            catch (Exception exc)
-            {
-                Console.WriteLine(exc.Message);
-                return null;
-            }
-
-
-        }
 
         private Aff_Game AffGame_Maker(SQLiteDataReader reader)
         {
@@ -1191,13 +1286,11 @@ namespace MyMameHelper.SQLite
         private SQLiteDataReader AffRoms_SQL(SqlCond[] conds, SqlOrder order)
         {
             //string constructeurs = PProp.Default.T_Constructeurs;
-            string tManufacturers = PProp.Default.T_Manufacturers;            
-            
 
             Dictionary<string, short> dicCol;
-            string sql = $"SELECT [{tRom}].*, [{tManufacturers}].Nom AS Aff_Manufacturer " +
+            string sql = $"SELECT [{tRom}].*, [{tManufacturer}].Nom AS Aff_Manufacturer " +
                             $"FROM [{tRom}] " +
-                            $"LEFT JOIN [{tManufacturers}] ON Manufacturer = [{tManufacturers}].ID " +
+                            $"LEFT JOIN [{tManufacturer}] ON Manufacturer = [{tManufacturer}].ID " +
 
                            "";
 

@@ -9,13 +9,9 @@ using System.Threading.Tasks;
 
 namespace MyMameHelper.ContTable
 {
-    public class CT_Game : M_TypeRom, IEquatable<CT_Game>, INotifyPropertyChanged, iCT_Games
+    public class CT_Game : M_GameType, IEquatable<CT_Game>,  iCT_Games
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+
 
         public uint ID { get; set; }
 

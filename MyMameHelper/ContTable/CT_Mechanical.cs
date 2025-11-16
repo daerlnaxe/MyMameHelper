@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyMameHelper.ContTable
 {
-    public class CT_Mechanical : M_TypeRom
+    public class CT_Mechanical : M_GameType
     {
         public uint ID { get; set; }
 

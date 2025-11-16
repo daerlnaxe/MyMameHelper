@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -36,9 +37,11 @@ namespace MyMameHelper.Pages
         }
 
 
-
-        private List<Map_RomGame> _RomsToMap = new List<Map_RomGame>();
-        public List<Map_RomGame> RomsToMap
+        /// <summary>
+        /// Liste des roms à mapper
+        /// </summary>
+        private List<CT_Game> _RomsToMap = new List<CT_Game>();
+        public List<CT_Game> RomsToMap
         {
             get => _RomsToMap;
             set
@@ -49,9 +52,36 @@ namespace MyMameHelper.Pages
         }
 
 
-        public List<Map_RomGame> SelectedRoms {  get; set; }
+        /// <summary>
+        /// Roms Sélectionnées
+        /// </summary>
+        /// <remarks>
+        /// Change en fonction de l'event sur le datagrid
+        /// </remarks>
+        public List<CT_Game> SelectedRoms { get; set; }
 
 
+
+        public ObservableCollection<CT_Rom> OrpheanRoms { get; set; } = new ObservableCollection<CT_Rom>();
+
+        private CT_Rom _SelectedOrpheanRom;
+        public CT_Rom SelectedOrpheanRom 
+        {
+            get => _SelectedOrpheanRom;
+            set
+            {
+                if(value != _SelectedOrpheanRom)
+                {
+                    _SelectedOrpheanRom = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Liste des jeux
+        /// </summary>
         private List<CT_Game> _Games;
         public List<CT_Game> Games
         {
@@ -67,7 +97,26 @@ namespace MyMameHelper.Pages
         }
 
 
-        public CT_Game GameSelected { get; set; }
+        /// <summary>
+        /// Jeu Selectionné dans la ListBox
+        /// </summary>
+        private CT_Game _SelectedGame;
+        public CT_Game SelectedGame
+        {
+            get => _SelectedGame;
+            set
+            {
+                if (value != _SelectedGame)
+                {
+                    _SelectedGame = value;
+                    OnPropertyChanged();
+                }
+
+            }
+        }
+
+
+
 
 
 
@@ -98,8 +147,9 @@ namespace MyMameHelper.Pages
             DataContext = this;
         }
 
-
-        private List<Map_RomGame> _Tmp;
+        //
+        //private List<Map_RomGame> _Tmp;
+        private List<CT_Game> _Tmp;
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
@@ -119,11 +169,13 @@ namespace MyMameHelper.Pages
                 AsyncWindowProgress aLoad = new AsyncWindowProgress();
                 aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoadMapGames);
                 aLoad.ShowDialog();
-                RomsToMap = _Tmp.ToList();
+                RomsToMap = _Tmp;
 
-                aLoad = new AsyncWindowProgress();
+
+                // Charement asynchrone des jeux
+                /*aLoad = new AsyncWindowProgress();
                 aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoadGames);
-                aLoad.ShowDialog();
+                aLoad.ShowDialog();*/
                 //OnPropertyChanged("Games");
             }
         }
@@ -175,7 +227,7 @@ namespace MyMameHelper.Pages
             aLoad.AsyncMessage("Loading Roms...");
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                _Tmp = sqReq.Build4Game_List();
+                _Tmp = sqReq.QueryGameWithRoms();
 
 
             }
@@ -206,21 +258,75 @@ namespace MyMameHelper.Pages
 
         private void RomsSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DataGrid grid = (DataGrid)sender;
-            SelectedRoms = grid.SelectedItems.Cast<Map_RomGame>().ToList();
+            ListBox grid = (ListBox)sender;
+            SelectedRoms = grid.SelectedItems.Cast<CT_Game>().ToList();
+        }
 
+        private void ListBoxItem_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ListBoxItem item = (ListBoxItem)sender;
+            SelectedGame = (CT_Game)item.DataContext;
 
         }
+
+
+
 
         private void Assign_Game(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < Games.Count; i++) 
-            { 
+
+            throw new Exception("deprecated ? ");
+            for (int i = 0; i < Games.Count; i++)
+            {
                 var game = Games[i];
 
-                game.Game_Name = GameSelected.Game_Name;
-                game.ID = GameSelected.ID;
+                //game.Game_Name = Gam.Game_Name;
+                //                game.ID = GameSelected.ID;
             }
         }
+
+
+        #region Roms
+        private void RemoveRom_Click(object sender, RoutedEventArgs e)
+        {
+            Button bt = (Button)sender;
+
+            List<CT_Rom> tmp = new List<CT_Rom>();
+            for (int i = 0; i < SelectedGame.Roms.Count; i++)
+            {
+                //foreach (var rom in SelectedGame.Roms)
+                {
+                    CT_Rom rom = SelectedGame.Roms[i];
+                    if (rom.ID != uint.Parse(bt.Tag.ToString()))
+                    {
+                        tmp.Add(rom);
+                    }
+                    else
+                    {
+                        OrpheanRoms.Add(rom);
+                    }
+                }
+            }
+            SelectedGame.Roms = tmp;
+        }
+
+        private void AddRom_Click(object sender, RoutedEventArgs e)
+        {
+            var tmp = new List<CT_Rom> (SelectedGame.Roms);
+            
+            //
+            tmp.Add(SelectedOrpheanRom);
+
+
+
+
+            SelectedGame.Roms = tmp;    
+
+
+            OrpheanRoms.Remove(SelectedOrpheanRom); 
+        }
+        #endregion Roms
+
+
     }
 }

@@ -10,36 +10,88 @@
 
     <DockPanel>
 
-        <!-- Roms -->
-        <DataGrid x:Name="lvRomsToMap"  ItemsSource="{Binding RomsToMap}" SelectionChanged="RomsSelectionChanged"  IsReadOnly="True" AutoGenerateColumns="False"  SelectionMode="Extended">
-            <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <!--MenuItem Header="Add To Selected" Command="commands:UICommands.SwapLeft2Right" />
-                    <MenuItem Header="Reset"  Command="commands:UICommands.ResetLeft"/-->
-                </ContextMenu>
-            </DataGrid.ContextMenu>
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Archive Name" Binding="{Binding Archive_Name}" SortDirection="Ascending"/>
-                <DataGridTextColumn Header="Game Name" Binding="{Binding Game_Name}"/>
-                <!--DataGridTextColumn Header="Description (Rom)" Binding="{Binding Description}"/>
-                <DataGridTextColumn Header="Year" Binding="{Binding Year}"/>
-                <DataGridTextColumn Header="Manufacturer" Binding="{Binding Aff_Machine}"/-->
-                
-                <!-- Data Grid customs -->
-                <!--pas possibleDataGridTemplateColumn Header="Roms">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <ItemsControl ItemsSource="{Binding Roms}">
-                            </ItemsControl>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn-->
-            </DataGrid.Columns>
+        <!-- Game Listbox -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" MinHeight="500" MinWidth="200">
+            <ListBox ItemsSource="{Binding RomsToMap}" SelectedItem="{Binding SelectedGame}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <EventSetter Event="MouseEnter" Handler="ListBoxItem_MouseEnter"/>
+                        <!--EventSetter Event="MouseLeave" Handler="ListBoxItem_MouseLeave"/-->
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="5">
+                            <!-- Affichage du Game -->
+                            <TextBlock Text="{Binding Game_Name}" FontWeight="Bold" FontSize="14" MinWidth="300"/>
 
-        </DataGrid>
+
+                            <!-- Liste des ROMs pour ce Game -->
+                            <ItemsControl ItemsSource="{Binding Roms}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal" Width="500"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5"  Margin="3">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Archive_Name}" Grid.Row="1" Grid.ColumnSpan="2" Padding="2"/>
+                                                <!-- Bouton custom -->
+                                                <Button Content="x" Width="14" Height="14" FontSize="8"
+                                                    Padding="2" Margin="2" 
+                                                    VerticalAlignment="Center" HorizontalAlignment="Right"
+                                                    Click="RemoveRom_Click"  Tag="{Binding ID}"  >
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}"
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="1"
+                                                                CornerRadius="2">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+        <!-- Game Listbox -->
+
 
 
         <StackPanel DockPanel.Dock="Right" >
+            <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="{Binding SelectedGame.Game_Name}" Grid.ColumnSpan="2"/>
+                    <TextBlock Text="{Binding OrpheanRoms.Count, StringFormat='Nombre de roms orphelines: {0}'}" Grid.Row="1"/>
+                    <!-- Add a Rom -->
+                    <TextBlock Text="Add a Rom:" Grid.Row="2"/>
+                    <ComboBox ItemsSource="{Binding OrpheanRoms}" DisplayMemberPath="Archive_Name" Grid.Row="2" Grid.Column="1" SelectedItem="{Binding SelectedOrpheanRom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEditable="False"/>
+                    <Button Content="Go" Click="AddRom_Click" Grid.Row="2" Grid.Column="2"/>
+                </Grid>
+            </Border>
+
             <!-- Add - We add a new game in the list -->
             <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5" >
                 <StackPanel Orientation="Horizontal">

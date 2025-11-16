@@ -124,3 +124,12 @@ Dans l'intérêt de l'utilisateur, si l'on part sur lister les jeux:
 - Au build de rom faire un pseudo build de games basé sur la description (until `()`)
 - Au map to game je récupère les roms avec une jonction valide sinon rien.
 - Je récupère une liste à droite qui contient les roms non linkées
+
+<br>
+<br>
+
+# Requêtes
+## Concaténation des roms avec subselect
+``` SQL
+SELECT Games.Game_Name  , (SELECT group_concat(Roms.Archive_Name, '|') FROM Roms WHERE Roms.Game=Games.ID) AS "Roms" FROM GAMES 
+```
