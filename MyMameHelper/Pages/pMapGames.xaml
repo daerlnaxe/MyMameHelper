@@ -37,7 +37,7 @@
                                     <DataTemplate>
                                         <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5"  Margin="3">
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Archive_Name}" Grid.Row="1" Grid.ColumnSpan="2" Padding="2"/>
+                                                <TextBlock Text="{Binding Archive_Name}" ToolTip="{Binding Description}" Grid.Row="1" Grid.ColumnSpan="2" Padding="2"/>
                                                 <!-- Bouton custom -->
                                                 <Button Content="x" Width="14" Height="14" FontSize="8"
                                                     Padding="2" Margin="2" 
@@ -87,7 +87,17 @@
                     <TextBlock Text="{Binding OrpheanRoms.Count, StringFormat='Nombre de roms orphelines: {0}'}" Grid.Row="1"/>
                     <!-- Add a Rom -->
                     <TextBlock Text="Add a Rom:" Grid.Row="2"/>
-                    <ComboBox ItemsSource="{Binding OrpheanRoms}" DisplayMemberPath="Archive_Name" Grid.Row="2" Grid.Column="1" SelectedItem="{Binding SelectedOrpheanRom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEditable="False"/>
+                    <ComboBox ItemsSource="{Binding OrpheanRoms}" Grid.Row="2" Grid.Column="1" SelectedItem="{Binding SelectedOrpheanRom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                              IsEditable="False">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Archive_Name}"/>
+                                    <TextBlock Text="{Binding Description, StringFormat=' | {0}'}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                     <Button Content="Go" Click="AddRom_Click" Grid.Row="2" Grid.Column="2"/>
                 </Grid>
             </Border>

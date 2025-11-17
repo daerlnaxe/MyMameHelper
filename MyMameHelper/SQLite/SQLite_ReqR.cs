@@ -989,7 +989,7 @@ namespace MyMameHelper.SQLite
             //string sql = $"SELECT [{tRoms}]*, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
             string sql = $"SELECT [{tGame}].ID, [{tGame}].Game_Name  , " +
                 //$"(SELECT group_concat([{tRom}].Archive_Name, '|') " +
-                $"(SELECT group_concat(Roms.ID || '♢' || Roms.Archive_Name, '|')" + 
+                $"(SELECT group_concat(Roms.ID || '♢' || Roms.Archive_Name || '♢' || Roms.Description, '|')" + 
                     $"FROM [{tRom}] " +
                     $"WHERE [{tRom}].Game=[{tGame}].ID) AS \"Roms\"" +
                 $" FROM [{tGame}]";
@@ -1054,7 +1054,8 @@ namespace MyMameHelper.SQLite
                                 new CT_Rom()
                                 {
                                     ID = uint.Parse(curr[0]),
-                                    Archive_Name = curr[1]
+                                    Archive_Name = curr[1],
+                                    Description = curr[2]
                                 }
                             );
                         }
