@@ -518,6 +518,11 @@ namespace MyMameHelper.Windows
         }
         #endregion
 
+        /// <summary>
+        /// Remise à zero des roms temporaires
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Reset_TempRoms_Click(object sender, RoutedEventArgs e)
         {
             bool res = false;
@@ -531,6 +536,12 @@ namespace MyMameHelper.Windows
                 System.Windows.MessageBox.Show("Table Flushed");
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UpdateDB(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog ofD = new OpenFileDialog();

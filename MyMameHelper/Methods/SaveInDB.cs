@@ -46,7 +46,7 @@ namespace MyMameHelper.Methods
         internal static void Insert_AsyncManus(AsyncWindowProgress windows)
         {
             // probleme problème
-            MyObservableCollection<CT_Constructeur> Manufacturers = (MyObservableCollection<CT_Constructeur>)windows.Arguments[0];
+            List<CT_Constructeur> Manufacturers = (List<CT_Constructeur>)windows.Arguments[0];
 
             using (SQLite_Op sqReq = new SQLite_Op())
             {

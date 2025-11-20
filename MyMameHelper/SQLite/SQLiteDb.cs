@@ -194,7 +194,7 @@ namespace MyMameHelper.SQLite
             // roms
             AlterTable($"ALTER TABLE [{tRoms}] ADD [Description] VARCHAR;");
             #region Nouveau système, c'est ici qu'on va lier à games
-            AlterTable($"ALTER TABLE [{tRoms}] ADD [Game] INTEGER;");
+            AlterTable($"ALTER TABLE [{tRoms}] ADD [Game_Id] INTEGER;");
             #endregion
             AlterTable($"ALTER TABLE [{tRoms}] ADD [Year] VARCHAR;");
             AlterTable($"ALTER TABLE [{tRoms}] ADD [Manufacturer] INTEGER;");

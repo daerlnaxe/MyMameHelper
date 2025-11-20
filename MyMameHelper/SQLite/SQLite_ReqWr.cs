@@ -296,7 +296,7 @@ namespace MyMameHelper.SQLite
         /// Insère une collection de manufacturers
         /// </summary>
         /// <param name=""></param>
-        public void Insert_Manus(ObservableCollection<CT_Constructeur> manufacturers, bool ignore)
+        public void Insert_Manus(IList<CT_Constructeur> manufacturers, bool ignore)
         {
             uint max = 50;
             Debug.WriteLine($"Insertion de la collection de manufactureurs");
@@ -448,7 +448,7 @@ namespace MyMameHelper.SQLite
                 sqlCmd.CommandText = $"Insert {strIgnore} INTO [{PProp.Default.T_Roms}] (" +
                                         "[Archive_Name], " +
                                         "[Description], " +
-                                        "[Game]," +
+                                        "[Game_Id]," +
                                         "[Unwanted]," +
                                         "[Year], " +
                                         "[Manufacturer], " +
@@ -471,7 +471,7 @@ namespace MyMameHelper.SQLite
                     sqlCmd.CommandText += $"(" +
                                           $"@Archive_Name{j}, " +
                                           $"@Description{j}, " +
-                                          $"@Game{j}, " +
+                                          $"@Game_Id{j}, " +
                                           $"@Unwanted{j}, " +
                                           $"@Year{j}, " +
                                           $"@Manufacturer{j}, " +
@@ -482,7 +482,7 @@ namespace MyMameHelper.SQLite
                     sqlCmd.Parameters.Add($"@Archive_Name{j}", DbType.String).Value = Roms[i].Archive_Name;
                     sqlCmd.Parameters.Add($"@Description{j}", DbType.String).Value = Roms[i].Description;
                     // Game
-                    sqlCmd.Parameters.Add($"@Game{j}", DbType.UInt32).Value = Roms[i].Game.ID;
+                    sqlCmd.Parameters.Add($"@Game_Id{j}", DbType.UInt32).Value = Roms[i].Game.ID;
 
                     sqlCmd.Parameters.Add($"@Year{j}", DbType.String).Value = Roms[i].Year;                    
                     sqlCmd.Parameters.Add($"@Unwanted{j}", DbType.Boolean).Value = Roms[i].Unwanted;
@@ -602,7 +602,7 @@ namespace MyMameHelper.SQLite
         /// <remarks> clone et isparent ont été levés</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="Roms"></param>
-        public void Update_Roms<T>(ObservableCollection<T> Roms) where T : iCT_Rom
+        public void Update_Roms<T>(IList<T> Roms) where T : iCT_Rom
         {
             Debug.WriteLine($"Update de la collection");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
@@ -616,6 +616,7 @@ namespace MyMameHelper.SQLite
                                         $"SET " +
                                         $"[Archive_Name]=@Archive_Name, " +
                                         $"[Description]=@Description, " +
+                                        $"[Game_Id]=@Game_Id, "+
                                         $"[Year]=@Year, " +
                                         $"[Manufacturer]=@Manufacturer, " +
                                         $"[Unwanted]=@Unwanted " +
@@ -624,6 +625,7 @@ namespace MyMameHelper.SQLite
 
                 sqlCmd.Parameters.Add($"@Archive_Name", DbType.String).Value = Roms[i].Archive_Name;
                 sqlCmd.Parameters.Add($"@Description", DbType.String).Value = Roms[i].Description;
+                sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt32).Value = Roms[i].Game.ID;
                 sqlCmd.Parameters.Add($"@Year", DbType.String).Value = Roms[i].Year;
                 sqlCmd.Parameters.Add($"@Manufacturer", DbType.UInt32).Value = Roms[i].Manufacturer;
                 sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = Roms[i].Unwanted;

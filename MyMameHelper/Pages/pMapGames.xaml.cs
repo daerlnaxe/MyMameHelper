@@ -38,15 +38,15 @@ namespace MyMameHelper.Pages
 
 
         /// <summary>
-        /// Liste des roms à mapper <-- A renommer ?
+        /// Liste des jeux à mapper
         /// </summary>
-        private List<CT_Game> _RomsToMap = new List<CT_Game>();
-        public List<CT_Game> RomsToMap
+        private List<CT_Game> _GamesMapped = new List<CT_Game>();
+        public List<CT_Game> GamesMapped
         {
-            get => _RomsToMap;
+            get => _GamesMapped;
             set
             {
-                _RomsToMap = value;
+                _GamesMapped = value;
                 OnPropertyChanged();
             }
         }
@@ -82,6 +82,38 @@ namespace MyMameHelper.Pages
                     _SelectedOrpheanRom = value;
                     OnPropertyChanged();
                 }
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Liste des jeux à updater
+        /// </summary>
+        public List<CT_Rom> RomsToUpdate { get; set; } = new List<CT_Rom>();
+
+
+
+        /// <summary>
+        /// Ajouts aux roms à updater en vérifiant qu'elle n'est pas déjà présente
+        /// </summary>
+        /// <param name=""></param>
+        private void Add_RomToUpdate(CT_Rom rom2update)
+        {
+            bool isPresent = false;
+            for (int i = 0; i < RomsToUpdate.Count; i++)
+                if (RomsToUpdate[i] == rom2update)
+                {
+                    isPresent = true;
+                    break;
+                }
+
+
+            if (!isPresent)
+            {
+                RomsToUpdate.Add(rom2update);
+                OnPropertyChanged("RomsToUpdate");
             }
         }
         #endregion
@@ -123,37 +155,10 @@ namespace MyMameHelper.Pages
             }
         }
 
-
-        /// <summary>
-        /// Liste des jeux à updater
-        /// </summary>
-        private List<CT_Game> _GamesToUpdate = new List<CT_Game>();
         #endregion
 
 
 
-
-
-
-
-
-        private string _GameToAdd;
-        public string GameToAdd
-        {
-            get => _GameToAdd;
-            set
-            {
-                if (Games.FirstOrDefault(x => x.Game_Name == value) == null)
-                {
-                    //Games.Add(value);
-                    Add_GameOnDB(value);
-                }
-
-                _GameToAdd = "";
-                OnPropertyChanged();
-
-            }
-        }
 
 
 
@@ -186,7 +191,7 @@ namespace MyMameHelper.Pages
                 AsyncWindowProgress aLoad = new AsyncWindowProgress();
                 aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoadMapGames);
                 aLoad.ShowDialog();
-                RomsToMap = _Tmp;
+                GamesMapped = _Tmp;
 
 
                 // Charement asynchrone des jeux
@@ -195,6 +200,198 @@ namespace MyMameHelper.Pages
                 aLoad.ShowDialog();*/
                 //OnPropertyChanged("Games");
             }
+        }
+
+
+
+        /// <summary>
+        /// Récupère en base les valeurs avec liaison des deux tables
+        /// </summary>
+        /// <param name="aLoad"></param>
+        private void AsyncLoadMapGames(AsyncWindowProgress aLoad)
+        {
+            aLoad.AsyncMessage("Loading Roms...");
+            using (SQLite_Op sqReq = new SQLite_Op())
+            {
+                _Tmp = sqReq.QueryGameWithRoms();
+
+
+            }
+        }
+
+
+        /// <summary>
+        /// Actions quand le curseur de la souris passe sur un element de la listbox des jeux
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ListBoxItem_MouseEnter(object sender, MouseEventArgs e)
+        {
+            //ListBoxItem item = (ListBoxItem)sender;
+            //SelectedGame = (CT_Game)item.DataContext;
+
+        }
+
+        private void ListBoxItem_LeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ListBoxItem item = (ListBoxItem)sender;
+            SelectedGame = (CT_Game)item.DataContext;
+        }
+
+
+        #region Roms
+        /// <summary>
+        /// Enlève la rom du jeu depuis l'itemscontrol du jeu
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RemoveRom_Click(object sender, RoutedEventArgs e)
+        {
+            Button bt = (Button)sender;
+            CT_Rom romToRemove = (CT_Rom)bt.DataContext;
+
+            // On ajoute aux roms orphelines
+            OrpheanRoms.Add(romToRemove);
+
+            // On ajoute la rom à la liste des roms qui sont à updater
+            Add_RomToUpdate(romToRemove);
+
+            // 2️⃣ Remonter dans le VisualTree pour trouver le parent correspondant au jeu
+            DependencyObject parent = VisualTreeHelper.GetParent(bt);
+            while (parent != null && !(parent is ListBoxItem))
+            {
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+
+            if (parent == null)
+            {
+                return;
+            }
+
+            CT_Game gameParent = (CT_Game)((ListBoxItem)parent).DataContext;
+
+
+            // On enlève de la liste du jeu sélectionné
+            List<CT_Rom> tmp = new List<CT_Rom>();
+            // Parcours des roms
+            for (int i = 0; i < gameParent.Roms.Count; i++)
+            {
+                CT_Rom currRom = gameParent.Roms[i];
+
+                // On lève l'association du jeu                
+                currRom.Game = null;
+
+                //foreach (var rom in SelectedGame.Roms)
+
+                //if (rom.ID != uint.Parse(bt.Tag.ToString()))                
+                if (currRom != romToRemove)
+                    tmp.Add(currRom);
+                //              else                
+                //                    OrpheanRoms.Add(rom);
+            }
+            gameParent.Roms = tmp;
+        }
+
+
+        /// <summary>
+        /// Ajout d'une rom à un jeu (par la combobox des roms orphelines)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddRom_Click(object sender, RoutedEventArgs e)
+        {
+            // Récupération de la liste des roms du jeu
+            var tmp = new List<CT_Rom>(SelectedGame.Roms);
+
+            // Ajout de la rom
+            tmp.Add(SelectedOrpheanRom);
+            // On ajoute la rom à la liste des roms qui sont à updater
+            Add_RomToUpdate(SelectedOrpheanRom);
+
+            // Liaison de la rom au jeu
+            SelectedOrpheanRom.Game = SelectedGame;
+
+            // Transmission pour signaler un notification de changement
+            SelectedGame.Roms = tmp;
+
+            // On enlève de la liste des orphelins
+            OrpheanRoms.Remove(SelectedOrpheanRom);
+        }
+
+        #endregion Roms
+
+
+        /// <summary>
+        /// Sauvegarde des roms
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// Seules les roms sont à sauvegarder car la pk est située à ce niveau
+        /// </remarks>
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            using (SQLite_Op sqOp = new SQLite_Op())
+            {
+                // Update des roms
+                sqOp.Update_Roms(RomsToUpdate);
+
+
+                // Update des jeux
+
+
+
+            }
+
+        }
+
+
+        #region Obsolete ?
+        private string _GameToAdd;
+        public string GameToAdd
+        {
+            get => _GameToAdd;
+            set
+            {
+                if (Games.FirstOrDefault(x => x.Game_Name == value) == null)
+                {
+                    //Games.Add(value);
+                    Add_GameOnDB(value);
+                }
+
+                _GameToAdd = "";
+                OnPropertyChanged();
+
+            }
+        }
+
+
+        /// <summary>
+        /// Ajoute un jeu dans la base de données, sans linker les roms.
+        /// </summary>
+        /// <param name="value"></param>
+        private void Add_GameOnDB(string value)
+        {
+            using (SQLite_Op sqOP = new SQLite_Op())
+            {
+                sqOP.Insert_Game(
+                    new CT_Game()
+                    {
+                        Game_Name = value
+                    }
+                );
+
+                var aLoad = new AsyncWindowProgress();
+                aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoadGames);
+                aLoad.ShowDialog();
+
+            }
+        }
+
+        private void RomsSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListBox grid = (ListBox)sender;
+            SelectedRoms = grid.SelectedItems.Cast<CT_Game>().ToList();
         }
 
 
@@ -234,162 +431,8 @@ namespace MyMameHelper.Pages
         }
 
 
-
-        /// <summary>
-        /// Récupère en base les valeurs avec liaison des deux tables
-        /// </summary>
-        /// <param name="aLoad"></param>
-        private void AsyncLoadMapGames(AsyncWindowProgress aLoad)
-        {
-            aLoad.AsyncMessage("Loading Roms...");
-            using (SQLite_Op sqReq = new SQLite_Op())
-            {
-                _Tmp = sqReq.QueryGameWithRoms();
+        #endregion
 
 
-            }
-        }
-
-
-        /// <summary>
-        /// Ajoute un jeu dans la base de données, sans linker les roms.
-        /// </summary>
-        /// <param name="value"></param>
-        private void Add_GameOnDB(string value)
-        {
-            using (SQLite_Op sqOP = new SQLite_Op())
-            {
-                sqOP.Insert_Game(
-                    new CT_Game()
-                    {
-                        Game_Name = value
-                    }
-                );
-
-                var aLoad = new AsyncWindowProgress();
-                aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoadGames);
-                aLoad.ShowDialog();
-
-            }
-        }
-
-        private void RomsSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ListBox grid = (ListBox)sender;
-            SelectedRoms = grid.SelectedItems.Cast<CT_Game>().ToList();
-        }
-
-        private void ListBoxItem_MouseEnter(object sender, MouseEventArgs e)
-        {
-            ListBoxItem item = (ListBoxItem)sender;
-            SelectedGame = (CT_Game)item.DataContext;
-
-        }
-
-
-
-
-        private void Assign_Game(object sender, RoutedEventArgs e)
-        {
-
-            throw new Exception("deprecated ? ");
-            for (int i = 0; i < Games.Count; i++)
-            {
-                var game = Games[i];
-
-                //game.Game_Name = Gam.Game_Name;
-                //                game.ID = GameSelected.ID;
-            }
-        }
-
-
-        #region Roms
-        /// <summary>
-        /// Enlève la rom du jeu
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RemoveRom_Click(object sender, RoutedEventArgs e)
-        {
-            Button bt = (Button)sender;
-
-            List<CT_Rom> tmp = new List<CT_Rom>();
-
-            // Parcours des roms
-            for (int i = 0; i < SelectedGame.Roms.Count; i++)
-            {
-                CT_Rom rom = SelectedGame.Roms[i];
-
-                // On lève l'association du jeu                
-                rom.Game = null;
-
-                //foreach (var rom in SelectedGame.Roms)
-
-
-                if (rom.ID != uint.Parse(bt.Tag.ToString()))
-                {
-                    tmp.Add(rom);
-                }
-                else
-                {
-                    OrpheanRoms.Add(rom);
-                }
-
-            }
-            SelectedGame.Roms = tmp;
-        }
-
-
-        /// <summary>
-        /// Ajout d'une rom à un jeu
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AddRom_Click(object sender, RoutedEventArgs e)
-        {
-            // Récupération de la liste des roms du jeu
-            var tmp = new List<CT_Rom>(SelectedGame.Roms);
-
-            // Ajout de la rom
-            tmp.Add(SelectedOrpheanRom);
-
-            // Liaison de la rom au jeu
-            SelectedOrpheanRom.Game = SelectedGame;
-
-            // Transmission pour signaler un notification de changement
-            SelectedGame.Roms = tmp;
-
-            // On enlève de la liste des orphelins
-            OrpheanRoms.Remove(SelectedOrpheanRom);
-        }
-
-        #endregion Roms
-
-
-
-        private void Save_Click(object sender, RoutedEventArgs e)
-        {
-            #region Liste des roms à updater
-            foreach (var game in _GamesToUpdate)
-            {
-
-            }
-            #endregion
-
-
-
-            using (SQLite_Op sqOp = new SQLite_Op())
-            {
-                // Update des roms
-                sqOp.Update_Roms()
-
-
-                // Update des jeux
-
-                
-
-            }
-
-        }
     }
 }

@@ -950,7 +950,7 @@ namespace MyMameHelper.SQLite
             string sql = $"SELECT [{tRom}].*,[{tGame}].Game_Name,  [{tManufacturer}].Nom AS Aff_Machine" +
                             $" FROM [{tRom}]" +
                             $" LEFT JOIN [{tManufacturer}] ON [{tRom}].Manufacturer = [{tManufacturer}].ID" +
-                            $" LEFT  JOIN [{tGame}] ON [{tGame}].ID = [{tRom}].Game";
+                            $" LEFT  JOIN [{tGame}] ON [{tGame}].ID = [{tRom}].Game_Id";
             /*$"LEFT JOIN [{tMachine}] ON Machine = [{tMachine}].ID " +
             $"LEFT JOIN [{tGenre}] ON Genre = [{tGenre}].ID " +*/
 
@@ -991,7 +991,7 @@ namespace MyMameHelper.SQLite
                 //$"(SELECT group_concat([{tRom}].Archive_Name, '|') " +
                 $"(SELECT group_concat(Roms.ID || '♢' || Roms.Archive_Name || '♢' || Roms.Description, '|')" + 
                     $"FROM [{tRom}] " +
-                    $"WHERE [{tRom}].Game=[{tGame}].ID) AS \"Roms\"" +
+                    $"WHERE [{tRom}].Game_Id=[{tGame}].ID) AS \"Roms\"" +
                 $" FROM [{tGame}]";
             
             
