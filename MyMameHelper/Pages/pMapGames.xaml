@@ -13,38 +13,52 @@
 
         <!-- Right Panel -->
         <StackPanel DockPanel.Dock="Right" >
-            <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5" >
-                <Grid MinHeight="180">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto" />
-
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+            <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1"  Background="LightGray">
+                <StackPanel>
                     <!-- Titre -->
-                    <Label Content="Rom Modification" HorizontalContentAlignment="Center" Grid.ColumnSpan="3" Background="LightGray"/>
-                    <!-- Nom du Jeu selectionné -->
-                    <TextBlock Text="{Binding SelectedGame.Game_Name}" Grid.Row="1" Grid.ColumnSpan="2" FontWeight="Bold"/>
-                    <!-- Compteur des roms orphelines -->
-                    <TextBlock Text="{Binding OrpheanRoms.Count, StringFormat='Nombre de roms orphelines:'}"  Grid.Row="2"/>
-                    <TextBlock Text="{Binding OrpheanRoms.Count}" Grid.Column="1" Grid.Row="2"/>
-                    <!-- Compteur des roms à updater -->
-                    <TextBlock Text="{Binding RomsToUpdate.Count, StringFormat='Nombre de roms à updater:'}" Grid.Row="3"/>
-                    <TextBlock Text="{Binding RomsToUpdate.Count}"  Grid.Column="1" Grid.Row="3"/>
+                    <Label Content="Rom Modification" HorizontalContentAlignment="Center" Grid.ColumnSpan="3"/>
+                    <Grid MinHeight="200" Background="white">
+                        <Grid.RowDefinitions>
+                            <!--RowDefinition Height="Auto"/-->
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!-- Nom du Jeu selectionné -->
+                        <TextBlock Text="{Binding SelectedGame.Game_Name}" HorizontalAlignment="Center" Grid.ColumnSpan="2" FontWeight="Bold"/>
+                        <!-- Compteur des roms orphelines -->
+                        <TextBlock Text="{Binding OrpheanRoms.Count, StringFormat='Nombre de roms orphelines:'}"  Grid.Row="1"/>
+                        <TextBlock Text="{Binding OrpheanRoms.Count}" Grid.Column="1" Grid.Row="1"/>
+                        <!-- Compteur des roms à updater -->
+                        <TextBlock Text="{Binding RomsToUpdate.Count, StringFormat='Nombre de roms à updater:'}" Grid.Row="2"/>
+                        <TextBlock Text="{Binding RomsToUpdate.Count}"  Grid.Column="1" Grid.Row="2"/>
 
-                    <!-- Add a Rom -->
-                    <TextBlock Text="Add a Rom:" Grid.Row="4"/>
-                    <ComboBox ItemsSource="{Binding OrpheanRoms}" Grid.Row="5" Grid.ColumnSpan="2" SelectedItem="{Binding SelectedOrpheanRom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                        <!-- Add a Rom -->
+                        <TextBlock Text="Add a Rom:" Grid.Row="3"/>
+                        <ListBox ItemsSource="{Binding OrpheanRoms, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="RomsSelectionChanged"  
+                                Height="100" Grid.Row="4" SelectionMode="Extended" 
+                                Grid.ColumnSpan="2" Grid.RowSpan="2">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox/>
+                                        <TextBlock Text="{Binding Archive_Name}" Width="70"/>
+                                        <TextBlock Text="{Binding Description, StringFormat='| {0}'}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <!--ComboBox ItemsSource="{Binding OrpheanRoms}" Grid.Row="5" Grid.ColumnSpan="2" SelectedItem="{Binding SelectedOrpheanRom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                               IsEditable="False">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
@@ -54,11 +68,13 @@
                                 </StackPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <Button Content="Go" Click="AddRom_Click" Grid.Row="5" Grid.Column="2"/>
+                    </ComboBox-->
+                        <Button Content="Go" Click="AddRom_Click" Grid.Row="5" Grid.Column="2"/>
+
+                    </Grid>
                     <!-- Sauvegarde Roms -->
-                    <Button Content="Save Rom Links" Margin="5" Grid.Row="7" Grid.ColumnSpan="3" Click="Save_Click"/>
-                </Grid>
+                    <Button Content="Save Rom Links" Margin="5"  Click="Save_Click"/>
+                </StackPanel>
             </Border>
 
             <!-- Add - We add a new game in the list -->
@@ -83,10 +99,13 @@
 
         </StackPanel>
         <!-- Game Listbox -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" MinHeight="500" MinWidth="200">
-            <ListBox ItemsSource="{Binding GamesMapped}" SelectedItem="{Binding SelectedGame}">
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" MinHeight="500" MinWidth="200" >
+            <ListBox ItemsSource="{Binding GamesMapped}" SelectedItem="{Binding SelectedGame}" >
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
+                        <!-- On stretch le container -->
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         <EventSetter Event="MouseEnter" Handler="ListBoxItem_MouseEnter"/>
                         <EventSetter Event="MouseLeftButtonUp"  Handler="ListBoxItem_LeftButtonUp"/>
                         <!--EventSetter Event="MouseLeave" Handler="ListBoxItem_MouseLeave"/-->
@@ -94,45 +113,50 @@
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Margin="5">
-                            <!-- Affichage du Game -->
-                            <TextBlock Text="{Binding Game_Name}" FontWeight="Bold" FontSize="14" MinWidth="300"/>
-                            <!--#region Liste des ROMs pour ce Game -->
-                            <ItemsControl ItemsSource="{Binding Roms}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel Orientation="Horizontal" Width="500"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5"  Margin="3">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Archive_Name}" ToolTip="{Binding Description}" Grid.Row="1" Grid.ColumnSpan="2" Padding="2"/>
-                                                <!--#region Bouton custom des Roms -->
-                                                <Button Content="x" Width="14" Height="14" FontSize="8" 
+                        <Border CornerRadius="10" BorderThickness="1" BorderBrush="Black" HorizontalAlignment="Stretch"  Background="LightGray">
+                            <StackPanel >
+                                <!-- Affichage du Game -->
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Game_Name}" FontWeight="Bold" FontSize="14" MinWidth="300"/>
+                                </StackPanel>
+                                <!--#region Liste des ROMs pour ce Game -->
+                                <ItemsControl ItemsSource="{Binding Roms}"  Background="White">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal" Width="500" HorizontalAlignment="Left"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5"  Margin="3">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Archive_Name}" ToolTip="{Binding Description}" Grid.Row="1" Grid.ColumnSpan="2" Padding="2"/>
+                                                    <!--#region Bouton custom des Roms -->
+                                                    <Button Content="x" Width="14" Height="14" FontSize="8" 
                                                         Padding="2" Margin="2" 
                                                         VerticalAlignment="Center" HorizontalAlignment="Right"
                                                         Click="RemoveRom_Click"  CommandParameter="{Binding}"  >
-                                                    <Button.Template>
-                                                        <ControlTemplate TargetType="Button">
-                                                            <Border Background="{TemplateBinding Background}"
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}"
                                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                                  BorderThickness="1"
                                                                 CornerRadius="2">
-                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Button.Template>
-                                                </Button>
-                                                <!--#endregion-->
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <!--#endregion Liste des Roms -->
-                        </StackPanel>
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+                                                    <!--#endregion-->
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <!--#endregion Liste des Roms -->
+                                <StackPanel Height="7"/>
+                            </StackPanel>
+                        </Border>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
@@ -62,13 +63,33 @@ namespace MyMameHelper.Pages
         /// <remarks>
         /// Change en fonction de l'event sur le datagrid
         /// </remarks>
-        public List<CT_Game> SelectedRoms { get; set; }
+        public List<CT_Rom> SelectedRoms { get; set; }
 
 
         /// <summary>
         /// Orphean Roms, when you remove a rom from a game
         /// </summary>
-        public ObservableCollection<CT_Rom> OrpheanRoms { get; set; } = new ObservableCollection<CT_Rom>();
+        private List<CT_Rom> _OrpheanRoms = new List<CT_Rom>();
+        public List<CT_Rom> OrpheanRoms
+        {
+            get => _OrpheanRoms;
+            set
+            {
+                if (value != _OrpheanRoms)
+                {
+                    _OrpheanRoms= value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private void Add_OrpheanRom(CT_Rom rom)
+        {
+            var tmpOrphean = new List<CT_Rom>(OrpheanRoms);
+            tmpOrphean.Add(rom);
+            OrpheanRoms = tmpOrphean;
+        }
 
 
         private CT_Rom _SelectedOrpheanRom;
@@ -251,7 +272,9 @@ namespace MyMameHelper.Pages
             CT_Rom romToRemove = (CT_Rom)bt.DataContext;
 
             // On ajoute aux roms orphelines
-            OrpheanRoms.Add(romToRemove);
+            //OrpheanRoms.Add(romToRemove);
+            Add_OrpheanRom(romToRemove);
+            
 
             // On ajoute la rom à la liste des roms qui sont à updater
             Add_RomToUpdate(romToRemove);
@@ -300,22 +323,49 @@ namespace MyMameHelper.Pages
         /// <param name="e"></param>
         private void AddRom_Click(object sender, RoutedEventArgs e)
         {
+            if (SelectedGame == null)
+            {
+                MessageBox.Show("Select a game before, please.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+
             // Récupération de la liste des roms du jeu
             var tmp = new List<CT_Rom>(SelectedGame.Roms);
 
-            // Ajout de la rom
-            tmp.Add(SelectedOrpheanRom);
-            // On ajoute la rom à la liste des roms qui sont à updater
-            Add_RomToUpdate(SelectedOrpheanRom);
 
-            // Liaison de la rom au jeu
-            SelectedOrpheanRom.Game = SelectedGame;
+            for (int i = 0; i < SelectedRoms.Count(); i++)
+            {
+                var rom = SelectedRoms[i];
 
-            // Transmission pour signaler un notification de changement
+                // Ajout de la rom
+                //tmp.Add(SelectedOrpheanRom);
+                tmp.Add(rom);
+
+                // On ajoute la rom à la liste des roms qui sont à updater
+                //Add_RomToUpdate(SelectedOrpheanRom);
+                Add_RomToUpdate(rom);
+
+                // Liaison de la rom au jeu
+                //SelectedOrpheanRom.Game = SelectedGame;
+                rom.Game = SelectedGame;
+            }
+
+            // Transmission pour signaler un changement
             SelectedGame.Roms = tmp;
 
-            // On enlève de la liste des orphelins
-            OrpheanRoms.Remove(SelectedOrpheanRom);
+            var tmp2 =new List<CT_Rom>(OrpheanRoms);            
+            for (int i = 0; i < SelectedRoms.Count(); i++)
+            {
+                var rom = SelectedRoms[i];
+
+                // On enlève de la liste des orphelins
+                //OrpheanRoms.Remove(SelectedOrpheanRom);
+                tmp2.Remove(rom);
+
+            }
+            OrpheanRoms = tmp2;
+            
         }
 
         #endregion Roms
@@ -388,12 +438,19 @@ namespace MyMameHelper.Pages
             }
         }
 
+        private void GameSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListBox grid = (ListBox)sender;
+            //SelectedRoms = grid.SelectedItems.Cast<CT_Game>().ToList();
+        }
+
         private void RomsSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListBox grid = (ListBox)sender;
-            SelectedRoms = grid.SelectedItems.Cast<CT_Game>().ToList();
-        }
 
+            SelectedRoms = grid.SelectedItems.Cast<CT_Rom>().ToList();
+            Debug.WriteLine($"Selected Roms: {SelectedRoms.Count}");
+        }
 
         /// <summary>
         /// Récupère en base uniquement les jeux (Games)
@@ -429,6 +486,7 @@ namespace MyMameHelper.Pages
 
             Games = games;
         }
+
 
 
         #endregion
