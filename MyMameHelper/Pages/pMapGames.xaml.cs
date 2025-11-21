@@ -38,19 +38,7 @@ namespace MyMameHelper.Pages
         }
 
 
-        /// <summary>
-        /// Liste des jeux à mapper
-        /// </summary>
-        private List<CT_Game> _GamesMapped = new List<CT_Game>();
-        public List<CT_Game> GamesMapped
-        {
-            get => _GamesMapped;
-            set
-            {
-                _GamesMapped = value;
-                OnPropertyChanged();
-            }
-        }
+
 
 
 
@@ -77,7 +65,7 @@ namespace MyMameHelper.Pages
             {
                 if (value != _OrpheanRoms)
                 {
-                    _OrpheanRoms= value;
+                    _OrpheanRoms = value;
                     OnPropertyChanged();
                 }
             }
@@ -141,6 +129,72 @@ namespace MyMameHelper.Pages
 
 
         #region Games
+
+        /// <summary>
+        /// Liste des jeux à mapper
+        /// </summary>
+        private List<CT_Game> _GamesMapped = new List<CT_Game>();
+        public List<CT_Game> GamesMapped
+        {
+            get => _GamesMapped;
+            set
+            {
+                _GamesMapped = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private void Add_GameToMap(CT_Game game)
+        {
+            var tmpGamesToMapp = new List<CT_Game>(GamesMapped);
+            tmpGamesToMapp.Add(game);
+            GamesMapped = tmpGamesToMapp;
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private string _GameToAdd;
+        public string GameToAdd
+        {
+            get => _GameToAdd;
+            set
+            {
+                if (GamesMapped.FirstOrDefault(x => x.Game_Name == value) == null)
+                {
+                    //Games.Add(value);
+                    //Add_GameOnDB(value);
+
+                    _GameToAdd = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+
+        /*
+        public string GameToAdd
+        {
+            get => _GameToAdd;
+            set
+            {
+                if (Games.FirstOrDefault(x => x.Game_Name == value) == null)
+                {
+                    //Games.Add(value);
+                    Add_GameOnDB(value);
+                }
+
+                _GameToAdd = "";
+                OnPropertyChanged();
+
+            }
+        }*/
+
+
+
         /// <summary>
         /// Liste des jeux
         /// </summary>
@@ -157,6 +211,8 @@ namespace MyMameHelper.Pages
                 }
             }
         }
+
+  
 
         /// <summary>
         /// Jeu Selectionné dans la ListBox
@@ -182,13 +238,17 @@ namespace MyMameHelper.Pages
 
 
 
-
+        /// <summary>
+        /// Constructeur
+        /// </summary>
         public pMapGames()
         {
             InitializeComponent();
 
             DataContext = this;
         }
+
+
 
         //
         //private List<Map_RomGame> _Tmp;
@@ -241,6 +301,8 @@ namespace MyMameHelper.Pages
         }
 
 
+        #region UI
+
         /// <summary>
         /// Actions quand le curseur de la souris passe sur un element de la listbox des jeux
         /// </summary>
@@ -258,7 +320,7 @@ namespace MyMameHelper.Pages
             ListBoxItem item = (ListBoxItem)sender;
             SelectedGame = (CT_Game)item.DataContext;
         }
-
+        #endregion
 
         #region Roms
         /// <summary>
@@ -274,7 +336,7 @@ namespace MyMameHelper.Pages
             // On ajoute aux roms orphelines
             //OrpheanRoms.Add(romToRemove);
             Add_OrpheanRom(romToRemove);
-            
+
 
             // On ajoute la rom à la liste des roms qui sont à updater
             Add_RomToUpdate(romToRemove);
@@ -354,7 +416,7 @@ namespace MyMameHelper.Pages
             // Transmission pour signaler un changement
             SelectedGame.Roms = tmp;
 
-            var tmp2 =new List<CT_Rom>(OrpheanRoms);            
+            var tmp2 = new List<CT_Rom>(OrpheanRoms);
             for (int i = 0; i < SelectedRoms.Count(); i++)
             {
                 var rom = SelectedRoms[i];
@@ -365,10 +427,31 @@ namespace MyMameHelper.Pages
 
             }
             OrpheanRoms = tmp2;
-            
+
         }
 
         #endregion Roms
+
+
+        #region Games
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Can_AddGame(object sender, CanExecuteRoutedEventArgs e)
+        {
+
+            e.CanExecute = !string.IsNullOrEmpty(GameToAdd);
+
+        }
+
+        private void Ex_AddGame(object sender, ExecutedRoutedEventArgs e)
+        {
+            Add_GameToMap(new CT_Game() { Game_Name = GameToAdd });
+
+        }
+        #endregion
 
 
         /// <summary>
@@ -397,23 +480,7 @@ namespace MyMameHelper.Pages
 
 
         #region Obsolete ?
-        private string _GameToAdd;
-        public string GameToAdd
-        {
-            get => _GameToAdd;
-            set
-            {
-                if (Games.FirstOrDefault(x => x.Game_Name == value) == null)
-                {
-                    //Games.Add(value);
-                    Add_GameOnDB(value);
-                }
 
-                _GameToAdd = "";
-                OnPropertyChanged();
-
-            }
-        }
 
 
         /// <summary>
@@ -489,8 +556,17 @@ namespace MyMameHelper.Pages
 
 
 
+
         #endregion
 
+        private void RemoveGame_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = (Button)sender;
+            CT_Game game = (CT_Game)btn.DataContext;
+
+            GamesMapped.Remove(game);
+            GamesMapped = new List<CT_Game>(GamesMapped);
+        }
 
     }
 }

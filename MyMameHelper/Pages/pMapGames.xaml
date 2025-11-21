@@ -4,13 +4,44 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MyMameHelper.Pages"
+      xmlns:commands ="clr-namespace:MyMameHelper.Commands"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800" d:Background="White"
       Title="pMapGames" Loaded="Page_Loaded">
+    <Page.CommandBindings>
+        <CommandBinding Command="commands:UICommands.AddGame" CanExecute="Can_AddGame" Executed="Ex_AddGame"/>
+    </Page.CommandBindings>
+    <Page.Resources>
+        <Style TargetType="Button" x:Key="miniBtn">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Width" Value="14"/>
+            <Setter Property="Height" Value="14"/>
+            <Setter Property="FontSize" Value="8"/>
+            <Setter Property="Background" Value="LightGray"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="2" BorderThickness="1" BorderBrush="Black"
+                                Background="{TemplateBinding Background}"
+                                >
+                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
     <DockPanel>
 
+        <!-- left -->
+        <!-- StackPanel DockPanel.Dock="left">
 
+
+            <Button Style="{DynamicResource miniBtn}" Content="X"/>
+        </StackPanel -->
         <!-- Right Panel -->
         <StackPanel DockPanel.Dock="Right" >
             <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1"  Background="LightGray">
@@ -41,7 +72,6 @@
                         <!-- Compteur des roms à updater -->
                         <TextBlock Text="{Binding RomsToUpdate.Count, StringFormat='Nombre de roms à updater:'}" Grid.Row="2"/>
                         <TextBlock Text="{Binding RomsToUpdate.Count}"  Grid.Column="1" Grid.Row="2"/>
-
                         <!-- Add a Rom -->
                         <TextBlock Text="Add a Rom:" Grid.Row="3"/>
                         <ListBox ItemsSource="{Binding OrpheanRoms, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="RomsSelectionChanged"  
@@ -77,13 +107,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- Add - We add a new game in the list -->
-            <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5" >
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Add a game:" MinWidth="100"/>
-                    <TextBox MinWidth="300" Text="{Binding GameToAdd}"/>
-                </StackPanel>
-            </Border>
+
             <!-- Liste 
             <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5" >
                 <StackPanel Orientation="Horizontal">
@@ -98,68 +122,81 @@
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
 
         </StackPanel>
-        <!-- Game Listbox -->
+        <!-- Panneau central -->
+        <StackPanel>
+            <!-- Add - We add a new game in the list -->
+            <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5" DockPanel.Dock="Top">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Add a game:" MinWidth="100"/>
+                    <TextBox MinWidth="300" Text="{Binding GameToAdd, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Button Content="Add"  Command="commands:UICommands.AddGame"/>
+                </StackPanel>
+            </Border>
+            <!-- Game Listbox -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto" MinHeight="500" MinWidth="200" >
+                <ListBox ItemsSource="{Binding GamesMapped}" SelectedItem="{Binding SelectedGame}" >
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <!-- On stretch le container -->
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <EventSetter Event="MouseEnter" Handler="ListBoxItem_MouseEnter"/>
+                            <EventSetter Event="MouseLeftButtonUp"  Handler="ListBoxItem_LeftButtonUp"/>
+                            <!--EventSetter Event="MouseLeave" Handler="ListBoxItem_MouseLeave"/-->
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="10" BorderThickness="1" BorderBrush="Black" HorizontalAlignment="Stretch"  Background="LightGray">
+                                <StackPanel >
+                                    <!-- Affichage du Game -->
+                                    <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
+                                        <Button Content="x" Style="{DynamicResource miniBtn}" Click="RemoveGame_Click" />
+                                        <TextBlock Text="{Binding Game_Name}" FontWeight="Bold" FontSize="14" MinWidth="300" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <!--#region Liste des ROMs pour ce Game -->
+                                    <ItemsControl ItemsSource="{Binding Roms}"  Background="White">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal" Width="500" HorizontalAlignment="Left"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5"  Margin="3">
+                                                    <StackPanel Orientation="Horizontal">
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" MinHeight="500" MinWidth="200" >
-            <ListBox ItemsSource="{Binding GamesMapped}" SelectedItem="{Binding SelectedGame}" >
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <!-- On stretch le container -->
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <EventSetter Event="MouseEnter" Handler="ListBoxItem_MouseEnter"/>
-                        <EventSetter Event="MouseLeftButtonUp"  Handler="ListBoxItem_LeftButtonUp"/>
-                        <!--EventSetter Event="MouseLeave" Handler="ListBoxItem_MouseLeave"/-->
-                    </Style>
-                </ListBox.ItemContainerStyle>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Border CornerRadius="10" BorderThickness="1" BorderBrush="Black" HorizontalAlignment="Stretch"  Background="LightGray">
-                            <StackPanel >
-                                <!-- Affichage du Game -->
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Game_Name}" FontWeight="Bold" FontSize="14" MinWidth="300"/>
-                                </StackPanel>
-                                <!--#region Liste des ROMs pour ce Game -->
-                                <ItemsControl ItemsSource="{Binding Roms}"  Background="White">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Horizontal" Width="500" HorizontalAlignment="Left"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5"  Margin="3">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Archive_Name}" ToolTip="{Binding Description}" Grid.Row="1" Grid.ColumnSpan="2" Padding="2"/>
-                                                    <!--#region Bouton custom des Roms -->
-                                                    <Button Content="x" Width="14" Height="14" FontSize="8" 
-                                                        Padding="2" Margin="2" 
-                                                        VerticalAlignment="Center" HorizontalAlignment="Right"
-                                                        Click="RemoveRom_Click"  CommandParameter="{Binding}"  >
-                                                        <Button.Template>
-                                                            <ControlTemplate TargetType="Button">
-                                                                <Border Background="{TemplateBinding Background}"
+                                                        <TextBlock Text="{Binding Archive_Name}" ToolTip="{Binding Description}" Grid.Row="1" Grid.ColumnSpan="2" Padding="2"/>
+                                                        <!--#region Bouton custom des Roms -->
+
+                                                        <Button Content="x" Width="14" Height="14" FontSize="8" 
+                                                            Padding="2" Margin="2" 
+                                                            VerticalAlignment="Center" HorizontalAlignment="Right"
+                                                            Click="RemoveRom_Click"  CommandParameter="{Binding}"  >
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}"
                                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                                  BorderThickness="1"
                                                                 CornerRadius="2">
-                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                                </Border>
-                                                            </ControlTemplate>
-                                                        </Button.Template>
-                                                    </Button>
-                                                    <!--#endregion-->
-                                                </StackPanel>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                                <!--#endregion Liste des Roms -->
-                                <StackPanel Height="7"/>
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </ScrollViewer>
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                        <!--#endregion-->
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <!--#endregion Liste des Roms -->
+                                    <StackPanel Height="7"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
+        </StackPanel>
     </DockPanel>
 </Page>

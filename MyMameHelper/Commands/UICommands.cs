@@ -36,11 +36,9 @@ namespace MyMameHelper.Commands
         public static readonly RoutedUICommand LoadGamesCmd = new RoutedUICommand("Load Games Table", "LoadGamesCmd", typeof(UICommands));
         public static readonly RoutedUICommand SaveGamesCmd = new RoutedUICommand("Save Games Table", "SaveGamesCmd", typeof(UICommands));
         public static readonly RoutedUICommand EditGameCmd = new RoutedUICommand("Edit Game Table", "EditGameCmd", typeof(UICommands));
-        // Game
-        public static readonly RoutedUICommand RemoveGame = new RoutedUICommand("Remove Game", "RemoveGame", typeof(UICommands));
-        public static readonly RoutedUICommand LaunchGame = new RoutedUICommand("Launch Game", "LaunchGame", typeof(UICommands));
-        public static readonly RoutedUICommand LaunchMame = new RoutedUICommand("Launch Mame", "LaunchMame", typeof(UICommands));
-
+        
+        
+        
         //
         public static readonly RoutedUICommand SaveDb = new RoutedUICommand("Save Table", "SaveDb", typeof(UICommands));
         public static readonly RoutedUICommand UpdateDb = new RoutedUICommand("Update Table", "UpdateDb", typeof(UICommands));
@@ -68,6 +66,14 @@ namespace MyMameHelper.Commands
         public static readonly RoutedUICommand AddRoms = new RoutedUICommand("Add a Rom", "AddRoms", typeof(UICommands));
         public static readonly RoutedUICommand EditRom = new RoutedUICommand("Edit a Rom", "EditRom", typeof(UICommands));
         public static readonly RoutedUICommand RemoveRom = new RoutedUICommand("Remove a Rom", "RemoveRom", typeof(UICommands));
+        #endregion
+        #region Games
+        public static readonly RoutedUICommand AddGame = new RoutedUICommand("Add a Game", "AddGame", typeof(UICommands));
+        public static readonly RoutedUICommand EditGame = new RoutedUICommand("Edit a Game", "EditGame", typeof(UICommands));
+        public static readonly RoutedUICommand RemoveGame = new RoutedUICommand("Remove a Game", "RemoveGame", typeof(UICommands));
+        public static readonly RoutedUICommand LaunchGame = new RoutedUICommand("Launch Game", "LaunchGame", typeof(UICommands));
+        public static readonly RoutedUICommand LaunchMame = new RoutedUICommand("Launch Mame", "LaunchMame", typeof(UICommands));
+
         #endregion
 
         // Swaps
