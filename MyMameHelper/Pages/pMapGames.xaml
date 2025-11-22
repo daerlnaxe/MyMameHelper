@@ -81,7 +81,7 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <CheckBox/>
+                                        
                                         <TextBlock Text="{Binding Archive_Name}" Width="70"/>
                                         <TextBlock Text="{Binding Description, StringFormat='| {0}'}"/>
                                     </StackPanel>
@@ -198,6 +198,8 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </ScrollViewer>
+            <!-- Saving Game -->
+            <Button Content="Save Games"/>
         </StackPanel>
     </DockPanel>
 </Page>
