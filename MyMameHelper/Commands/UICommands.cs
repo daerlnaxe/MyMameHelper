@@ -63,7 +63,8 @@ namespace MyMameHelper.Commands
         public static readonly RoutedUICommand EditDeveloper = new RoutedUICommand("Edit a Developer", "EditDeveloper", typeof(UICommands));
         public static readonly RoutedUICommand RemoveDeveloper = new RoutedUICommand("Remove a Developer", "RemoveDeveloper", typeof(UICommands));
         #region Roms
-        public static readonly RoutedUICommand AddRoms = new RoutedUICommand("Add a Rom", "AddRoms", typeof(UICommands));
+        public static readonly RoutedUICommand AddRom = new RoutedUICommand("Add a Rom", "AddRom", typeof(UICommands));
+        public static readonly RoutedUICommand AddRoms = new RoutedUICommand("Add Roms", "AddRoms", typeof(UICommands));
         public static readonly RoutedUICommand EditRom = new RoutedUICommand("Edit a Rom", "EditRom", typeof(UICommands));
         public static readonly RoutedUICommand RemoveRom = new RoutedUICommand("Remove a Rom", "RemoveRom", typeof(UICommands));
         #endregion

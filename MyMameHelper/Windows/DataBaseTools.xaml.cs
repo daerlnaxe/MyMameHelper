@@ -97,10 +97,15 @@ namespace MyMameHelper.Windows
 
 
                     // Liste des constructeurs 
-                    Constructors.ChangeContent = sqRead.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true, orders: new SqlOrder("Nom")));
+                    var objSelConst = new Obj_Select(table: PProp.Default.T_Manufacturers, all: true);
+                    objSelConst.AddOrders(new SqlOrder("Nom"));
+                    Constructors.ChangeContent = sqRead.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, objSelConst);
 
+                    var objSelGenres = new Obj_Select(table: PProp.Default.T_Genres, all: true);
+                    objSelGenres.AddOrders(new SqlOrder("Nom"));
                     // Liste des genres
-                    Genres.ChangeContent = sqRead.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true, orders: new SqlOrder("Nom")));
+                    Genres.ChangeContent = sqRead.GetListOf<CT_Genre>(CT_Genre.Result2Class, objSelGenres);
+
 
                     // Liste des Manufacturers
                     Manufacturers.ChangeContent = sqRead.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
@@ -232,7 +237,10 @@ namespace MyMameHelper.Windows
                 using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     sqReq.Insert_Genre(new CT_Genre() { Nom = lval.Valeur });
-                    Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true, orders: new SqlOrder("Nom")));
+                    var objSelGenres= new Obj_Select(table: PProp.Default.T_Genres, all: true);
+                    objSelGenres.AddOrders(new SqlOrder("Nom"));
+
+                    Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, objSelGenres);
                 }
             }
 
@@ -257,7 +265,9 @@ namespace MyMameHelper.Windows
                 using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     sqReq.Update_Genre(ctGenre);
-                    Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true, orders: new SqlOrder("Nom")));
+                    var objSelGenres = new Obj_Select(table: PProp.Default.T_Genres, all: true);
+                    objSelGenres.AddOrders(new SqlOrder("Nom"));
+                    Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, objSelGenres);
                 }
             }
         }
@@ -276,7 +286,9 @@ namespace MyMameHelper.Windows
                 {
                     SqlCond cond = new SqlCond("ID", eWhere.Equal, ctGenre.ID);
                     sqReq.Delete_Genre(new SqlCond[] { cond });
-                    Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true, orders: new SqlOrder("Nom")));
+                    var objSelGenres = new Obj_Select(table: PProp.Default.T_Genres, all: true);
+                    objSelGenres.AddOrders(new SqlOrder("Nom"));
+                    Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, objSelGenres);
                 }
             }
         }

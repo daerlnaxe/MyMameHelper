@@ -152,26 +152,54 @@ namespace MyMameHelper.SQLite
         /// 
         /// </summary>
         /// <param name="command"></param>
-        /// <param name="orderCom"></param>
-        public void Order_TreatMt(SQLiteCommand command, SqlOrder orderCom)
+        /// <param name="orders"></param>
+        public void Order_TreatMt(SQLiteCommand command, params SqlOrder[] orders)
         {
-            if (orderCom == null)
+            if (orders == null)
                 return;
 
-            command.CommandText += " ORDER BY";
 
             // traitement de l'ordre
             int i = 0;
-            foreach (string order in orderCom.orders)
+            /*foreach (string order in orderCom.orders)
             {
                 if (i > 0) command.CommandText += ", ";
                 command.CommandText += $" [{order}]";
                 i++;
             }
 
-            if (orderCom.collate != Collate.None) command.CommandText += $" COLLATE {orderCom.collate}";
 
-            command.CommandText += $" {orderCom.sens}";
+            if (orderCom.collate != Collate.None) command.CommandText += $" COLLATE {orderCom.collate}";*/
+            bool hasOrders=false;
+            string strOrders="";
+            foreach (var order in orders)
+            {
+                if (order == null)
+                    continue;
+
+                if(i> 0 )
+                    command.CommandText += ", ";
+
+                strOrders += $" [{order.field}] ";
+
+                if (order.collate != Collate.None)
+                    strOrders += $" COLLATE {order.collate}";
+
+
+                strOrders += $" {order.sens}";
+
+                hasOrders = true;
+            }
+
+            if (hasOrders)
+            {
+                command.CommandText += " ORDER BY";
+                command.CommandText = strOrders;
+
+
+            }
+
+
         }
 
 

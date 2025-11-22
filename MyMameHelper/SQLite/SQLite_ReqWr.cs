@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SQLite;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using PProp = MyMameHelper.Properties.Settings;
 /*
     Version objet de la connexion sql
@@ -518,9 +520,49 @@ namespace MyMameHelper.SQLite
         }
         #endregion
 
-        #region Update
 
-        public void Update_Games<T>(ObservableCollection<T> Games) where T : iCT_Games
+
+        #region Update
+        
+        /// <summary>
+        /// Update sans limitation selon des conditions
+        /// </summary>
+        internal void Update_MassiveRoms(IList<SQL_Element> sqlElems,SqlCond[] conditions)
+        {
+            string sql = $"UPDATE [{tRom}] SET";
+
+            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+
+            foreach (var elem in sqlElems)
+            {
+                sql += $" [{elem.column}]=@{elem.column},";
+                
+                Type t = elem.type;
+                
+
+                if (t == typeof(string))
+                    sqlCmd.Parameters.Add($"@{elem.column}", DbType.String).Value = elem.value;
+                else if (t==typeof(uint))
+                    sqlCmd.Parameters.Add($"@{elem.column}", DbType.UInt16).Value = elem.value;
+            }
+
+            sql = sql.Substring(0, sql.Length -1 );
+
+ 
+            sqlCmd.CommandText = sql;
+
+            Condition_TreatMt(sqlCmd, conditions);
+
+            ExecNQ(sqlCmd);
+        }
+        
+        
+        /// <summary>
+        /// Update par l'ID
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Games"></param>
+        public void Update_Games<T>(IList<T> Games) where T : iCT_Games
         {
             Debug.WriteLine($"Update de la collection");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
@@ -562,6 +604,10 @@ namespace MyMameHelper.SQLite
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gameCont"></param>
         internal void Update_Game(CT_Game gameCont)
         {
             Debug.WriteLine($"Update de la collection");
@@ -595,6 +641,7 @@ namespace MyMameHelper.SQLite
 
             ExecNQ(sqlCmd);
         }
+
 
         /// <summary>
         /// 
@@ -638,6 +685,10 @@ namespace MyMameHelper.SQLite
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ctComp"></param>
         internal void Update_Company(CT_Constructeur ctComp)
         {
             Debug.WriteLine($"Update de {ctComp.Nom}");
@@ -653,6 +704,10 @@ namespace MyMameHelper.SQLite
             ExecNQ(sqlCmd);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ctConst"></param>
         internal void Update_Constructeur(CT_Constructeur ctConst)
         {
             Debug.WriteLine($"Update de {ctConst.Nom}");
@@ -668,6 +723,10 @@ namespace MyMameHelper.SQLite
             ExecNQ(sqlCmd);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ctGenre"></param>
         internal void Update_Genre(CT_Genre ctGenre)
         {
             Debug.WriteLine($"Update de {ctGenre.Nom}");
@@ -683,6 +742,10 @@ namespace MyMameHelper.SQLite
             ExecNQ(sqlCmd);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Machine"></param>
         public void Update_Machine(CT_Machine Machine)
         {
             Debug.WriteLine($"Update de {Machine.Nom}");
@@ -920,6 +983,8 @@ namespace MyMameHelper.SQLite
         }
 
         #endregion
+
+
 
         #region UNIQUE
         internal bool Flush_TempRoms()

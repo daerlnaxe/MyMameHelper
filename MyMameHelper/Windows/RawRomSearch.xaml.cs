@@ -54,10 +54,15 @@ namespace MyMameHelper.Windows
 
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                Obj_Select objDev = new Obj_Select(PProp.Default.T_TempRoms, colonnes: new string[] { "Manufacturer" }, groups: new string[] { "Manufacturer" }, conditions: new SqlCond[] { new SqlCond("Manufacturer", eWhere.Not_Like, "Null" ) });
+                Obj_Select objDev = new Obj_Select(PProp.Default.T_TempRoms, colonnes: new string[] { "Manufacturer" }, groups: new string[] { "Manufacturer" });
+                objDev.AddConds(new SqlCond("Manufacturer", eWhere.Not_Like, "Null"));
+
                 Developers.ChangeContent = sqReq.GetStringOf(objDev);
 
-                Obj_Select objSourceF = new Obj_Select(PProp.Default.T_TempRoms, colonnes: new string[] { "Source_File" }, groups: new string[] { "Source_File" }, conditions: new SqlCond[] { new SqlCond("Source_File", eWhere.Not_Like, "Null" ) });
+
+                Obj_Select objSourceF = new Obj_Select(PProp.Default.T_TempRoms, colonnes: new string[] { "Source_File" }, groups: new string[] { "Source_File" });
+                objSourceF.AddConds(new SqlCond("Source_File", eWhere.Not_Like, "Null"));
+
                 Source_Files.ChangeContent = sqReq.GetStringOf(objSourceF);
             }
         }
@@ -113,7 +118,7 @@ namespace MyMameHelper.Windows
             }
 
 
-                if (cboxSourceF.SelectedItem != null)
+            if (cboxSourceF.SelectedItem != null)
             {
                 string sourceFSelected = (string)cboxSourceF.SelectedItem;
                 SqlCond sourceCond = new SqlCond("Source_File", eWhere.Like, sourceFSelected);
@@ -140,9 +145,12 @@ namespace MyMameHelper.Windows
 
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                Obj_Select objSel = new Obj_Select(PProp.Default.T_TempRoms, all: true, conditions: sqlConds, orders: new SqlOrder(new string[] { "Name" }));
+                Obj_Select objSel = new Obj_Select(PProp.Default.T_TempRoms, all: true);
+                objSel.AddConds(sqlConds);
+                objSel.AddOrders(new SqlOrder("Name"));
+
                 RomsFound.ChangeContent = sqReq.GetListOf<RawMameRom>(RawMameRom.Result2Class, objSel);
-                
+
             }
         }
 

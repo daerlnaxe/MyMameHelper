@@ -85,8 +85,14 @@ namespace MyMameHelper.Pages
 
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true, orders: new SqlOrder("Nom")));
-                Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true, orders: new SqlOrder("Nom")));
+                var objSelManu = new Obj_Select(table: PProp.Default.T_Manufacturers, all: true);
+                objSelManu.AddOrders(new SqlOrder("Nom"));
+                Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, objSelManu);
+
+                var objSelGenres = new Obj_Select(table: PProp.Default.T_Genres, all: true);
+                objSelGenres.AddOrders(new SqlOrder("Nom"));
+                Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, objSelGenres);
+                
                 dbGames = sqReq.Get_ListOf_Games(new Obj_Select(all: true));
             }
 
@@ -122,12 +128,16 @@ namespace MyMameHelper.Pages
             ComboBox cb = (ComboBox)sender;
             int idConstruct = Convert.ToInt32(cb.SelectedValue);
 
+
+
+
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                Machines.ChangeContent = sqReq.GetListOf(
-                   CT_Machine.Result2Class,
-                   new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" }, conditions: new SqlCond[] { new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()) }, orders: new SqlOrder("Nom"))
-                   );
+                Obj_Select objSel = new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" });
+                objSel.AddConds(new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()));
+                objSel.AddOrders(new SqlOrder("Nom"));
+
+                Machines.ChangeContent = sqReq.GetListOf(CT_Machine.Result2Class, objSel);
             }
         }
 
@@ -449,7 +459,7 @@ namespace MyMameHelper.Pages
                 Task.Run(() => MameLauncher(game));
 
 
-             //   Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+                //   Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             }
             else
             {
@@ -461,17 +471,17 @@ namespace MyMameHelper.Pages
         {
             try
             {
-            Directory.SetCurrentDirectory(PProp.Default.MameFolder);
+                Directory.SetCurrentDirectory(PProp.Default.MameFolder);
 
-            Process ExternalProcess = new Process();
-            ExternalProcess.StartInfo.FileName = "mame64.exe";
-            if (game != null)
-                ExternalProcess.StartInfo.Arguments = game;
-            Trace.WriteLine($"Launching: {game}");
-            ExternalProcess.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
-            ExternalProcess.Start();
-            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-            ExternalProcess.WaitForExit();
+                Process ExternalProcess = new Process();
+                ExternalProcess.StartInfo.FileName = "mame64.exe";
+                if (game != null)
+                    ExternalProcess.StartInfo.Arguments = game;
+                Trace.WriteLine($"Launching: {game}");
+                ExternalProcess.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                ExternalProcess.Start();
+                Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+                ExternalProcess.WaitForExit();
 
             }
             catch (Exception exc)
@@ -482,7 +492,7 @@ namespace MyMameHelper.Pages
         #endregion
 
         private void Ex_LaunchMame(object sender, ExecutedRoutedEventArgs e)
-        {            
+        {
             if (Directory.Exists(PProp.Default.MameFolder))
             {
 

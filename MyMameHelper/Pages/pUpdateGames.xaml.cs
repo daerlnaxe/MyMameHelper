@@ -131,10 +131,11 @@ namespace MyMameHelper.Pages
 
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                Machines.ChangeContent = sqReq.GetListOf(
-                   CT_Machine.Result2Class,
-                   new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" }, conditions: new SqlCond[] { new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()) }, orders: new SqlOrder("Nom"))
-                   );
+                var osel = new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" });
+                osel.AddConds(new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()));
+                osel.AddOrders(new SqlOrder("Nom"));
+
+                Machines.ChangeContent = sqReq.GetListOf(CT_Machine.Result2Class, osel);
             }
         }
 

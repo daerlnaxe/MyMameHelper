@@ -72,7 +72,7 @@ namespace MyMameHelper.Pages
 
         public CT_Constructeur CbDeveloper_Selected { get; set; }
 
-        
+
         /// <summary>
         /// Liste des roms en base
         /// </summary>
@@ -113,7 +113,7 @@ namespace MyMameHelper.Pages
                     //2025 levé Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
                     Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
                     _RomsInDb = sqReq.AffRoms_List();
-                    _GamesInDB = sqReq.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, colonnes: new[] {"ID", "Game_Name"}, all: true   ));
+                    _GamesInDB = sqReq.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, colonnes: new[] { "ID", "Game_Name" }, all: true));
                 }
 
                 // Chargement asynchrone des roms
@@ -1083,10 +1083,11 @@ namespace MyMameHelper.Pages
 
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                Machines.ChangeContent = sqReq.GetListOf(
-                   CT_Machine.Result2Class,
-                   new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" }, conditions: new SqlCond[] { new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()) }, orders: new SqlOrder("Nom"))
-                   );
+                var objSel = new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" });
+                objSel.AddConds(new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()));
+                objSel.AddOrders(new SqlOrder("Nom"));
+
+                Machines.ChangeContent = sqReq.GetListOf(CT_Machine.Result2Class, objSel);
             }
         }
 
@@ -1141,12 +1142,12 @@ namespace MyMameHelper.Pages
                 Debug.WriteLine(gameName);
 
                 // Vérification pour éviter les doublons dans les gamesToAdd  + jeux en base (_GamesInDB). 
-                if (gameToAdd.FirstOrDefault(x => x.Game_Name.Equals(gameName)) == null && _GamesInDB.FirstOrDefault(x => x.Game_Name.Equals(gameName))== null  )
+                if (gameToAdd.FirstOrDefault(x => x.Game_Name.Equals(gameName)) == null && _GamesInDB.FirstOrDefault(x => x.Game_Name.Equals(gameName)) == null)
                 {
                     gameToAdd.Add(
                         new CT_Game
                         {
-                            Game_Name= gameName,
+                            Game_Name = gameName,
                         });
                 }
             }
@@ -1194,7 +1195,7 @@ namespace MyMameHelper.Pages
 
             Debug.WriteLine("Construction des liaisons");
             /* Construction des liaisons 
-             *      On le fait aussi pour les games, puisqu'une fois sauvé on ne verra plus dans la liste ensuite */ 
+             *      On le fait aussi pour les games, puisqu'une fois sauvé on ne verra plus dans la liste ensuite */
             for (int i = 0; i < RomsToSave.Count; i++)
             {
                 // Liaison manufacturers
@@ -1290,7 +1291,9 @@ namespace MyMameHelper.Pages
                 window.AsyncMessage("Insertion of Parent Roms");
                 sqReq.Insert_Roms(parentsToSave, true);
 
-                Obj_Select oSel = new Obj_Select(PProp.Default.T_Roms, all: true, conditions: new SqlCond[] { new SqlCond("IsParent", eWhere.Is, 1) });
+                Obj_Select oSel = new Obj_Select(PProp.Default.T_Roms, all: true);
+                oSel.AddConds(new SqlCond("IsParent", eWhere.Is, 1));
+
                 sParentsRoms = sqReq.GetListOf<CT_Rom>(CT_Rom.Result2Class, oSel);
             }
 

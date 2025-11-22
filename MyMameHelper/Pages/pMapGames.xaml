@@ -10,6 +10,7 @@
       Title="pMapGames" Loaded="Page_Loaded">
     <Page.CommandBindings>
         <CommandBinding Command="commands:UICommands.AddGame" CanExecute="Can_AddGame" Executed="Ex_AddGame"/>
+        <CommandBinding Command="commands:UICommands.RemoveGame" CanExecute="Can_RemoveGame" Executed="Ex_RemoveGame"/>
     </Page.CommandBindings>
     <Page.Resources>
         <Style TargetType="Button" x:Key="miniBtn">
@@ -150,7 +151,7 @@
                                 <StackPanel >
                                     <!-- Affichage du Game -->
                                     <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
-                                        <Button Content="x" Style="{DynamicResource miniBtn}" Click="RemoveGame_Click" />
+                                        <Button Content="x" Style="{DynamicResource miniBtn}" Command="commands:UICommands.RemoveGame" CommandParameter="{Binding}" />
                                         <TextBlock Text="{Binding Game_Name}" FontWeight="Bold" FontSize="14" MinWidth="300" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <!--#region Liste des ROMs pour ce Game -->

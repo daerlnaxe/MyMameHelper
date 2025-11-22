@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
+using System.Data.Entity.Migrations.Model;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
@@ -16,11 +17,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PProp = MyMameHelper.Properties.Settings;
+
 
 namespace MyMameHelper.Pages
 {
@@ -268,11 +272,17 @@ namespace MyMameHelper.Pages
                 //
                 // System.Data.SQLite.SQLiteDataReader tmp = sqReq.AffGames_SQL(null, null);
 
-                // Chargement asynchrone des roms
+                // Chargement asynchrone des Jeux et des roms associées
                 AsyncWindowProgress aLoad = new AsyncWindowProgress();
                 aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoadMapGames);
                 aLoad.ShowDialog();
                 GamesMapped = _Tmp;
+
+                // Chargement asynchrone des Roms isolées
+                aLoad = new AsyncWindowProgress();
+                aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoadOrpheanRoms);
+                aLoad.ShowDialog();
+                
 
 
                 // Charement asynchrone des jeux
@@ -283,6 +293,8 @@ namespace MyMameHelper.Pages
             }
         }
 
+ 
+
 
 
         /// <summary>
@@ -291,12 +303,23 @@ namespace MyMameHelper.Pages
         /// <param name="aLoad"></param>
         private void AsyncLoadMapGames(AsyncWindowProgress aLoad)
         {
-            aLoad.AsyncMessage("Loading Roms...");
+            aLoad.AsyncMessage("Loading Games and mappel Roms...");
             using (SQLite_Op sqReq = new SQLite_Op())
             {
                 _Tmp = sqReq.QueryGameWithRoms();
 
 
+            }
+        }
+
+        private void AsyncLoadOrpheanRoms(AsyncWindowProgress aLoad)
+        {
+            aLoad.AsyncMessage("Loading Orphean Roms...");
+
+            using (SQLite_Op sqReq = new SQLite_Op())
+            {
+                List<CT_Rom> tmp = sqReq.GetListOf<CT_Rom>(CT_Rom.Result2Class, new Obj_Select(table: PProp.Default.T_Roms, new string[] { "ID", "Archive_Name", "Game_Id", "Description" }));
+                OrpheanRoms = tmp;
             }
         }
 
@@ -559,14 +582,34 @@ namespace MyMameHelper.Pages
 
         #endregion
 
-        private void RemoveGame_Click(object sender, RoutedEventArgs e)
+        private void Can_RemoveGame(object sender, CanExecuteRoutedEventArgs e)
         {
-            var btn = (Button)sender;
-            CT_Game game = (CT_Game)btn.DataContext;
-
-            GamesMapped.Remove(game);
-            GamesMapped = new List<CT_Game>(GamesMapped);
+            e.CanExecute = true;
         }
+
+        private void Ex_RemoveGame(object sender, ExecutedRoutedEventArgs e)
+        {
+            CT_Game game = (CT_Game)e.Parameter;
+
+
+            if (MessageBox.Show($"Do you want to remove {game.Game_Name} from the database ?", "Remove Game", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                SqlCond[] sqlCond= new SqlCond[1];
+
+                using (SQLite_Op sqOp = new SQLite_Op())
+                {
+                    sqOp.Delete_Game(new SqlCond[] { new SqlCond("ID", eWhere.Equal, game.ID) });
+
+                    // Update de toutes les roms qui sont en lien avec le jeu
+                    sqOp.Update_MassiveRoms(new List<SQL_Element>() { new SQL_Element(typeof(string), "Game_Id", null) }, new SqlCond[] { new SqlCond("Game_Id", eWhere.Equal, game.ID) });
+                }
+
+
+                GamesMapped.Remove(game);
+                GamesMapped = new List<CT_Game>(GamesMapped);
+            }
+        }
+
 
     }
 }

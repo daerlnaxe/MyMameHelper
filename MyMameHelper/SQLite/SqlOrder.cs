@@ -8,32 +8,43 @@ namespace MyMameHelper.SQLite
 {
     public class SqlOrder
     {
-        public string[] orders;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string field;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Collate collate;
+        
+        /// <summary>
+        /// Sens
+        /// </summary>
         public Sens sens;
 
-        public SqlOrder(params string[] orders)
+        public SqlOrder(string field)
         {
-            this.orders = orders;
+            this.field = field;
         }
 
-        public SqlOrder(Sens sens, params string[] orders)
+        public SqlOrder(Sens sens, string field)
         {
-            this.orders = orders;
+            this.field = field;
             this.sens = sens;
         }
 
-        public SqlOrder(Collate coll, params string[] orders)
+        public SqlOrder(Collate coll, string field)
         {
-            this.orders = orders;
+            this.field = field;
             this.sens = Sens.Asc;
             this.collate = coll;
         }
 
 
-        public SqlOrder(Collate coll , Sens sens = Sens.Asc, params string[] orders)
+        public SqlOrder(string field, Collate coll , Sens sens = Sens.Asc)
         {
-            this.orders = orders;
+            this.field = field;
             this.sens = sens;
             this.collate = coll;
         }
@@ -45,10 +56,13 @@ namespace MyMameHelper.SQLite
         Desc
     }
 
+    /// <summary>
+    /// Options de comparaison
+    /// </summary>
     public enum Collate
-    {
-        None,
-        NOCASE,
-        BINARY
+    {                      
+        None,   // Pas de collation particulière (utilise le comportement par défaut)
+        NOCASE, // Comparaison insensible à la casse (majuscules = minuscules)
+        BINARY  // Comparaison insensible à la casse (majuscules = minuscules)
     }
 }

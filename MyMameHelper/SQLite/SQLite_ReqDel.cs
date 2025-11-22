@@ -37,7 +37,7 @@ namespace MyMameHelper.SQLite
 
         public void Delete_RomById(uint Id)
         {
-            string sql = $"DELETE FROM {PProp.Default.T_Roms} WHERE ";
+            string sql = $"DELETE FROM {tRom} WHERE ";
             SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);            
 
             ExecNQ(command);
@@ -72,7 +72,7 @@ namespace MyMameHelper.SQLite
 
         public void Delete_Genre(SqlCond[] conditions)
         {
-            string sql = $"DELETE FROM {PProp.Default.T_Genres}";
+            string sql = $"DELETE FROM {tGenre}";
             SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
 
             Condition_TreatMt(command, conditions);

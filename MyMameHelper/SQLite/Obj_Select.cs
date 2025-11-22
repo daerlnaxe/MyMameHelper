@@ -13,7 +13,7 @@ namespace MyMameHelper.SQLite
         public string[] Colonnes { get; set; }
         public SqlCond[] Conditions { get; set; }
         public string[] Groups { get; set; }
-        public SqlOrder Orders { get; set; }
+        public SqlOrder[] Orders { get; set; }
         public uint? Limit { get; set; }
 
         public string Requete { get; private set; }
@@ -21,32 +21,32 @@ namespace MyMameHelper.SQLite
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="table"></param>
-        /// <param name="all"></param>
+        /// <param name="table">Table de la base</param>
+        /// <param name="all">Tous les champs</param>
         /// <param name="colonnes"></param>
         /// <param name="conditions"></param>
         /// <param name="groups"></param>
         /// <param name="orders"></param>
-        /// <param name="limit"></param>
+        /// <param name="limit">Limite des résultats</param>
         /// <example>
         /// order: new []{}
         /// </example>
-        public Obj_Select(string table = null, bool all = false, string[] colonnes = null, SqlCond[] conditions = null, string[] groups = null, SqlOrder orders = null, uint? limit = null)
+        public Obj_Select(string table = null, bool all = false, string[] colonnes = null, string[] groups = null, uint? limit = null)
         {
             Table = table;
             All = all;
             Colonnes = colonnes;
-            Conditions = conditions;
+            //Conditions = conditions;
             Groups = groups;
-            Orders = orders;
+           // Orders = orders;
             Limit = limit;
         }
 
-        public Obj_Select(string table, string[] colonnes, SqlOrder orders=null)
+        public Obj_Select(string table, string[] colonnes)
         {
             Table = table;
             Colonnes = colonnes;
-            Orders = orders;
+         //   Orders = orders;
         }
 
         /*
@@ -57,21 +57,26 @@ namespace MyMameHelper.SQLite
             Orders = orders;
         }*/
 
-        public Obj_Select(bool all, SqlOrder orders)
+        public Obj_Select(bool all/*, params SqlOrder[] orders*/)
         {
             All = all;
-            Orders = orders;
+            //Orders = orders;
         }
 
-        public Obj_Select(string[] colonnes, SqlOrder orders)
+        public Obj_Select(string[] colonnes/*, params SqlOrder[] orders*/)
         {
             Colonnes = colonnes;
-            Orders = orders;
+            //Orders = orders;
         }
 
-        public void Add(params SqlCond[] conds)
+        public void AddConds(params SqlCond[] conds)
         {
             Conditions = conds;
+        }
+
+        internal void AddOrders(params SqlOrder[] sqlOrders)
+        {
+            this.Orders = sqlOrders;
         }
     }
 

@@ -147,6 +147,7 @@
     <Compile Include="Pages\PrepareGames.xaml.cs">
       <DependentUpon>PrepareGames.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SQLite\SQL_Element.cs" />
     <Compile Include="Windows\AsyncLoading.xaml.cs">
       <DependentUpon>AsyncLoading.xaml</DependentUpon>
     </Compile>

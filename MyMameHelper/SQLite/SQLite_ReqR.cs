@@ -31,7 +31,9 @@ namespace MyMameHelper.SQLite
         #region 1 Element
         public CT_Constructeur Get_Companie(SqlCond[] conds)
         {
-            Obj_Select objCompanie = new Obj_Select(table: PProp.Default.T_Developers, all: true, conditions: conds);
+            Obj_Select objCompanie = new Obj_Select(table: PProp.Default.T_Developers, all: true);
+            objCompanie.AddConds(conds);
+
             return Get_OneResult<CT_Constructeur>(CT_Constructeur.Result2Class, objCompanie);
         }
 
@@ -210,15 +212,10 @@ namespace MyMameHelper.SQLite
 
             Obj_Select objSelect = new Obj_Select(table: PProp.Default.T_Manufacturers, all: true);
             objSelect.Conditions = new SqlCond[] { new SqlCond { Colonne = "ID", Operateur = eWhere.Equal, Valeur = id.ToString() } };
-            objSelect.Orders = new SqlOrder("Nom");
+            objSelect.Orders = new SqlOrder[] { new SqlOrder("Nom") };
 
-            return GetCollectionOf<CT_Constructeur>(CT_Constructeur.Result2Class, objSelect);
+            return new ObservableCollection<CT_Constructeur>(GetCollectionOf<CT_Constructeur>(CT_Constructeur.Result2Class, objSelect));
         }
-
-
-
-
-
 
 
 
@@ -238,7 +235,7 @@ namespace MyMameHelper.SQLite
 
 
 
-        /*
+        /* Personnes
     public ObservableCollection<T> Collect_Personnes<T>(Func<Dictionary<string, object>, T> ConvertToGifter, Obj_Select objSelect, ObservableCollection<T> obsCollec = null) where T : ICT_Personne
     {
         objSelect.Table = PProp.Default.T_Personnes;
@@ -262,7 +259,7 @@ namespace MyMameHelper.SQLite
     }
     */
 
-        /*
+        /* R2gions
     /// <summary>
     /// Renvoie une collection de regions
     /// </summary>
@@ -373,7 +370,7 @@ namespace MyMameHelper.SQLite
                 }
 
                 string sql = $"SELECT {cols2Sel} FROM \"{objSelect.Table}\"";
-                
+
                 SQLiteCommand command = new SQLiteCommand(sql, this.SQLiteConn);
 
                 Condition_TreatMt(command, objSelect.Conditions);
@@ -451,11 +448,11 @@ namespace MyMameHelper.SQLite
         /// <param name="objSelect"></param>
         /// <param name="obsCollec"></param>
         /// <param name="reset"></param>
-        public ObservableCollection<T> GetCollectionOf<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect)
+        public IList<T> GetCollectionOf<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect)
         {
             Debug.WriteLine($"GetCollectionOf: {typeof(T)}");
 
-            ObservableCollection<T> obsCollec = new ObservableCollection<T>();
+            List<T> obsCollec = new List<T>();
 
 
             SQLiteDataReader reader = this.ResultSelect(objSelect);
@@ -471,7 +468,9 @@ namespace MyMameHelper.SQLite
                     }
 
                     T data = method(dico);
-                    if (data == null) continue;
+                    if (data == null)
+                        continue;
+
                     obsCollec.Add(data);
                 }
             }
@@ -510,7 +509,9 @@ namespace MyMameHelper.SQLite
 
                     //
                     T data = method(dico);
-                    if (data == null) continue;
+                    if (data == null)
+                        continue;
+
                     lCollec.Add(data);
                 }
             }
@@ -644,7 +645,9 @@ namespace MyMameHelper.SQLite
                 }
 
                 T data = method(dico);
-                if (data == null) continue;
+                if (data == null)
+                    continue;
+
                 obsCollec.Add(new KeyValuePair<string, object>(key: dico[col].ToString(), value: data));
             }
 
@@ -788,7 +791,7 @@ namespace MyMameHelper.SQLite
 
         public T GetLast<T>(Obj_Select objSelect, Func<Dictionary<string, object>, T> method)
         {
-            if (objSelect.Orders == null) objSelect.Orders = new SqlOrder(Sens.Desc, "ID");
+            if (objSelect.Orders == null) objSelect.AddOrders(new SqlOrder(Sens.Desc, "ID"));
             //objSelect.Limit = 1;
             T data = default(T);
             //SQLiteDataReader reader = ResultSelect(table_name, All, colonnes);
@@ -983,24 +986,24 @@ namespace MyMameHelper.SQLite
         /// <param name="conds"></param>
         /// <param name="order"></param>
         /// <returns></returns>
-        internal SQLiteDataReader GameWithRoms_SQL(SqlCond[] conds, SqlOrder order)
-        {                        
+        internal SQLiteDataReader GameWithRoms_SQL(SqlCond[] conds, SqlOrder[] orders)
+        {
             Dictionary<string, short> dicCol;
             //string sql = $"SELECT [{tRoms}]*, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
             string sql = $"SELECT [{tGame}].ID, [{tGame}].Game_Name  , " +
                 //$"(SELECT group_concat([{tRom}].Archive_Name, '|') " +
-                $"(SELECT group_concat(Roms.ID || '♢' || Roms.Archive_Name || '♢' || Roms.Description, '|')" + 
+                $"(SELECT group_concat(Roms.ID || '♢' || Roms.Archive_Name || '♢' || Roms.Description, '|')" +
                     $"FROM [{tRom}] " +
                     $"WHERE [{tRom}].Game_Id=[{tGame}].ID) AS \"Roms\"" +
                 $" FROM [{tGame}]";
-            
-            
+
+
 
 
 
             SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
             Condition_TreatMt(sqlCMD, conds);
-            Order_TreatMt(sqlCMD, order);
+            Order_TreatMt(sqlCMD, orders);
 
             Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");
 
@@ -1080,9 +1083,9 @@ namespace MyMameHelper.SQLite
         /// <exception cref="NotImplementedException"></exception>
         /// <remarks>
         /// </remarks>
-        internal List<Map_RomGame> Build4Game_List()        
+        internal List<Map_RomGame> Build4Game_List()
         {
-            List<Map_RomGame> lGames = new List<Map_RomGame>();            
+            List<Map_RomGame> lGames = new List<Map_RomGame>();
             SQLiteDataReader reader = AffGames_SQL(null, null);
 
             if (reader.HasRows)
@@ -1093,13 +1096,13 @@ namespace MyMameHelper.SQLite
                 {
                     Map_RomGame mr = new Map_RomGame()
                     {
-                        
-                       
+
+
                     };
                     mr.ID = Trans.GetUInt("ID", reader);
                     //mr.Archive_Name = Trans.GetString("Archive_Name", reader);
                     mr.Game_Name = Trans.GetString("Game_Name", reader);
-                    
+
 
                     //Ag.Game_Name = Trans.GetString("Game_Name", reader);
                     lGames.Add(mr);
@@ -1177,7 +1180,7 @@ namespace MyMameHelper.SQLite
             Aff_Game Ag = new Aff_Game();
 
             Ag.ID = Trans.GetUInt("ID", reader);
-            
+
             Ag.Game_Name = Trans.GetString("Game_Name", reader);
 
 
@@ -1261,7 +1264,7 @@ namespace MyMameHelper.SQLite
                 {
                     while (reader.Read())
                     {
-                        uint ID = Convert.ToUInt32(reader.GetValue(0)) ;
+                        uint ID = Convert.ToUInt32(reader.GetValue(0));
                         dicoRet.Add(ID, reader.GetString(1));
                     }
                 }

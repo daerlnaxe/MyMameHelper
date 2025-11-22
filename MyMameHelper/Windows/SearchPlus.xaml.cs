@@ -78,10 +78,12 @@ namespace MyMameHelper.Windows
 
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                Machines.ChangeContent = sqReq.GetListOf(
-                   CT_Machine.Result2Class,
-                   new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" }, conditions: new SqlCond[] { new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()) }, orders: new SqlOrder("Nom"))
-                   );
+                Obj_Select obj_Select = new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" });
+                obj_Select.AddConds(new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()));
+                obj_Select.AddOrders(new SqlOrder("Nom"));
+
+
+                Machines.ChangeContent = sqReq.GetListOf(CT_Machine.Result2Class, obj_Select);
             }
         }
 
