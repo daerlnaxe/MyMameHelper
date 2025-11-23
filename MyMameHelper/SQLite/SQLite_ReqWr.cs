@@ -132,7 +132,7 @@ namespace MyMameHelper.SQLite
                 T game = Games[i];
 
                 sqlCmd.CommandText = $"Insert INTO [{PProp.Default.T_Games}] " +
-                                        $"([Game_Name],  [Description], [Unwanted],[Machine], [Genre], [IsMahjong], [IsQuizz], [Rate]) " + // J'ai levé Roms, ça n'en fait plus partie
+                                        $"([Game_Name], [Description], [Unwanted], [Machine_Id], [Genre_Id], [IsMahjong], [IsQuizz], [Rate]) " + // J'ai levé Roms, ça n'en fait plus partie
                                         $"VALUES ";
 
                 for (int j = 0; j < max; j++)
@@ -142,13 +142,13 @@ namespace MyMameHelper.SQLite
                     if (j != 0)
                         sqlCmd.CommandText += ", ";
 
-                    sqlCmd.CommandText += $"(@Game_Name{j}, @Description{j}, @Unwanted{j},@Machine{j}, @Genre{j}, @IsMahjong{j}, @IsQuizz{j}, @Rate{j})";// J'ai levé Roms, ça n'en fait plus partie
+                    sqlCmd.CommandText += $"(@Game_Name{j}, @Description{j}, @Unwanted{j},@Machine_Id{j}, @Genre_Id{j}, @IsMahjong{j}, @IsQuizz{j}, @Rate{j})";// J'ai levé Roms, ça n'en fait plus partie
                     // parametres
                     sqlCmd.Parameters.Add($"@Game_Name{j}", DbType.String).Value = Games[i].Game_Name;
                     sqlCmd.Parameters.Add($"@Description{j}", DbType.String).Value = Games[i].Description;
                     sqlCmd.Parameters.Add($"@Unwanted{j}", DbType.Boolean).Value = Games[i].Unwanted;
-                    sqlCmd.Parameters.Add($"@Machine{j}", DbType.Int32).Value = Games[i].Machine;
-                    sqlCmd.Parameters.Add($"@Genre{j}", DbType.Int32).Value = Games[i].Genre;
+                    sqlCmd.Parameters.Add($"@Machine_Id{j}", DbType.Int32).Value = Games[i].Machine_Id;
+                    sqlCmd.Parameters.Add($"@Genre_Id{j}", DbType.Int32).Value = Games[i].Genre_Id;
                     sqlCmd.Parameters.Add($"@Rate{j}", DbType.Int32).Value = Games[i].Rate;
                     sqlCmd.Parameters.Add($"@IsMahjong{j}", DbType.Boolean).Value = Games[i].IsMahjong;
                     sqlCmd.Parameters.Add($"@IsQuizz{j}", DbType.Boolean).Value = Games[i].IsQuizz;
@@ -317,7 +317,7 @@ namespace MyMameHelper.SQLite
             {
                 CT_Constructeur dev = manufacturers[i];
                 //  string vals = null;
-                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{PProp.Default.T_Manufacturers}] (" +
+                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tManufacturer}] (" +
                                         "[Nom] " +
                                         ") VALUES ";
 
@@ -576,24 +576,24 @@ namespace MyMameHelper.SQLite
                                         $"SET " +
                                         $"[Game_Name]=@Game_Name, " +
                                         $"[Description]=@Description, " +
-                                        $"[Machine]=@Machine, " +
-                                        $"[Genre]=@Genre, " +
+                                        $"[Machine_Id]=@Machine_Id, " +
+                                        $"[Genre_Id]=@Genre_Id, " +
                                         $"[Rate]=@Rate, " +
                                         $"[Unwanted]=@Unwanted, " +
                                         $"[IsMahjong]=@IsMahjong, " +
                                         $"[IsQuizz]=@IsQuizz " +
-                                        //$"[Developer]=@Developer " +
+                                        $"[Developer_Id]=@Developer_Id " +
                                         $"WHERE ID=@ID";
 
                 sqlCmd.Parameters.Add($"@Game_Name", DbType.String).Value = Games[i].Game_Name;
                 sqlCmd.Parameters.Add($"@Description", DbType.String).Value = Games[i].Description;
-                sqlCmd.Parameters.Add($"@Machine", DbType.UInt32).Value = Games[i].Machine;
+                sqlCmd.Parameters.Add($"@Machine_Id", DbType.UInt32).Value = Games[i].Machine_Id;
                 sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = Games[i].Unwanted;
-                sqlCmd.Parameters.Add($"@Genre", DbType.UInt32).Value = Games[i].Genre;
+                sqlCmd.Parameters.Add($"@Genre_Id", DbType.UInt32).Value = Games[i].Genre_Id;
                 sqlCmd.Parameters.Add($"@Rate", DbType.UInt32).Value = Games[i].Rate;
                 sqlCmd.Parameters.Add($"@IsMahjong", DbType.Boolean).Value = Games[i].IsMahjong;
                 sqlCmd.Parameters.Add($"@IsQuizz", DbType.Boolean).Value = Games[i].IsQuizz;
-                //sqlCmd.Parameters.Add($"@Developer", DbType.UInt32).Value = Games[i].Developer;
+                sqlCmd.Parameters.Add($"@Developer_Id", DbType.UInt32).Value = Games[i].Developer_Id;
 
                 // condition
                 sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = Games[i].ID;
@@ -617,24 +617,24 @@ namespace MyMameHelper.SQLite
                                     $"SET " +
                                     $"[Game_Name]=@Game_Name, " +
                                     $"[Description]=@Description, " +
-                                    $"[Machine]=@Machine, " +
-                                    $"[Genre]=@Genre, " +
+                                    $"[Machine_Id]=@Machine, " +
+                                    $"[Genre_Id]=@Genre, " +
                                     $"[Rate]=@Rate, " +
                                     $"[Unwanted]=@Unwanted, " +
                                     $"[IsMahjong]=@IsMahjong, " +
                                     $"[IsQuizz]=@IsQuizz " +
-                                    //$"[Developer]=@Developer " +
+                                    $"[Developer_Id]=@Developer " +
                                     $"WHERE ID=@ID";
 
             sqlCmd.Parameters.Add($"@Game_Name", DbType.String).Value = gameCont.Game_Name;
             sqlCmd.Parameters.Add($"@Description", DbType.String).Value = gameCont.Description;
-            sqlCmd.Parameters.Add($"@Machine", DbType.UInt32).Value = gameCont.Machine;
+            sqlCmd.Parameters.Add($"@Machine_Id", DbType.UInt32).Value = gameCont.Machine_Id;
             sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = gameCont.Unwanted;
-            sqlCmd.Parameters.Add($"@Genre", DbType.UInt32).Value = gameCont.Genre;
+            sqlCmd.Parameters.Add($"@Genre_Id", DbType.UInt32).Value = gameCont.Genre_Id;
             sqlCmd.Parameters.Add($"@Rate", DbType.UInt32).Value = gameCont.Rate;
             sqlCmd.Parameters.Add($"@IsMahjong", DbType.Boolean).Value = gameCont.IsMahjong;
             sqlCmd.Parameters.Add($"@IsQuizz", DbType.Boolean).Value = gameCont.IsQuizz;
-            //sqlCmd.Parameters.Add($"@Developer", DbType.UInt32).Value = Games[i].Developer;
+            sqlCmd.Parameters.Add($"@Developer_Id", DbType.UInt32).Value = gameCont.Developer_Id;
 
             // condition
             sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = gameCont.ID;

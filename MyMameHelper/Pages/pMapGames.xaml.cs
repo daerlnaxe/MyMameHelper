@@ -359,7 +359,7 @@ namespace MyMameHelper.Pages
             using (SQLite_Op sqReq = new SQLite_Op())
             {
                 var selOrphean = new Obj_Select(table: PProp.Default.T_Roms, new string[] { "ID", "Archive_Name", "Game_Id", "Description" });
-                selOrphean.AddConds(new SqlCond("Game_Id", eWhere.Is, "null"));
+                selOrphean.AddConds(new SqlCond("Game_Id", eWhere.Is, null));
                 List<CT_Rom> tmp = sqReq.GetListOf<CT_Rom>(CT_Rom.Result2Class, selOrphean);
                 OrpheanRoms = tmp;
             }

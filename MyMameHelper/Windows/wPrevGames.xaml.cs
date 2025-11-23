@@ -29,7 +29,7 @@ namespace MyMameHelper.Windows
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public MyObservableCollection<Aff_Game> Games { get; set; } = new MyObservableCollection<Aff_Game>();
+        //public MyObservableCollection<Aff_Game> Games { get; set; } = new MyObservableCollection<Aff_Game>();
 
 
         public wPrevGames()
@@ -78,10 +78,13 @@ namespace MyMameHelper.Windows
 
         private void Select_LeftGame()
         {
+            /*
             if (RomModes == "Mode Game")
-                Selected4List = Games.FirstOrDefault(x => x.Description.StartsWith(Filter, StringComparison.OrdinalIgnoreCase));
+               Selected4List = Games.FirstOrDefault(x => x.Description.StartsWith(Filter, StringComparison.OrdinalIgnoreCase));
             else if (RomModes == "Mode Archive")
                 Selected4List = Games.FirstOrDefault(x => x.Game_Name.StartsWith(Filter, StringComparison.OrdinalIgnoreCase));
+            */
+
 
             if (Selected4List != null)
             {

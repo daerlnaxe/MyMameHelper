@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,8 +26,6 @@ namespace MyMameHelper.ContTable
         {
             try
             {
-
-
                 if (reader[key] is DBNull)
                     return null;
 
@@ -34,8 +33,10 @@ namespace MyMameHelper.ContTable
             }
             catch
             {
-                throw new Exception($"Column {key} missing, Database alteration");
-            
+                Debug.WriteLine($"Column {key} missing, Database alteration ?");
+                return "";
+                //throw new Exception($"Column {key} missing, Database alteration");
+
             }
 
         }
@@ -62,18 +63,58 @@ namespace MyMameHelper.ContTable
         /// <returns></returns>
         public static uint GetUInt(string key, Dictionary<string, object> dico)
         {
-            if (!dico.ContainsKey(key))
-                return 0;
+            try
+            {
+                if (!dico.ContainsKey(key))
+                    return 0;
 
-            return Convert.ToUInt32(dico[key]);
+                return Convert.ToUInt32(dico[key]);
+            }
+            catch
+            {
+                Debug.WriteLine($"Column {key} missing, Database alteration ?");
+                return 0;
+                //throw new Exception($"Column {key} missing, Database alteration");
+
+            }
         }
+
 
         public static uint GetUInt(string key, SQLiteDataReader reader)
         {
-            if (reader[key] is DBNull)
-                return 0;
+            try
+            {
+                if (reader[key] is DBNull)
+                    return 0;
 
-            return Convert.ToUInt32(reader[key]);
+                return Convert.ToUInt32(reader[key]);
+            }
+            catch
+            {
+                Debug.WriteLine($"Column {key} missing, Database alteration ?");
+                return 0;
+                //throw new Exception($"Column {key} missing, Database alteration");
+
+            }
+        }
+
+
+        public static uint? GetNullableUInt(string key, SQLiteDataReader reader)
+        {
+            try
+            {
+                if (reader[key] is DBNull)
+                    return null;
+
+                return Convert.ToUInt32(reader[key]);
+            }
+            catch
+            {
+                Debug.WriteLine($"Column {key} missing, Database alteration ?");
+                return null;
+                //throw new Exception($"Column {key} missing, Database alteration");
+
+            }
         }
 
 
@@ -183,20 +224,38 @@ namespace MyMameHelper.ContTable
 
         internal static bool GetBool(string key, SQLiteDataReader reader)
         {
-            if (reader[key] is DBNull)
-                return false;
+            try
+            {
 
-            return Convert.ToBoolean(reader[key]);
+
+                if (reader[key] is DBNull)
+                    return false;
+
+                return Convert.ToBoolean(reader[key]);
+            }
+            catch
+            {
+                Debug.WriteLine($"Column {key} missing, Database alteration ?");
+                return false;
+            }
         }
 
         internal static bool? GetBoolFalse(string key, SQLiteDataReader reader)
         {
-            if ( reader[key] is DBNull)
+            try
+            {
+                if (reader[key] is DBNull)
+                    return false;
+
+                bool? val = reader[key] as bool?;
+
+                return val == true ? true : false;
+            }
+            catch
+            {
+                Debug.WriteLine($"Column {key} missing, Database alteration ?");
                 return false;
-
-            bool? val = reader[key] as bool?;
-
-            return val == true ? true : false;
+            }
         }
 
 

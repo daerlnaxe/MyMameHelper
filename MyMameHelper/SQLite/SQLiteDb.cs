@@ -163,15 +163,15 @@ namespace MyMameHelper.SQLite
             string tRoms = Properties.Settings.Default.T_Roms;
             string tempRoms = Properties.Settings.Default.T_TempRoms;
 
-            AlterTable($"ALTER TABLE [{tGames}] ADD [Machine] INTEGER");
+            AlterTable($"ALTER TABLE [{tGames}] ADD [Machine_Id] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [Description] VARCHAR");
             #region Ancien système, délégué à présent à la table Roms
             //AlterTable($"ALTER TABLE [{tGames}] ADD [Roms] VARCHAR");
             #endregion
             AlterTable($"ALTER TABLE [{tGames}] ADD [Unwanted] BOOLEAN");
-            AlterTable($"ALTER TABLE [{tGames}] ADD [Developer] INTEGER");
+            AlterTable($"ALTER TABLE [{tGames}] ADD [Developer_Id] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [Rate] INTEGER");
-            AlterTable($"ALTER TABLE [{tGames}] ADD [Genre] INTEGER");
+            AlterTable($"ALTER TABLE [{tGames}] ADD [Genre_Id] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [IsMahJong] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [IsQuizz] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [IsPinball] INTEGER");

@@ -429,9 +429,9 @@ namespace MyMameHelper.Pages
 
         private void Ex_SaveGames(object sender, ExecutedRoutedEventArgs e)
         {
-            pBuildGames pbGames = new pBuildGames();
-            pbGames.GamesToOrganize = GamesCollec;
-            NavigationService.Navigate(pbGames);
+           /* pBuildGames pbGames = new pBuildGames(); < -- j'ai du le lever
+            /*pbGames.GamesToOrganize = GamesCollec;
+            NavigationService.Navigate(pbGames);*/
         }
 
         private void Can_SaveMecas(object sender, CanExecuteRoutedEventArgs e)

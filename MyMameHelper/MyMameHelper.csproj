@@ -131,9 +131,6 @@
     <Compile Include="Pages\pBuildManus.xaml.cs">
       <DependentUpon>pBuildManus.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\pHandleRoms.xaml.cs">
-      <DependentUpon>pHandleRoms.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\pMapGames.xaml.cs">
       <DependentUpon>pMapGames.xaml</DependentUpon>
     </Compile>
@@ -142,12 +139,6 @@
     </Compile>
     <Compile Include="Pages\pBuildRoms.xaml.cs">
       <DependentUpon>pBuildRoms.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\pBuildGames.xaml.cs">
-      <DependentUpon>pBuildGames.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\PrepareGames.xaml.cs">
-      <DependentUpon>PrepareGames.xaml</DependentUpon>
     </Compile>
     <Compile Include="SQLite\SQL_Element.cs" />
     <Compile Include="Windows\AsyncLoading.xaml.cs">
@@ -172,7 +163,6 @@
       <DependentUpon>wPrevGames.xaml</DependentUpon>
     </Compile>
     <Compile Include="Methods\SaveDb.cs" />
-    <Compile Include="ContTable\Aff_Game.cs" />
     <Compile Include="ContTable\CT.cs" />
     <Compile Include="ContTable\CT_Base.cs" />
     <Compile Include="ContTable\CT_Constructeur.cs" />
@@ -215,9 +205,6 @@
     <None Include="Controls\ListViewPlus.xaml.cs">
       <DependentUpon>ListViewPlus.xaml</DependentUpon>
     </None>
-    <Compile Include="Pages\pCompare_Games.xaml.cs">
-      <DependentUpon>pCompare_Games.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SQLite\eWhere.cs" />
     <Compile Include="SQLite\Obj_Select.cs" />
     <Compile Include="SQLite\SqlCond.cs" />
@@ -232,9 +219,6 @@
     <Compile Include="Windows\ProgressWindow.xaml.cs">
       <DependentUpon>ProgressWindow.xaml</DependentUpon>
     </Compile>
-    <None Include="Windows\Search.xaml.cs">
-      <DependentUpon>Search.xaml</DependentUpon>
-    </None>
     <None Include="Controls\ListViewPlus.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -247,9 +231,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\pHandleRoms.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\pMapGames.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -258,23 +239,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\pCompare_Games.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\PrepareGames.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Pages\pUpdateGames.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\pBuildRoms.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\pBuildGames.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -333,10 +302,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <None Include="Windows\Search.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </None>
     <Page Include="Windows\raoul.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

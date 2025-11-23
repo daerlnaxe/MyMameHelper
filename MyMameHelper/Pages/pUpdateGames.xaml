@@ -7,7 +7,7 @@
       xmlns:commands="clr-namespace:MyMameHelper.Commands"
       xmlns:collections="clr-namespace:System.Collections;assembly=mscorlib"
       mc:Ignorable="d" 
-      d:DesignHeight="800" d:DesignWidth="1200"
+      d:DesignHeight="800" d:DesignWidth="1200" d:Background="white"
       Title="pWorkPage" Loaded="Page_Loaded">
     <Page.Resources>
         <Style TargetType="Button">

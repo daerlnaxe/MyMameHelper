@@ -20,7 +20,7 @@ namespace MyMameHelper.ContTable
         /// </summary>
         public string Game_Name { get; set; }
                
-        public uint? Machine { get; set; }
+        public uint? Machine_Id { get; set; }
 
         private bool? _UnWanted =  false;
         public bool? Unwanted
@@ -36,18 +36,18 @@ namespace MyMameHelper.ContTable
             }
         }
 
-        public uint? Developer { get; set; }
+        public uint? Developer_Id { get; set; }
 
-        public uint? _Genre;
+        public uint? _Genre_Id;
 
-        public uint? Genre
+        public uint? Genre_Id
         {
-            get { return _Genre; }
+            get { return _Genre_Id; }
             set
             {
-                if(_Genre != value)
+                if(_Genre_Id != value)
                 {
-                    _Genre = value;
+                    _Genre_Id = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -87,10 +87,10 @@ namespace MyMameHelper.ContTable
             Game_Name = game.Game_Name;
             Description = game.Description;
          //   SourceFile = game.SourceFile;
-            Machine = game.Machine;
+            Machine_Id = game.Machine_Id;
             Unwanted = game.Unwanted;
-            Developer = game.Developer;
-            Genre = game.Genre;
+            Developer_Id = game.Developer_Id;
+            Genre_Id = game.Genre_Id;
             IsMahjong = game.IsMahjong;
             IsQuizz = game.IsQuizz;
         }
@@ -112,10 +112,10 @@ namespace MyMameHelper.ContTable
             //cTC.Parent_Name = Trans.GetString("Archive_Name", dico);
             cTC.Game_Name = Trans.GetString("Game_Name", dico);           
             cTC.Description = Trans.GetString("Description", dico);           
-            cTC.Machine = Trans.GetNullableUInt("Machine", dico);
+            cTC.Machine_Id = Trans.GetNullableUInt("Machine", dico);
             cTC.Unwanted = Trans.GetBool("Unwanted", dico);
-            cTC.Genre = Trans.GetNullableUInt("Genre", dico);
-            cTC.Developer = Trans.GetNullableUInt("Developer", dico);
+            cTC.Genre_Id = Trans.GetNullableUInt("Genre", dico);
+            cTC.Developer_Id = Trans.GetNullableUInt("Developer", dico);
             cTC.Rate = Trans.GetNullableUInt("Rate", dico);
             cTC.IsMahjong = Trans.GetBoolFalse("IsMahjong", dico);
             cTC.IsQuizz = Trans.GetBoolFalse("IsQuizz", dico);

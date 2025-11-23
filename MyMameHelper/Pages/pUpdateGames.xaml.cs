@@ -43,17 +43,19 @@ namespace MyMameHelper.Pages
         /// <summary>
         /// Liste de référence prise dans la bdd
         /// </summary>
-        public MyObservableCollection<Aff_Game> DbGames { get; set; } = new MyObservableCollection<Aff_Game>();
+        public MyObservableCollection<CT_Game_Mapped> DbGames { get; set; } = new MyObservableCollection<CT_Game_Mapped>();
 
         /// <summary>
         /// Liste des jeux en cours de modification
         /// </summary>
-        public MyObservableCollection<Aff_Game> GamesModified { get; set; } = new MyObservableCollection<Aff_Game>();
+        //public MyObservableCollection<Aff_Game> GamesModified { get; set; } = new MyObservableCollection<Aff_Game>();
+
+
 
         /// <summary>
         /// Stockage des jeux pour permetre de revenir sur les modifications
         /// </summary>
-        private List<Aff_Game> _TempGame { get; set; } = new List<Aff_Game>();
+        //private List<Aff_Game> _TempGame { get; set; } = new List<Aff_Game>();
 
         public MyObservableCollection<CT_Constructeur> Constructeurs { get; set; } = new MyObservableCollection<CT_Constructeur>();
 
@@ -64,8 +66,8 @@ namespace MyMameHelper.Pages
         public MyObservableCollection<CT_Genre> Genres { get; set; } = new MyObservableCollection<CT_Genre>();
 
 
-        private Aff_Game _LeftSelected;
-        public Aff_Game LeftSel
+       // private Aff_Game _LeftSelected;
+        /*public Aff_Game LeftSel
         {
             get { return _LeftSelected; }
             set
@@ -91,7 +93,7 @@ namespace MyMameHelper.Pages
                 }
             }
         }
-
+        */
 
 
         public pUpdateGames()
@@ -102,16 +104,22 @@ namespace MyMameHelper.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            /* A revoir
-            using (SQLite_Req sqReq = new SQLite_Req())
+            
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
-                DbGames.ChangeContent = sqReq.AffGames_List(order: new SqlOrder("Game_Name"));
+                DbGames.ChangeContent = sqReq.QueryGame4Update(order: new SqlOrder("Game_Name"));
 
-                Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Constructeurs, all: true));
-                Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Companies, all: true));
+                // Liste des constructeurs ?? 
+                //Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Constructeurs, all: true));
+                
+                // Liste des développeurs
+                Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
+                // Liste des Machines
+                Machines.ChangeContent = sqReq.GetListOf<CT_Machine>(CT_Machine.Result2Class, new Obj_Select(table: PProp.Default.T_Machines, all: true));
+                // Liste des genres
                 Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true));
             }
-            */
+            
         }
 
         private void Select_All(object sender, ExecutedRoutedEventArgs e)
@@ -237,7 +245,7 @@ namespace MyMameHelper.Pages
         #region Updater dans la table Games
         private void Can_Update(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = GamesModified.Count > 0;
+           // e.CanExecute = GamesModified.Count > 0;
         }
 
         private void UpdateGames(object sender, ExecutedRoutedEventArgs e)
@@ -262,10 +270,11 @@ namespace MyMameHelper.Pages
             e.CanExecute = DbGames.Count > 0;
         }
 
+
         private void Ex_AddGame(object sender, ExecutedRoutedEventArgs e)
         {
             //CT_Machine machine = (CT_Machine)cbMachines.SelectedItem;
-
+            /*
             List<Aff_Game> toModify = null;
             if (dg2Organize.SelectedItems.Count == 0)
             {
@@ -286,19 +295,20 @@ namespace MyMameHelper.Pages
 
             GamesModified.SignalChange();
             dg2Organize.SelectedIndex = -1;
-            // DbGames.SignalChange();
+            // DbGames.SignalChange();*/
         }
         #endregion
 
         #region Datagrid Droite
 
         private void Can_RemoveRight(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = GamesModified.Count > 0;
+        {/*
+            e.CanExecute = GamesModified.Count > 0;*/
         }
 
         private void Ex_RemoveRight(object sender, ExecutedRoutedEventArgs e)
         {
+            /*
             IList items = dgRight.SelectedItems;
             List<Aff_Game> toDel = new List<Aff_Game>();
             for (int i = 0; i < items.Count; i++)
@@ -309,24 +319,24 @@ namespace MyMameHelper.Pages
 
             foreach (Aff_Game g in toDel)
             {
-                DbGames.Add(g);
-                GamesModified.Remove(g);
-            }
+            /*    DbGames.Add(g);
+                GamesModified.Remove(g);*/
+            /*}*/
         }
 
         private void Can_ResetRight(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = GamesModified.Count > 0;
+            //e.CanExecute = GamesModified.Count > 0;
         }
 
         private void Ex_ResetRight(object sender, ExecutedRoutedEventArgs e)
         {
-            foreach (Aff_Game g in GamesModified)
+          /*  foreach (Aff_Game g in GamesModified)
             {
-                DbGames.Add(g);
+              //  DbGames.Add(g);
             }
 
-            GamesModified.Clear();
+            GamesModified.Clear();*/
         }
 
 
@@ -339,7 +349,7 @@ namespace MyMameHelper.Pages
             SearchPlus sp = new SearchPlus();
             if (sp.ShowDialog() == true)
             {
-                DbGames.ChangeContent = sp.GamesFound.ToList();
+              //s  DbGames.ChangeContent = sp.GamesFound.ToList();
             }
         }
 
@@ -351,11 +361,12 @@ namespace MyMameHelper.Pages
         #region Change
         private void Can_Change(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = GamesModified.Count > 0;
+            //e.CanExecute = GamesModified.Count > 0;
         }
 
         private void Ex_Change(object sender, ExecutedRoutedEventArgs e)
         {
+            /*
             if (dgRight.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Select Game(s)");
@@ -383,7 +394,7 @@ namespace MyMameHelper.Pages
 
                 /*foreach (CT_Rom rom in game.Roms)
                     rom.Unwanted = cbUnwanted.IsChecked;*/
-
+            /*
                 // Genre
                 if (cboxGenres.SelectedItem != null)
                 {
@@ -407,18 +418,19 @@ namespace MyMameHelper.Pages
                 }
             }
             cbMachines.SelectedItem = null;
-
+            */
         }
         #endregion
 
         #region Edit
         private void Can_EditRom(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = GamesModified.Count > 0;
+           // e.CanExecute = GamesModified.Count > 0;
         }
 
         private void Ex_EditRom(object sender, ExecutedRoutedEventArgs e)
         {
+            /*
             Aff_Game game = (Aff_Game)dgRight.SelectedItem;
             wGame window = new wGame();
             window.Game = new Aff_Game(game);
@@ -436,7 +448,7 @@ namespace MyMameHelper.Pages
                 {
                     DbGames.ChangeContent = sqReq.AffGames_List();
                 }*/
-            }
+            /*}*/
         }
         #endregion
 

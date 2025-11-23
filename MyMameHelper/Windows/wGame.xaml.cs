@@ -30,7 +30,7 @@ namespace MyMameHelper.Windows
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
+        /*
         private Aff_Game _Game;
         public Aff_Game Game
         {
@@ -45,7 +45,7 @@ namespace MyMameHelper.Windows
             }
         }
 
-        private Aff_Game _OldGame;
+        private Aff_Game _OldGame;*/
 
         public uint? SelIndexGenre { get; set; }
 

@@ -220,6 +220,7 @@ namespace MyMameHelper.Pages
         }
         */
 
+        /*
         /// <summary>
         /// obsolète ?
         /// </summary>
@@ -250,8 +251,8 @@ namespace MyMameHelper.Pages
                     wd1.Progress_Value = percent;
                 }
             }
-        }
-
+        }*/
+        /*
         private ObservableCollection<Aff_Game> Asynctest2(ObservableCollection<Aff_Game> copyGames, IList selectedGames)
         {
             throw new NotImplementedException("A identifier");
@@ -274,7 +275,7 @@ namespace MyMameHelper.Pages
             wd1.CloseByAsync();
 
             return copyGames;
-        }
+        }*/
 
         #endregion
 

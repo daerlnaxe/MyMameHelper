@@ -65,7 +65,7 @@ namespace MyMameHelper
         }
 
         private bool DatabaseOk;
-
+        /*
         private ObservableCollection<Aff_Game> _GamesCollection = new ObservableCollection<Aff_Game>();
         public ObservableCollection<Aff_Game> GamesCollection
         {
@@ -78,7 +78,7 @@ namespace MyMameHelper
                     NotifyPropertyChanged();
                 }
             }
-        }
+        }*/
 
 
 
@@ -212,7 +212,7 @@ namespace MyMameHelper
 
         private void Ex_Compare(object sender, ExecutedRoutedEventArgs e)
         {
-            Active_Page = new pCompare_Games();//Pages["pCompare_Games.xaml"];
+           // Active_Page = new pCompare_Games();//Pages["pCompare_Games.xaml"];
 
         }
 
@@ -345,7 +345,7 @@ namespace MyMameHelper
 
         private void Ex_RomManager(object sender, ExecutedRoutedEventArgs e)
         {
-            Active_Page = new pHandleRoms();
+           // Active_Page = new pHandleRoms();
         }
         #endregion
 

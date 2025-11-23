@@ -44,7 +44,7 @@ namespace MyMameHelper.Pages
         /// <summary>
         /// 
         /// </summary>
-        public MyObservableCollection<Aff_Game> DbGames = new MyObservableCollection<Aff_Game>();
+        //public MyObservableCollection<Aff_Game> DbGames = new MyObservableCollection<Aff_Game>();
 
         public List<CT_Game> IncompleteGames = new List<CT_Game>();
         public List<CT_Rom> MissingRoms = new List<CT_Rom>();
@@ -99,7 +99,7 @@ namespace MyMameHelper.Pages
         }
 
 
-
+        /*
         private void Create_HelpFiles_Click(object sender, RoutedEventArgs e)
         {
             if (DbGames.Count == 0)
@@ -125,10 +125,11 @@ namespace MyMameHelper.Pages
                 {
                     file.WriteLine(g.Game_Name);
                 }*/
+        /*
             }
 
             System.Windows.MessageBox.Show("All Help Files created", "", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
+        }*/
 
 
 
@@ -165,6 +166,7 @@ namespace MyMameHelper.Pages
 
 
         [Obsolete]
+        /*
         private void Proceed_Click(object sender, RoutedEventArgs e)
         {
             if (DbGames.Count == 0)
@@ -208,11 +210,12 @@ namespace MyMameHelper.Pages
 
                 //string destFile = System.IO.Path.Combine(Destination_Folder, $"{g.Parent_Name}.zip");
                 //File.Move(archiveFile, destFile);*/
+        /*
                 i++;
             }
             System.Windows.MessageBox.Show($"{i} File(s) Moved", "", MessageBoxButton.OK, MessageBoxImage.Information);
 
-        }
+        }*/
 
         private void Proceed_Roms(object sender, ExecutedRoutedEventArgs e)
         {
@@ -338,7 +341,7 @@ namespace MyMameHelper.Pages
 
             return;
            // throw new Exception("A revoir");
-            foreach (Aff_Game dbG in DbGames)
+           /* foreach (Aff_Game dbG in DbGames)
             {
 
                 /*
@@ -376,7 +379,7 @@ namespace MyMameHelper.Pages
                 {
                     Console.WriteLine(exc.Message);
                 }*/
-            }
+            /*}*/
         }
 
 

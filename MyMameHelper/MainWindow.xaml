@@ -21,7 +21,7 @@
         <CommandBinding Command="local:MainWindow.Build_Roms" Executed="Ex_BuildRoms" CanExecute="Can_BuildRoms"/>
         <CommandBinding Command="local:MainWindow.RomManager" Executed="Ex_RomManager" CanExecute="Can_Manage"/>
         <CommandBinding Command="local:MainWindow.MapGames" CanExecute="Can_MapGames" Executed="Ex_MapGames"/>
-        <!-- Work -->
+        <!-- Work On Games -->
         <CommandBinding Command="local:MainWindow.Compare" CanExecute="Can_Compare" Executed="Ex_Compare"/>
         <!--CommandBinding Command="local:MainWindow.MoveAllGames" CanExecute="Can_MoveAllGames" Executed="Ex_MoveAllGames"/-->
         <CommandBinding Command="local:MainWindow.FileManager" CanExecute="Can_ManageFiles" Executed="Ex_ManageFiles"/>

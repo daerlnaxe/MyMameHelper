@@ -32,7 +32,7 @@ namespace MyMameHelper.Windows
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public MyObservableCollection<Aff_Game> GamesFound { get; set; } = new MyObservableCollection<Aff_Game>();
+        //public MyObservableCollection<Aff_Game> GamesFound { get; set; } = new MyObservableCollection<Aff_Game>();
 
         private string _LastOrder;
 

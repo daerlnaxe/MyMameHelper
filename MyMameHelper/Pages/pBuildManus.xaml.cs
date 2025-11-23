@@ -53,7 +53,7 @@ namespace MyMameHelper.Pages
 
                     #region Collection of Temporary Roms
                     Obj_Select obsJ = new Obj_Select(table: PProp.Default.T_TempRoms, colonnes: new string[] { "Manufacturer" }, groups: new string[] { "Manufacturer" });
-                    obsJ.Conditions = new SqlCond[] { new SqlCond(colonne: "Is_Bios", eWhere.Equal, "False"), new SqlCond(link: Linker.And, colonne: "Is_Mechanical", eWhere.Equal, "False"), new SqlCond(Linker.And, "Manufacturer", eWhere.Not_Equal, "null") };
+                    //obsJ.Conditions = new SqlCond[] { new SqlCond(colonne: "Is_Bios", eWhere.Equal, "False"), new SqlCond(link: Linker.And, colonne: "Is_Mechanical", eWhere.Equal, "False"), new SqlCond(Linker.And, "Manufacturer", eWhere.Not_Equal, "null") };
                     gDev = sqReq.GetListOf<RawMameRom>(RawMameRom.Result2Class, obsJ);
                     #endregion
                 }

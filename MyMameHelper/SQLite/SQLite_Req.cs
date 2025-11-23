@@ -142,14 +142,17 @@ namespace MyMameHelper.SQLite
                 munch[0] = $"[{munch[0]}]";
 
                 string val = "";
-                if(cond.Valeur is string)
+                if (cond.Valeur is string)
                 {
-                    val = this.FilterParameter((string)cond.Valeur);
+                    val = $"'{this.FilterParameter((string)cond.Valeur)}'";
 
                 }
+                else if (cond.Valeur == null)
+                    val = "null";
+
                 else
                 {
-                    val = "null";
+                    val = $"{cond.Valeur}";
                 }
 
 

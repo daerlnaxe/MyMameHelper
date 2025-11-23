@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyMameHelper.Windows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,27 +46,48 @@ namespace MyMameHelper.ContTable
         }
 
 
+        /// <summary>
+        /// Developer
+        /// </summary>
+        private CT_Machine _Developer;
+        public CT_Machine Developer
+        {
+            get { return _Developer; }
+            set
+            {
+                if (value != _Developer)
+                {
+                    _Developer = value;
+                    base.NotifyPropertyChanged();
+                }
+            }
+        }
+
 
         public CT_Game_Mapped()
         {
         }
-
-        public CT_Game_Mapped(CT_Game_Mapped game)
+        public CT_Game_Mapped(CT_Game game) : base(game)
         {
-            ID = game.ID;
+        }
+
+        public CT_Game_Mapped(CT_Game_Mapped game):base(game)
+        {
+           /*ID = game.ID;
             Game_Name = game.Game_Name;
-            Description = game.Description;
+            Description = game.Description;*/
             //SourceFile = game.SourceFile;
+
             Machine = game.Machine;
 
             /*Aff_Machine = game.Aff_Machine;*/
 
-            Unwanted = game.Unwanted;
+            //Unwanted = game.Unwanted;
             Developer = game.Developer;
             //  Aff_Developer = game.Aff_Developer;
-            Genre = game.Genre;
+            //Genre_Id = game.Genre_Id;
             //Aff_Genre = game.Aff_Genre;
-            Rate = game.Rate;
+            //Rate = game.Rate;
 
             foreach (var rom in game.Roms)
                 Roms.Add(new CT_Rom(rom));

@@ -36,7 +36,7 @@
             <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
 
-        <!-- Raw -->
+        <!-- Colonne de gauche Raw -->
         <DockPanel Grid.RowSpan="2">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                 <Label Content="Developers Found:" DockPanel.Dock="Top"/>
@@ -65,7 +65,7 @@
             </DataGrid>
 
         </DockPanel>
-        <!-- TO Database -->
+        <!-- Colonne de droite TO Database -->
         <DockPanel Grid.Column="2">
             <Label Content="Developers to Add:" DockPanel.Dock="Top"/>
             <StackPanel DockPanel.Dock="Right">
