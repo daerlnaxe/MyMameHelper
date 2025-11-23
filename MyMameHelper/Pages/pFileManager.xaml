@@ -63,7 +63,7 @@
                         </Grid.RowDefinitions>
                         <CheckBox x:Name="useFiles" Content="Use Files Information ???"  ToolTip="???"/>
                         <CheckBox x:Name="useUnwanted"  Content="Use Unwanted Folder (Machine method) ???" Grid.Row="1" ToolTip="???"/>
-                        <CheckBox x:Name="OverWrite"  Content="OverWrite Files" Grid.Row="2"  ToolTip="OverWrite if file exists"/>
+                        <CheckBox IsChecked="{Binding OverWriteFiles}" x:Name="OverWrite"  Content="OverWrite Files" Grid.Row="2"  ToolTip="OverWrite if file exists"/>
                         <CheckBox Content="Move files" Grid.Row="3"  ToolTip="Move files instead of copy" IsChecked="{Binding MoveFiles}"/>
 
                     </Grid>

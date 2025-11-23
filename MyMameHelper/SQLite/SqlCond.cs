@@ -53,21 +53,21 @@ namespace MyMameHelper.SQLite
         {
             Colonne = colonne;
             Operateur = operateur;
-            Valeur = valeur.ToString();
+            Valeur = valeur;
         }
         public SqlCond(Linker link, string colonne, eWhere operateur, object valeur)
         {
             Link = link;
             Colonne = colonne;
             Operateur = operateur;
-            Valeur = valeur.ToString();
+            Valeur = valeur;
         }
         public SqlCond(Linker link, string colonne, eWhere operateur, uint? valeur)
         {
             Link = link;
             Colonne = colonne;
             Operateur = operateur;
-            Valeur = valeur.ToString();
+            Valeur = valeur;
         }
 
         public SqlCond() { }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace MyMameHelper.Pages
         /// </summary>
         public MyObservableCollection<Aff_Game> DbGames = new MyObservableCollection<Aff_Game>();
 
-        public List<CT_Game_Mapped> IncompleteGames = new List<CT_Game_Mapped>();
+        public List<CT_Game> IncompleteGames = new List<CT_Game>();
         public List<CT_Rom> MissingRoms = new List<CT_Rom>();
 
 
@@ -80,7 +81,11 @@ namespace MyMameHelper.Pages
             }
         }
 
+        #region Checkboxes
         public Boolean MoveFiles { get; set; }
+
+        public bool OverWriteFiles { get; set; }
+        #endregion
 
         public pFileManager()
         {
@@ -219,11 +224,11 @@ namespace MyMameHelper.Pages
             _DirFiles = Directory.GetFiles(PProp.Default.RomSource);
 
             // Récupérer les jeux et les roms associées
-            Load_MapGames();
-            Debug.WriteLine($"Nombre de jeux trouvés: {_GamesMapped.Count}");
+            Get_RomMapped();
+            Debug.WriteLine($"Nombre de roms trouvées: {_RomsMapped.Count}");
 
 
-            List<CT_Game> FilteredGamesMapped = new List<CT_Game>(_GamesMapped);
+            List<CT_Rom_Mapped> FilteredGamesMapped = new List<CT_Rom_Mapped>(_RomsMapped);
 
             // Méthode
             // Construction du chemin de destination
@@ -235,69 +240,104 @@ namespace MyMameHelper.Pages
             
 
             // Construction des répertoires
-            foreach (CT_Game_Mapped dbG in FilteredGamesMapped)
-            {
-                
-                string dest = null;
+            foreach (CT_Rom_Mapped romMapped in FilteredGamesMapped)
+            {                
+                string dest = Destination_Folder;
+
+                var dbG = romMapped.Game;
+
 
                 // According to the arborescence type chosen
                 switch (arboChoosen)
                 {
                     case "Machine":
-                        dest = Get_Path4Machine(dbG);
+                        dest = Get_Path4Machine(romMapped);
                         break;
 
                     default:
                         break;
                 }
 
-  
- 
+
+
                 //dest = Path.Combine(dest, $"{dbG.}.zip");
 
 
                 //Console.WriteLine($"{dicMachines[Convert.ToUInt32(dbG.Machine)].Constructeur} | {dbG.Machine.Nom} | {dbG.Game_Name}");
 
-
-
-                // roms
-                foreach (CT_Rom rom in dbG.Roms)
+                string romFile = Path.Combine(PProp.Default.RomSource, $"{romMapped.Archive_Name}.zip");
+                // Vérifie que le fichier existe
+                Debug.WriteLine($"Test présence: '{romFile}'");
+                if (!File.Exists(romFile))
                 {
-                    string romFile = Path.Combine(PProp.Default.RomSource, $"{rom.Archive_Name}");
+                    MissingRoms.Add(romMapped);
 
-
-                    // Vérifie que le fichier existe
-                    Debug.WriteLine($"Test présence: '{romFile}'");
-                    if (!File.Exists(romFile))
+                    if (IncompleteGames.FirstOrDefault(x => x == dbG) == null)
                     {
-                        MissingRoms.Add(rom);
-
-                        if (IncompleteGames.FirstOrDefault(x => x == dbG) == null)
-                        {
-                            IncompleteGames.Add(dbG);
-                        }
-
-                        continue;
+                        IncompleteGames.Add(dbG);
                     }
+
+                    continue;
                 }
 
 
-               
+                // Déplacement + option d'écrasement.
+                string destFile = Path.Combine(dest, $"{romMapped.Archive_Name}.zip");
 
-                //
-                return;
-
-                if (MoveFiles == true)
+                try
                 {
+                    bool overW = false;
 
+                    if (OverWrite.IsChecked == true)
+                        overW = true;
+                    
+
+
+                    if (!Directory.Exists(Path.GetDirectoryName(dest)))
+                        Directory.CreateDirectory(Path.GetDirectoryName(dest));
+
+                    if (dbG.Unwanted == true && useUnwanted.IsChecked == true)
+                        File.Create(dest);
+
+
+
+
+
+                    // Déplacement des fichiers
+                    if (MoveFiles )
+                    {
+                        if (!OverWriteFiles)
+                        {
+                            System.Windows.MessageBox.Show("File exists, unable to move file if you don't allow to overwrite", "File exists", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                        else if (OverWriteFiles && File.Exists(destFile))
+                        {
+                            File.Delete(destFile);
+                        }
+                        File.Move(romFile, destFile);
+                    }
+                    else
+                        File.Copy(romFile, dest, overW);
                 }
-                else
+                catch (IOException ioExc)
                 {
+                    Debug.WriteLine(ioExc.Message);
 
                 }
+                catch (Exception exc)
+                {
+                    Console.WriteLine(exc.Message);
+                }
+
+
+
             }
 
-            throw new Exception("A revoir");
+            System.Windows.MessageBox.Show("File operation finished", "Finished", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            return;
+           // throw new Exception("A revoir");
             foreach (Aff_Game dbG in DbGames)
             {
 
@@ -347,13 +387,14 @@ namespace MyMameHelper.Pages
         /// </summary>
         /// <param name="dbG"></param>
         /// <returns></returns>
-        private string Get_Path4Machine(CT_Game_Mapped dbG)
+        private string Get_Path4Machine(CT_Rom_Mapped romMapped)
         {
+            
             string dest = null;
 
-            dest = Path.Combine(PProp.Default.RomDestination, dicMachines[Convert.ToUInt32(dbG.Machine)].Constructeur, dbG.Machine.Nom);
+            dest = Path.Combine(PProp.Default.RomDestination, dicMachines[Convert.ToUInt32(romMapped.Machine.ID)].Constructeur, romMapped.Machine.Nom);
 
-            if (dbG.Unwanted == true && useUnwanted.IsChecked == true)
+            if (romMapped.Game.Unwanted == true && useUnwanted.IsChecked == true)
             {
                 dest = Path.Combine(dest, "Unwanted");
             }
@@ -373,17 +414,17 @@ namespace MyMameHelper.Pages
         }
 
 
-        private List<CT_Game_Mapped> _GamesMapped;
+        private List<CT_Rom_Mapped> _RomsMapped;
 
 
         /// <summary>
         /// Construit et lance l'asyncloadmapGames
         /// </summary>
-        private void Load_MapGames()
+        private void Get_RomMapped()
         {
             // Chargement asynchrone des Jeux et des roms associées
             AsyncWindowProgress aLoad = new AsyncWindowProgress();
-            aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoad_MapGames);
+            aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoad_RomMapped);
             aLoad.ShowDialog();
         }
 
@@ -391,12 +432,12 @@ namespace MyMameHelper.Pages
         /// Récupère en base les valeurs avec liaison des deux tables
         /// </summary>
         /// <param name="aLoad"></param>
-        private void AsyncLoad_MapGames(AsyncWindowProgress aLoad)
+        private void AsyncLoad_RomMapped(AsyncWindowProgress aLoad)
         {
-            aLoad.AsyncMessage("Loading Games and mappel Roms...");
+            aLoad.AsyncMessage("Loading enhanced Roms...");
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                _GamesMapped = sqReq.QueryGameWithRoms();
+                _RomsMapped = sqReq.List_Roms4Move();
 
 
             }

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace MyMameHelper.ContTable
 {
+    /// <summary>
+    /// Représente la version enrichie avec le mapping, et non la version existante en base de donnée
+    /// </summary>
     public class CT_Rom_Mapped: CT_Rom
     {
         /// <summary>
@@ -26,6 +29,21 @@ namespace MyMameHelper.ContTable
                     NotifyPropertyChanged();
                 }
 
+            }
+        }
+
+
+        private CT_Machine _Machine = new CT_Machine();
+        public CT_Machine Machine
+        {
+            get => _Machine;
+            set
+            {
+                if (value != _Machine)
+                {
+                    _Machine = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
     }

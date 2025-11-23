@@ -141,3 +141,11 @@ Dans l'intérêt de l'utilisateur, si l'on part sur lister les jeux:
 ``` SQL
 SELECT Games.Game_Name  , (SELECT group_concat(Roms.Archive_Name, '|') FROM Roms WHERE Roms.Game=Games.ID) AS "Roms" FROM GAMES 
 ```
+
+<br>
+<br>
+
+## File Manager
+- Copie normale : ok
+- Ecrasement : ok
+- Déplacement : ok + gestion si le fichier existe déjà

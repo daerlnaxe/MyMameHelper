@@ -1151,7 +1151,8 @@ namespace MyMameHelper.SQLite
         {
 
             Dictionary<string, short> dicCol;
-            string sql = $"SELECT [{tRom}].Archive_Name, " +
+            string sql = $"SELECT [{tRom}].ID, [{tRom}].Archive_Name, [{tRom}].Game_Id" +
+                            $" , [{tGame}].Game_Name" +
                             $" FROM [{tRom}] " +
                             $" LEFT JOIN [{tGame}] ON Game_Id = [{tGame}].ID " +
 
@@ -1159,10 +1160,10 @@ namespace MyMameHelper.SQLite
 
             SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
 
-            SqlCond[] conds = new SqlCond[] { new SqlCond($"[{tRom}].Game_Id", eWhere.Is_Not, null) };
+            SqlCond[] conds = new SqlCond[] { new SqlCond($"Game_Id", eWhere.Is_Not, null) };
             Condition_TreatMt(sqlCMD, conds);
 
-            SqlOrder[] orders = new SqlOrder[] { new SqlOrder($"[{tGame}].Game_Name") };
+            SqlOrder[] orders = new SqlOrder[] { new SqlOrder($"Game_Name") };
             Order_TreatMt(sqlCMD, orders);
 
             Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");
@@ -1179,10 +1180,10 @@ namespace MyMameHelper.SQLite
         }
 
 
-        public List<CT_Rom> List_Roms4Move(SqlCond[] conds = null, SqlOrder order = null)
+        public List<CT_Rom_Mapped> List_Roms4Move(SqlCond[] conds = null, SqlOrder order = null)
         {
             
-            List<CT_Rom> lGames = new List<CT_Rom>();
+            List<CT_Rom_Mapped> lGames = new List<CT_Rom_Mapped>();
             SQLiteDataReader reader = Select_Roms4Move();
 
             if (reader.HasRows)
@@ -1191,9 +1192,20 @@ namespace MyMameHelper.SQLite
 
                 while (reader.Read())
                 {
-                    /*CT_Rom aG = AffRom_Maker(reader);
+                    CT_Rom_Mapped aRom = new CT_Rom_Mapped();
+                    aRom.ID = Trans.GetUInt("ID", reader);
+                    aRom.Archive_Name = Trans.GetString("Archive_Name", reader);
 
-                    lGames.Add(aG);*/
+
+                    CT_Game game = new CT_Game();
+                    if (aRom.Game_Id != null)
+                    {
+                        game.ID = uint.Parse( aRom.Game_Id.ToString());
+                        game.Game_Name = Trans.GetString("Game_Name", reader);
+                    }
+
+
+                    lGames.Add(aRom);
                 }
             }
 

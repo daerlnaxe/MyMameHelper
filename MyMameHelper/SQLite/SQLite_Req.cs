@@ -207,12 +207,8 @@ namespace MyMameHelper.SQLite
             if (hasOrders)
             {
                 command.CommandText += " ORDER BY";
-                command.CommandText = strOrders;
-
-
+                command.CommandText += strOrders;
             }
-
-
         }
 
 
