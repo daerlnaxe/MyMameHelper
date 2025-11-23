@@ -33,7 +33,7 @@ namespace MyMameHelper.ContTable
             }
             catch
             {
-                Debug.WriteLine($"Column {key} missing, Database alteration ?");
+             //   Debug.WriteLine($"Column {key} missing, Database alteration ?");
                 return "";
                 //throw new Exception($"Column {key} missing, Database alteration");
 

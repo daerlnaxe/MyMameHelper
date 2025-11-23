@@ -29,6 +29,23 @@ namespace MyMameHelper.ContTable
         }
 
         /// <summary>
+        /// Genre
+        /// </summary>
+        private CT_Genre _Genre;
+        public CT_Genre Genre
+        {
+            get { return _Genre; }
+            set
+            {
+                if (value != _Genre)
+                {
+                    _Genre = value;
+                    base.NotifyPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
         /// Machine
         /// </summary>
         private CT_Machine _Machine;
@@ -40,7 +57,7 @@ namespace MyMameHelper.ContTable
                 if (value != _Machine)
                 {
                     _Machine = value;
-                    base.NotifyPropertyChanged();
+                    NotifyPropertyChanged();                    
                 }
             }
         }
@@ -49,8 +66,8 @@ namespace MyMameHelper.ContTable
         /// <summary>
         /// Developer
         /// </summary>
-        private CT_Machine _Developer;
-        public CT_Machine Developer
+        private CT_Developer _Developer;
+        public CT_Developer Developer
         {
             get { return _Developer; }
             set

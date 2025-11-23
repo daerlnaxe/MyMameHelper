@@ -40,6 +40,8 @@ namespace MyMameHelper.Pages
 
         public static readonly RoutedCommand Select_AllCmd = new RoutedCommand("Select All", typeof(pUpdateGames));
 
+
+        #region Game
         /// <summary>
         /// Liste de référence prise dans la bdd
         /// </summary>
@@ -48,8 +50,8 @@ namespace MyMameHelper.Pages
         /// <summary>
         /// Liste des jeux en cours de modification
         /// </summary>
-        //public MyObservableCollection<Aff_Game> GamesModified { get; set; } = new MyObservableCollection<Aff_Game>();
-
+        public MyObservableCollection<CT_Game_Mapped> GamesModified { get; set; } = new MyObservableCollection<CT_Game_Mapped>();
+        #endregion Game
 
 
         /// <summary>
@@ -58,10 +60,13 @@ namespace MyMameHelper.Pages
         //private List<Aff_Game> _TempGame { get; set; } = new List<Aff_Game>();
 
         public MyObservableCollection<CT_Constructeur> Constructeurs { get; set; } = new MyObservableCollection<CT_Constructeur>();
-
+         
+        #region Machine
         public MyObservableCollection<CT_Machine> Machines { get; set; } = new MyObservableCollection<CT_Machine>();
+        public CT_Machine SelectedMachine { get; set; }
+        #endregion Machine
 
-        public MyObservableCollection<CT_Constructeur> Developers { get; set; } = new MyObservableCollection<CT_Constructeur>();
+        public MyObservableCollection<CT_Developer> Developers { get; set; } = new MyObservableCollection<CT_Developer>();
 
         public MyObservableCollection<CT_Genre> Genres { get; set; } = new MyObservableCollection<CT_Genre>();
 
@@ -113,7 +118,7 @@ namespace MyMameHelper.Pages
                 //Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Constructeurs, all: true));
                 
                 // Liste des développeurs
-                Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
+                Developers.ChangeContent = sqReq.GetListOf<CT_Developer>(CT_Developer.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
                 // Liste des Machines
                 Machines.ChangeContent = sqReq.GetListOf<CT_Machine>(CT_Machine.Result2Class, new Obj_Select(table: PProp.Default.T_Machines, all: true));
                 // Liste des genres
@@ -274,28 +279,39 @@ namespace MyMameHelper.Pages
         private void Ex_AddGame(object sender, ExecutedRoutedEventArgs e)
         {
             //CT_Machine machine = (CT_Machine)cbMachines.SelectedItem;
-            /*
-            List<Aff_Game> toModify = null;
+            
+            List<CT_Game_Mapped> toModify = null;
             if (dg2Organize.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Select Game(s)", "", MessageBoxButton.OK);
             }
 
             //toModify =.Cast<Aff_Game>().ToList();
+            List<CT_Game_Mapped> tmp =new List<CT_Game_Mapped>();
+            for (int i = 0; i < dg2Organize.SelectedItems.Count; i++)
+            { 
+                tmp.Add((CT_Game_Mapped)dg2Organize.SelectedItems[i]);  
+            }
+                
+                
 
-            foreach (Aff_Game game in dg2Organize.SelectedItems)
+            foreach (CT_Game_Mapped game in tmp)
             {
-                if (GamesModified.FirstOrDefault(x => x.Game_Name.Equals(game.Game_Name)) != null)
-                    continue;
+                /*if (GamesModified.FirstOrDefault(x => x.Game_Name.Equals(game.Game_Name)) != null)
+                    continue;*/
 
-                GamesModified.AddSilent(new Aff_Game(game));
+                GamesModified.AddSilent(new CT_Game_Mapped(game));
+                DbGames.Remove(game);
             }
             // _TempGame.AddRange(toModify);
             // DbGames.RemoveSilentRange(toModify);
 
             GamesModified.SignalChange();
+            //DbGames.SignalChange();
+
+
             dg2Organize.SelectedIndex = -1;
-            // DbGames.SignalChange();*/
+            // DbGames.SignalChange();
         }
         #endregion
 
@@ -326,17 +342,17 @@ namespace MyMameHelper.Pages
 
         private void Can_ResetRight(object sender, CanExecuteRoutedEventArgs e)
         {
-            //e.CanExecute = GamesModified.Count > 0;
+            e.CanExecute = GamesModified.Count > 0;
         }
 
         private void Ex_ResetRight(object sender, ExecutedRoutedEventArgs e)
         {
-          /*  foreach (Aff_Game g in GamesModified)
+          foreach (var g in GamesModified)
             {
-              //  DbGames.Add(g);
+              DbGames.Add(g);
             }
 
-            GamesModified.Clear();*/
+            GamesModified.Clear();
         }
 
 
@@ -361,12 +377,12 @@ namespace MyMameHelper.Pages
         #region Change
         private void Can_Change(object sender, CanExecuteRoutedEventArgs e)
         {
-            //e.CanExecute = GamesModified.Count > 0;
+            e.CanExecute = GamesModified.Count > 0;
         }
 
         private void Ex_Change(object sender, ExecutedRoutedEventArgs e)
         {
-            /*
+            
             if (dgRight.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Select Game(s)");
@@ -375,40 +391,39 @@ namespace MyMameHelper.Pages
 
             for (int i = 0; i < dgRight.SelectedItems.Count; i++)
             {
-                Aff_Game game = dgRight.SelectedItems[i] as Aff_Game;
+                CT_Game_Mapped game = dgRight.SelectedItems[i] as CT_Game_Mapped;
                 if (game is null)
                     continue;
 
                 Trace.WriteLine(game.Game_Name);
                 if (cbMachines.SelectedItem != null)
                 {
-                    CT_Machine machine = cbMachines.SelectedItem as CT_Machine;
-                    game.Machine = machine.ID;
-                    game.Aff_Machine = machine.Nom;
+                    game.Machine = cbMachines.SelectedItem as CT_Machine;
+                    game.Machine_Id= game.Machine.ID;                  
                 }
 
                 // Unwanted
                 game.Unwanted = cbUnwanted.IsChecked;
 
-                throw new NotImplementedException("a revoir");
+                
 
                 /*foreach (CT_Rom rom in game.Roms)
                     rom.Unwanted = cbUnwanted.IsChecked;*/
-            /*
+            
                 // Genre
                 if (cboxGenres.SelectedItem != null)
                 {
-                    CT_Genre genre = cboxGenres.SelectedItem as CT_Genre;
-                    game.Genre = genre.ID;
-                    game.Aff_Genre = genre.Nom;
+                    game.Genre = cboxGenres.SelectedItem as CT_Genre;
+                    game.Genre.ID = game.Genre.ID;
+                    
                 }
 
                 //Developpeurs
                 if (cboxDevs.SelectedItem != null)
                 {
-                    CT_Constructeur dev = cboxDevs.SelectedItem as CT_Constructeur;
-                    game.Developer = dev.ID;
-                    game.Aff_Developer = dev.Nom;
+                    game.Developer = cboxDevs.SelectedItem as CT_Developer;
+                    game.Developer_Id = game.Developer.ID;
+                    
                 }
 
                 if (cboxRate.SelectedItem != null)
@@ -418,7 +433,7 @@ namespace MyMameHelper.Pages
                 }
             }
             cbMachines.SelectedItem = null;
-            */
+            
         }
         #endregion
 

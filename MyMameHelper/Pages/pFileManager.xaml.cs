@@ -238,9 +238,7 @@ namespace MyMameHelper.Pages
             //string destPath = "0-Miscellaneous";
             string arboChoosen = (string)cbArboType.SelectionBoxItem;
             Debug.WriteLine($"Méthode choisie: '{arboChoosen}'");
-
-                            
-            
+                        
 
             // Construction des répertoires
             foreach (CT_Rom_Mapped romMapped in FilteredGamesMapped)
@@ -301,9 +299,6 @@ namespace MyMameHelper.Pages
 
                     if (dbG.Unwanted == true && useUnwanted.IsChecked == true)
                         File.Create(dest);
-
-
-
 
 
                     // Déplacement des fichiers

@@ -109,13 +109,13 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Game Name" Binding="{Binding Game_Name}" SortDirection="Ascending"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
-                        <DataGridTextColumn Header="Machine" Binding="{Binding Aff_Machine}" />
+                        <DataGridTextColumn Header="Machine" Binding="{Binding Machine.Nom}" />
                         <DataGridCheckBoxColumn Header="Unwanted" Binding="{Binding Unwanted}" />
-                        <DataGridTextColumn Header="Genre" Binding="{Binding Aff_Genre}" />
+                        <DataGridTextColumn Header="Genre" Binding="{Binding Genre.Nom}" />
                         <DataGridComboBoxColumn Header="Rate" SelectedValueBinding="{Binding Rate}" ItemsSource="{StaticResource ItemsRate}"  DisplayMemberPath="Value" SelectedValuePath="Key"/>
                         <DataGridCheckBoxColumn Header="Mahjong" Binding="{Binding IsMahjong}" />
                         <DataGridCheckBoxColumn Header="Quizz" Binding="{Binding IsQuizz}" />
-                        <DataGridTextColumn Header="Developer" Binding="{Binding Aff_Developer}" />
+                        <DataGridTextColumn Header="Developer" Binding="{Binding Developer.Nom}" />
                     </DataGrid.Columns>
                     <!--" DataGrid.RowDetailsTemplate>
                     <DataTemplate>
@@ -167,7 +167,7 @@
                             <ComboBox x:Name="cbConstructeur" ItemsSource="{Binding Constructeurs}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectionChanged="CbConstructeur_SelectionChanged" />
                             <!-- Hardware -->
                             <Label Content="Select a Machine"/>
-                            <ComboBox x:Name="cbMachines" ItemsSource="{Binding Machines}" DisplayMemberPath="Nom" SelectedValuePath="ID"   />
+                            <ComboBox x:Name="cbMachines" ItemsSource="{Binding Machines}" SelectedItem="{Binding SelectedMachine}" DisplayMemberPath="Nom" SelectedValuePath="ID"   />
                         </StackPanel>
                     </Border>
                     <!-- Unwanted -->
@@ -228,13 +228,14 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Game Name" Binding="{Binding Game_Name}" IsReadOnly="False"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
-                        <DataGridTextColumn Header="Machine" Binding="{Binding Aff_Machine}" />
+                        <DataGridTextColumn Header="Machine" Binding="{Binding Machine.Nom}"  />
                         <DataGridCheckBoxColumn Header="Unwanted" Binding="{Binding Unwanted}" />
-                        <DataGridComboBoxColumn Header="Genre" ItemsSource="{Binding Source={StaticResource ItemsGenres}}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectedValueBinding="{Binding Genre}" />
+                        <DataGridComboBoxColumn Header="Genre" ItemsSource="{Binding Source={StaticResource ItemsGenres}}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectedValueBinding="{Binding Genre_Id}" />
+                        <!--DataGridTextColumn Header="Genre2" Binding="{Binding Genre.Nom}" /-->
                         <DataGridComboBoxColumn Header="Rate" Width="70" SelectedValueBinding="{Binding Rate}" ItemsSource="{StaticResource ItemsRate}"  DisplayMemberPath="Value" SelectedValuePath="Key"/>
                         <DataGridCheckBoxColumn Header="Mahjong" Binding="{Binding IsMahjong}" />
                         <DataGridCheckBoxColumn Header="Quizz" Binding="{Binding IsQuizz}" />
-                        <DataGridComboBoxColumn Header="Developer" ItemsSource="{Binding Source={StaticResource ItemsDevelopers}}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectedValueBinding="{Binding Developer}"/>
+                        <DataGridComboBoxColumn Header="Developer" ItemsSource="{Binding Source={StaticResource ItemsDevelopers}}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectedValueBinding="{Binding Developer_Id}"/>
                     </DataGrid.Columns>
                     <!--DataGrid.RowDetailsTemplate>
                         <DataTemplate>
