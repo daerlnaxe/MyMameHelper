@@ -12,7 +12,7 @@ namespace MyMameHelper.SQLite
     {
         public Linker? Link { get; set; }
         public string Colonne { get; set; }
-        public string Valeur { get; set; }
+        public object Valeur { get; set; }
 
 
         public eWhere Operateur { get; set; }

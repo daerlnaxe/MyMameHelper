@@ -656,7 +656,7 @@ namespace MyMameHelper.SQLite
 
             for (int i = 0; i < Roms.Count; i++)
             {
-                T game = Roms[i];
+                T rom = Roms[i];
                 //  string vals = null;
 
                 sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Roms}]" +
@@ -670,15 +670,22 @@ namespace MyMameHelper.SQLite
                                         //
                                         $"WHERE ID=@ID";
 
-                sqlCmd.Parameters.Add($"@Archive_Name", DbType.String).Value = Roms[i].Archive_Name;
-                sqlCmd.Parameters.Add($"@Description", DbType.String).Value = Roms[i].Description;
-                sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt32).Value = Roms[i].Game.ID;
-                sqlCmd.Parameters.Add($"@Year", DbType.String).Value = Roms[i].Year;
-                sqlCmd.Parameters.Add($"@Manufacturer", DbType.UInt32).Value = Roms[i].Manufacturer;
-                sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = Roms[i].Unwanted;
+                sqlCmd.Parameters.Add($"@Archive_Name", DbType.String).Value = rom.Archive_Name;
+                sqlCmd.Parameters.Add($"@Description", DbType.String).Value = rom.Description;
+                if (rom.Game != null)
+                {
+                    sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt32).Value = rom.Game.ID;
+                }
+                else
+                {
+                    sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt16).Value = null;
+                }
+                    sqlCmd.Parameters.Add($"@Year", DbType.String).Value = rom.Year;
+                sqlCmd.Parameters.Add($"@Manufacturer", DbType.UInt32).Value = rom.Manufacturer;
+                sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = rom.Unwanted;
 
                 // condition
-                sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = Roms[i].ID;
+                sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = rom.ID;
 
                 ExecNQ(sqlCmd);
                 UpdateProgress?.Invoke(this, i * 100 / Roms.Count);

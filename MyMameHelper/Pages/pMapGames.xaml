@@ -6,13 +6,29 @@
       xmlns:local="clr-namespace:MyMameHelper.Pages"
       xmlns:commands ="clr-namespace:MyMameHelper.Commands"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800" d:Background="White"
+      d:DesignHeight="720" d:DesignWidth="1280" d:Background="White"
       Title="pMapGames" Loaded="Page_Loaded">
     <Page.CommandBindings>
         <CommandBinding Command="commands:UICommands.AddGame" CanExecute="Can_AddGame" Executed="Ex_AddGame"/>
         <CommandBinding Command="commands:UICommands.RemoveGame" CanExecute="Can_RemoveGame" Executed="Ex_RemoveGame"/>
     </Page.CommandBindings>
     <Page.Resources>
+        <!-- Label -->
+        <Style TargetType="Label">
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Margin" Value="0"/>
+
+        </Style>
+        <!-- TextBox -->
+        <Style TargetType="TextBox" >
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <!-- Boutons -->
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <!-- Boutons spéciaux -->
         <Style TargetType="Button" x:Key="miniBtn">
             <Setter Property="Margin" Value="2"/>
             <Setter Property="Padding" Value="2"/>
@@ -34,62 +50,89 @@
             </Setter>
         </Style>
     </Page.Resources>
-
+    <!-- Content -->
     <DockPanel>
-
-        <!-- left -->
+        <!-- Left -->
         <!-- StackPanel DockPanel.Dock="left">
-
-
             <Button Style="{DynamicResource miniBtn}" Content="X"/>
         </StackPanel -->
-        <!-- Right Panel -->
-        <StackPanel DockPanel.Dock="Right" >
-            <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1"  Background="LightGray">
-                <StackPanel>
-                    <!-- Titre -->
-                    <Label Content="Rom Modification" HorizontalContentAlignment="Center" Grid.ColumnSpan="3"/>
-                    <Grid MinHeight="200" Background="white">
-                        <Grid.RowDefinitions>
-                            <!--RowDefinition Height="Auto"/-->
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <!-- Nom du Jeu selectionné -->
-                        <TextBlock Text="{Binding SelectedGame.Game_Name}" HorizontalAlignment="Center" Grid.ColumnSpan="2" FontWeight="Bold"/>
-                        <!-- Compteur des roms orphelines -->
-                        <TextBlock Text="{Binding OrpheanRoms.Count, StringFormat='Nombre de roms orphelines:'}"  Grid.Row="1"/>
-                        <TextBlock Text="{Binding OrpheanRoms.Count}" Grid.Column="1" Grid.Row="1"/>
-                        <!-- Compteur des roms à updater -->
-                        <TextBlock Text="{Binding RomsToUpdate.Count, StringFormat='Nombre de roms à updater:'}" Grid.Row="2"/>
-                        <TextBlock Text="{Binding RomsToUpdate.Count}"  Grid.Column="1" Grid.Row="2"/>
-                        <!-- Add a Rom -->
-                        <TextBlock Text="Add a Rom:" Grid.Row="3"/>
-                        <ListBox ItemsSource="{Binding OrpheanRoms, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="RomsSelectionChanged"  
-                                Height="100" Grid.Row="4" SelectionMode="Extended" 
-                                Grid.ColumnSpan="2" Grid.RowSpan="2">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        
-                                        <TextBlock Text="{Binding Archive_Name}" Width="70"/>
-                                        <TextBlock Text="{Binding Description, StringFormat='| {0}'}"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+        <!-- Top -->
+        <Border  DockPanel.Dock="Top" CornerRadius="5" BorderThickness="1" BorderBrush="Black" Margin="5">
+            <StackPanel>
+                <!-- -->
+                <Label Content="Informations:" Grid.ColumnSpan="3" FontSize="16"/>
+                <StackPanel Orientation="Horizontal">
 
-                        <!--ComboBox ItemsSource="{Binding OrpheanRoms}" Grid.Row="5" Grid.ColumnSpan="2" SelectedItem="{Binding SelectedOrpheanRom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    <!--StackPanel.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </StackPanel.RowDefinitions>
+                <StackPanel.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </StackPanel.ColumnDefinitions-->
+                    <!-- Compteur des jeux à updater>
+                    <Label Content="Jeux à updater:" Grid.Row="2" Grid.Column="0"/>
+                    <Label Content="{Binding OrpheanRoms.Count, FallbackValue='0'}" Grid.Row="2" Grid.Column="1" /-->
+                    <!--#endregion-->
+                    <!--#region Roms -->
+                    <!-- Compteur des roms orphelines -->
+                    <Label Content="Roms orphelines:"  Grid.Row="1"/>
+                    <Label Content="{Binding OrpheanRoms.Count, FallbackValue='0'}"  Grid.Column="1" Grid.Row="1" />
+                    <!-- Compteur des roms à updater -->
+                    <Label Content="Roms à updater:" Grid.Row="1" Grid.Column="2"/>
+                    <Label Content="{Binding RomsToUpdate.Count, FallbackValue='0'}" Grid.Row="1" Grid.Column="3"/>
+                    <!--#endregion-->
+                    <!--#region Games -->
+
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <!-- Right Panel -->
+        <StackPanel DockPanel.Dock="Right" Width="300" Height="600" Margin="5" VerticalAlignment="Top">
+            <Border CornerRadius="5" BorderBrush="Black" BorderThickness="1"  Background="LightGray">
+                <StackPanel >
+                    <!-- Titre -->
+                    <Label Content="Rom Mapper" HorizontalContentAlignment="Center" Grid.ColumnSpan="3"/>
+                    <StackPanel Background="white">
+                        <!-- Nom du Jeu selectionné -->
+                        <Label Content="{Binding SelectedGame.Game_Name, FallbackValue='Jeu Sélectionné'}" HorizontalAlignment="Center" Grid.ColumnSpan="2" FontWeight="Bold"/>
+                        <!-- Filter Roms -->
+                        <Label Content="Filter Rom(s):" />
+                        <TextBox Grid.Column="1" Grid.ColumnSpan="2" TextChanged="FilterChanged" />
+                        <!-- List Orphean Roms -->
+                        <Grid MinHeight="200" Margin="5">
+                            <Grid.RowDefinitions>
+                                <!--RowDefinition Height="Auto"/-->
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition  />
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Add a Rom -->
+                            <Label Content="Map Rom(s)s:" />
+                            <ListBox Grid.Row="1" Grid.RowSpan="2" MaxHeight="450"
+                                 ItemsSource="{Binding FilteredOrpheanRoms, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="RomsSelectionChanged"  
+                                 SelectionMode="Extended" >
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+
+                                            <TextBlock Text="{Binding Archive_Name}" Width="70"/>
+                                            <TextBlock Text="{Binding Description, StringFormat='| {0}'}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <!--ComboBox ItemsSource="{Binding OrpheanRoms}" Grid.Row="5" Grid.ColumnSpan="2" SelectedItem="{Binding SelectedOrpheanRom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                               IsEditable="False">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
@@ -100,11 +143,12 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox-->
-                        <Button Content="Go" Click="AddRom_Click" Grid.Row="5" Grid.Column="2"/>
+                            <Button Grid.Row="2" Grid.Column="2" Content="Go" Click="AddRom_Click"  Margin="5,0"/>
 
-                    </Grid>
+                        </Grid>
+                    </StackPanel>
                     <!-- Sauvegarde Roms -->
-                    <Button Content="Save Rom Links" Margin="5"  Click="Save_Click"/>
+                    <Button Content="Save Rom Links"  Click="SaveRoms_Click"/>
                 </StackPanel>
             </Border>
 
@@ -120,21 +164,23 @@
 
         </StackPanel>
         <!-- Bottom Panel -->
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-
+        <StackPanel DockPanel.Dock="Bottom"  Orientation="Horizontal" HorizontalAlignment="Right">
+            <!-- Saving All -->
+            <!--Button Content="Save" ToolTip="Save Games and associed roms" Margin="5,5,0,5"/-->
         </StackPanel>
         <!-- Panneau central -->
-        <StackPanel>
+        <StackPanel Margin="5">
             <!-- Add - We add a new game in the list -->
-            <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5" DockPanel.Dock="Top">
+            <Border CornerRadius="5" BorderBrush="Black" BorderThickness="1" >
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="Add a game:" MinWidth="100"/>
-                    <TextBox MinWidth="300" Text="{Binding GameToAdd, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Label Content="Add a game:" MinWidth="100" Margin="5"/>
+                    <TextBox MinWidth="300" Text="{Binding NewGame, UpdateSourceTrigger=PropertyChanged}"/>
                     <Button Content="Add"  Command="commands:UICommands.AddGame"/>
                 </StackPanel>
             </Border>
             <!-- Game Listbox -->
-            <ScrollViewer VerticalScrollBarVisibility="Auto" MinHeight="500" MinWidth="200" >
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          MinHeight="350" MinWidth="200" >
                 <ListBox ItemsSource="{Binding GamesMapped}" SelectedItem="{Binding SelectedGame}" >
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -198,8 +244,7 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </ScrollViewer>
-            <!-- Saving Game -->
-            <Button Content="Save Games"/>
+
         </StackPanel>
     </DockPanel>
 </Page>

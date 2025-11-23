@@ -141,8 +141,21 @@ namespace MyMameHelper.SQLite
                 string[] munch = cond.Colonne.Split('.');
                 munch[0] = $"[{munch[0]}]";
 
-                cond.Valeur = this.FilterParameter(cond.Valeur);
-                command.CommandText += $" {cond.Get_Linker()} {String.Join(".", munch)}{cond.Get_Operateur()}'{cond.Valeur}'";
+                string val = "";
+                if(cond.Valeur is string)
+                {
+                    val = this.FilterParameter((string)cond.Valeur);
+
+                }
+                else
+                {
+                    val = "null";
+                }
+
+
+
+
+                    command.CommandText += $" {cond.Get_Linker()} {String.Join(".", munch)}{cond.Get_Operateur()} {val}";
                 
             }
         }

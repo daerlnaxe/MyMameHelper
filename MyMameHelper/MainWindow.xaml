@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MyMameHelper"
         mc:Ignorable="d"
-        Title="MyMameHelper - Beta " Height="900" Width="1600" MinWidth="500" WindowStartupLocation="CenterScreen">
+        Title="MyMameHelper - Beta " Height="900" Width="1600" MinWidth="1280" MinHeight="720" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="Margin" Value="5"/>
