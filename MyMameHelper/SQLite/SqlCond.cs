@@ -42,7 +42,7 @@ namespace MyMameHelper.SQLite
         }
 
 
-        public SqlCond(string colonne, eWhere operateur, string valeur = null)
+        public SqlCond(string colonne, eWhere operateur, object valeur = null)
         {
             Colonne = colonne;
             Operateur = operateur;
@@ -55,7 +55,7 @@ namespace MyMameHelper.SQLite
             Operateur = operateur;
             Valeur = valeur.ToString();
         }
-        public SqlCond(Linker link, string colonne, eWhere operateur, string valeur)
+        public SqlCond(Linker link, string colonne, eWhere operateur, object valeur)
         {
             Link = link;
             Colonne = colonne;

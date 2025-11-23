@@ -484,7 +484,7 @@ namespace MyMameHelper.SQLite
                     sqlCmd.Parameters.Add($"@Archive_Name{j}", DbType.String).Value = Roms[i].Archive_Name;
                     sqlCmd.Parameters.Add($"@Description{j}", DbType.String).Value = Roms[i].Description;
                     // Game
-                    sqlCmd.Parameters.Add($"@Game_Id{j}", DbType.UInt32).Value = Roms[i].Game.ID;
+                    sqlCmd.Parameters.Add($"@Game_Id{j}", DbType.UInt32).Value = Roms[i].Game_Id;
 
                     sqlCmd.Parameters.Add($"@Year{j}", DbType.String).Value = Roms[i].Year;                    
                     sqlCmd.Parameters.Add($"@Unwanted{j}", DbType.Boolean).Value = Roms[i].Unwanted;
@@ -672,9 +672,9 @@ namespace MyMameHelper.SQLite
 
                 sqlCmd.Parameters.Add($"@Archive_Name", DbType.String).Value = rom.Archive_Name;
                 sqlCmd.Parameters.Add($"@Description", DbType.String).Value = rom.Description;
-                if (rom.Game != null)
+                if (rom.Game_Id != null)
                 {
-                    sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt32).Value = rom.Game.ID;
+                    sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt32).Value = rom.Game_Id;
                 }
                 else
                 {

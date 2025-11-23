@@ -105,7 +105,7 @@ namespace MyMameHelper.Pages
 
             aLoad.AsyncMessage("Handle Parents roms");
 
-
+            /*
             // Gestion des parents
             for (int i = 0; i < rawRoms.Count; i++)
             {
@@ -164,7 +164,7 @@ namespace MyMameHelper.Pages
                     if (game.Roms.FirstOrDefault(x => x.Archive_Name.Equals(romParent.Archive_Name)) == null)
                         game.Roms.Add(romParent);
                 }
-            }
+            }*/
 
             aLoad.AsyncMessage("Handle Children roms");
 
@@ -172,6 +172,7 @@ namespace MyMameHelper.Pages
             string problem = string.Empty;
             try
             {
+                /*
                 // Gestion des enfants ? 
                 for (int i = 0; i < rawRoms.Count; i++)
                 {
@@ -235,7 +236,7 @@ namespace MyMameHelper.Pages
 
 
                     }
-                }
+                }*/
             }
             catch (Exception exc)
             {

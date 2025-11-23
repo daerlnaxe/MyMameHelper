@@ -16,7 +16,7 @@
         </Style>
     </Page.Resources>
     <Page.CommandBindings>
-        <!-- CommandBinding Command="commands:UICommands.Proceed" Executed="Proceed_Roms"/-->
+        <CommandBinding Command="commands:UICommands.Proceed" Executed="Proceed_Roms"/>
     </Page.CommandBindings>
     <!--  -->
     <Grid>
@@ -49,7 +49,7 @@
 
             <!-- Panneau du bas -->
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" FlowDirection="RightToLeft">
-                <!--Button Name="Proceed" Content="Proceed" Command="commands:UICommands.Proceed" /-->
+                <Button Name="Proceed" Content="Proceed" Command="commands:UICommands.Proceed" />
             </StackPanel>
             <StackPanel>
                 <GroupBox x:Name="groupBox" Header="Options" Margin="10" Height="141">
@@ -61,16 +61,16 @@
                             <RowDefinition Height="19*"/>
                             <RowDefinition Height="50*"/>
                         </Grid.RowDefinitions>
-                        <CheckBox x:Name="useFiles" Content="Use Files Information"  ToolTip="???"/>
-                        <CheckBox x:Name="useUnwanted"  Content="Use Unwanted Folder (Machine method)" Grid.Row="1" ToolTip="???"/>
+                        <CheckBox x:Name="useFiles" Content="Use Files Information ???"  ToolTip="???"/>
+                        <CheckBox x:Name="useUnwanted"  Content="Use Unwanted Folder (Machine method) ???" Grid.Row="1" ToolTip="???"/>
                         <CheckBox x:Name="OverWrite"  Content="OverWrite Files" Grid.Row="2"  ToolTip="OverWrite if file exists"/>
                         <CheckBox Content="Move files" Grid.Row="3"  ToolTip="Move files instead of copy" IsChecked="{Binding MoveFiles}"/>
 
                     </Grid>
                 </GroupBox>
                 <StackPanel Orientation="Horizontal" Margin="10">
-                    <Label Content="Choose a method:"/>
-                    <ComboBox x:Name="cbMethod" HorizontalAlignment="Left" Width="165">
+                    <Label Content="Arborescene type:"/>
+                    <ComboBox x:Name="cbArboType" HorizontalAlignment="Left" Width="165">
                         <ComboBoxItem Content="Favorites"/>
                         <ComboBoxItem Content="Machine"/>
                     </ComboBox>

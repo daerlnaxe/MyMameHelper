@@ -30,8 +30,8 @@
         <CommandBinding Command="local:MainWindow.ModifyRoms" CanExecute="Can_ModifyRoms" Executed="Ex_ModifyRoms"/>
     </Window.CommandBindings>
     <DockPanel>
-        <StackPanel DockPanel.Dock="Left">
-            <Expander Header="Build" IsExpanded="False">
+        <StackPanel DockPanel.Dock="Left" MinWidth="150">
+            <Expander Header="Build Roms" IsExpanded="False">
                 <StackPanel>
                     <Button Content="Populate Temp" Command="local:MainWindow.AddByXML" ToolTip="Load XML File to populate the temp part of the Database"/>
                     <Button Content="Build Manufacturers" Command="local:MainWindow.Build_Manufacturers" ToolTip="Populate the Game Developer table by using temporary roms table"/>
@@ -40,24 +40,38 @@
                     <Button Content="Mapping to Games" Command="local:MainWindow.MapGames"/>
                     <!-- Button Content="Rom Manager" Command="local:MainWindow.RomManager" /-->
                     <!-- Button Content="Add Games1" Command="local:MainWindow.AddGames"/-->
+
+                    <Separator />
                 </StackPanel>
             </Expander>
+
             <!--  -->
-            <Expander Header="Work">
+            <Expander Header="Work On Games">
+                <StackPanel>
+                    <!-- -->
+                    <Button Content="Compare" Command="local:MainWindow.Compare" ToolTip="Compare between 2 list of files"/>
+                    <!-- Button Content="Move Games1" Command="local:MainWindow.MoveGames1"/-->
+                    <Button Content="Modify Games" Command="local:MainWindow.ModifyGames"/>
+                    <Separator />
+                </StackPanel>
 
             </Expander>
-            <!-- -->
-            <Button Content="Compare" Command="local:MainWindow.Compare" ToolTip="Compare between 2 list of files"/>
-            <Separator />
-            <!-- Button Content="File Manager" Command="local:MainWindow.FileManager"/-->
-            <!-- Button Content="Move Games1" Command="local:MainWindow.MoveGames1"/-->
-            <Separator />
+            <!--  -->
+            <Expander Header="Export" IsExpanded="True">
+                <StackPanel>
+                    <Button Content="File Manager" Command="local:MainWindow.FileManager"/>
+                    <Separator />
+                </StackPanel>
+
+            </Expander>
+
+            <!--
             <Expander Header="Manage">
                 <StackPanel>
-                    <!-- Button Content="Modify Roms" Command="local:MainWindow.ModifyRoms"/-->
-                    <!-- Button Content="Modify Games" Command="local:MainWindow.ModifyGames"/-->
-                </StackPanel>
+                    <Button Content="Modify Roms" Command="local:MainWindow.ModifyRoms" ToolTip="Deprecated ?"/>
+
             </Expander>
+            -->
             <Separator />
             <Button x:Name="btSettings" Content="Settings" Click="BtSettings_Click"/>
             <Button x:Name="btDataBase" Content="Db Tools" Click="btDb_Click" />

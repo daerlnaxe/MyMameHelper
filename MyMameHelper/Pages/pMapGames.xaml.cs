@@ -170,8 +170,8 @@ namespace MyMameHelper.Pages
         /// <summary>
         /// Liste des jeux à mapper
         /// </summary>
-        private List<CT_Game> _GamesMapped = new List<CT_Game>();
-        public List<CT_Game> GamesMapped
+        private List<CT_Game_Mapped> _GamesMapped = new List<CT_Game_Mapped>();
+        public List<CT_Game_Mapped> GamesMapped
         {
             get => _GamesMapped;
             set
@@ -243,8 +243,8 @@ namespace MyMameHelper.Pages
         /// <summary>
         /// Jeu Selectionné dans la ListBox
         /// </summary>
-        private CT_Game _SelectedGame;
-        public CT_Game SelectedGame
+        private CT_Game_Mapped _SelectedGame;
+        public CT_Game_Mapped SelectedGame
         {
             get => _SelectedGame;
             set
@@ -261,7 +261,7 @@ namespace MyMameHelper.Pages
 
         //
         //private List<Map_RomGame> _Tmp;
-        private List<CT_Game> _TmpGames;
+        private List<CT_Game_Mapped> _TmpGames;
 
 
 
@@ -385,7 +385,7 @@ namespace MyMameHelper.Pages
         private void ListBoxItem_LeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             ListBoxItem item = (ListBoxItem)sender;
-            SelectedGame = (CT_Game)item.DataContext;
+            SelectedGame = (CT_Game_Mapped)item.DataContext;
         }
         #endregion
 
@@ -421,7 +421,7 @@ namespace MyMameHelper.Pages
                 return;
             }
 
-            CT_Game gameParent = (CT_Game)((ListBoxItem)parent).DataContext;
+            CT_Game_Mapped gameParent = (CT_Game_Mapped)((ListBoxItem)parent).DataContext;
 
 
             // On enlève de la liste du jeu sélectionné
@@ -432,7 +432,7 @@ namespace MyMameHelper.Pages
                 CT_Rom currRom = gameParent.Roms[i];
 
                 // On lève l'association du jeu                
-                currRom.Game = null;
+                currRom.Game_Id = null;
 
                 //foreach (var rom in SelectedGame.Roms)
 
@@ -478,7 +478,7 @@ namespace MyMameHelper.Pages
 
                 // Liaison de la rom au jeu
                 //SelectedOrpheanRom.Game = SelectedGame;
-                rom.Game = SelectedGame;
+                rom.Game_Id = SelectedGame.ID;
             }
 
             // Transmission pour signaler un changement
@@ -606,7 +606,7 @@ namespace MyMameHelper.Pages
         /// <param name="e"></param>
         private void Ex_RemoveGame(object sender, ExecutedRoutedEventArgs e)
         {
-            CT_Game game = (CT_Game)e.Parameter;
+            CT_Game_Mapped game = (CT_Game_Mapped)e.Parameter;
 
 
             if (MessageBox.Show($"Do you want to remove {game.Game_Name} from the database ?", "Remove Game", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -623,7 +623,13 @@ namespace MyMameHelper.Pages
 
 
                 GamesMapped.Remove(game);
-                GamesMapped = new List<CT_Game>(GamesMapped);
+                GamesMapped = new List<CT_Game_Mapped>(GamesMapped);
+
+
+                OrpheanRoms.AddRange(game.Roms);
+                OrpheanRoms= new List<CT_Rom>(OrpheanRoms);
+
+                
             }
         }
 

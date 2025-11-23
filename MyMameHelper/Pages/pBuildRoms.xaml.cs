@@ -1213,13 +1213,13 @@ namespace MyMameHelper.Pages
                 }
 
                 // Liaison des games                
-                if (rom.Game.ID == 0)
+                if (rom.Game_Id == 0 || rom.Game_Id == null)
                 {
                     var posPar = rom.Description.IndexOf('(');
                     var gameName = posPar > 0 ? rom.Description.Substring(0, posPar).Trim() : rom.Description;
 
                     var tmp = _GamesInDB.FirstOrDefault(x => x.Game_Name.Equals(gameName));
-                    rom.Game = tmp;
+                    rom.Game_Id = tmp.ID;
                 }
 
 

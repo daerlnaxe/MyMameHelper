@@ -379,8 +379,10 @@ namespace MyMameHelper.Pages
                 // Unwanted
                 game.Unwanted = cbUnwanted.IsChecked;
 
-                foreach (CT_Rom rom in game.Roms)
-                    rom.Unwanted = cbUnwanted.IsChecked;
+                throw new NotImplementedException("a revoir");
+
+                /*foreach (CT_Rom rom in game.Roms)
+                    rom.Unwanted = cbUnwanted.IsChecked;*/
 
                 // Genre
                 if (cboxGenres.SelectedItem != null)

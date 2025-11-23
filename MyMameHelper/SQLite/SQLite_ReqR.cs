@@ -1,5 +1,6 @@
 ﻿using DxTBoxWPF.MBox;
 using MyMameHelper.ContTable;
+using MyMameHelper.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,14 +38,6 @@ namespace MyMameHelper.SQLite
             return Get_OneResult<CT_Constructeur>(CT_Constructeur.Result2Class, objCompanie);
         }
 
-        /*
-        public T Get_GamePos<T>(Func<Dictionary<string, object>, T> ConvertToGamePos, Obj_Select objSelect, T gamePos = default(T)) where T : ICT_GamePos
-        {
-            objSelect.Table = PProp.Default.T_GamesPos;
-            return Get_OneResult<T>(ConvertToGamePos, objSelect, gamePos);
-        }*/
-
-
         private T Get_OneResult<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect)
         {
             Debug.WriteLine($"Get_OneResult: {typeof(T)}");
@@ -72,139 +65,6 @@ namespace MyMameHelper.SQLite
         #endregion
 
 
-        /*
-         * Les Listes pouvant faire un AddRange, on renvoie une list
-         */
-        #region liste 
-
-        public List<CT_Game> Get_ListOf_Games(Obj_Select objS)
-        {
-            objS.Table = PProp.Default.T_Games;
-            return GetListOf<CT_Game>(CT_Game.Result2Class, objS);
-
-        }
-
-
-        internal void GetList_RawRoms(Obj_Select objSel)
-        {
-            SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
-            sqlCommand.CommandText = $"SELECT * FROM {PProp.Default.T_TempRoms} WHERE [Is_Bios]='True'";
-
-            var reader = sqlCommand.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    Dictionary<string, object> dico = new Dictionary<string, object>();
-                    for (short i = 0; i < reader.FieldCount; i++)
-                    {
-                        dico.Add(reader.GetName(i), reader[i]);
-                    }
-
-                }
-            }
-        }
-
-
-
-
-        /*
-    /// <summary>
-    /// Retourne la liste des gifters
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="method"></param>
-    /// <param name="Forced"></param>
-    /// <returns></returns>
-    public List<T> List_Gifters<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_Personne
-    {
-        objSelect.Table = PProp.Default.T_Personnes;
-        List<T> ctGifters = GetListOf<T>(method, objSelect);
-
-        return ctGifters;
-    }*/
-
-        /*
-    /// <summary>
-    /// Liste des langues
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="method"></param>
-    /// <returns></returns>
-    public List<T> List_Langues<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_Langue
-    {
-        objSelect.Table = PProp.Default.T_Langues;
-        List<T> ctLangues = GetListOf<T>(method, objSelect);
-
-        return ctLangues;
-    }*/
-
-        /*
-    /// <summary>
-    /// Liste des Plateformes
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="method"></param>
-    /// <returns></returns>
-    public List<T> List_RawPlateformes<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_Plateforme
-    {
-        objSelect.Table = PProp.Default.T_Plateformes;
-        List<T> cT_Plateformes = GetListOf<T>(method, objSelect);
-
-        return cT_Plateformes;
-    }*/
-
-        /*
-    /// <summary>
-    /// Liste des pegis
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="method"></param>
-    /// <returns></returns>
-    public List<T> List_PEGIs<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_PEGI
-    {
-        objSelect.Table = PProp.Default.T_PEGIs;
-        List<T> ctPEGI = GetListOf<T>(method, objSelect);
-
-        return ctPEGI;
-    }
-    */
-
-        /*
-    /// <summary>
-    /// Liste des problèmes
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="method"></param>
-    /// <returns></returns>
-    public List<T> List_Problems<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_Problem
-    {
-        objSelect.Table = PProp.Default.T_ProblemType;
-        List<T> ctProblems = GetListOf<T>(method, objSelect);
-
-        return ctProblems;
-    }*/
-
-        /*
-
-    /// <summary>
-    /// Liste des sagas
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="method"></param>
-    /// <returns></returns>
-    public List<T> List_Sagas<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_Saga
-    {
-        objSelect.Table = PProp.Default.T_Sagas;
-        List<T> ctSagas = GetListOf<T>(method, objSelect);
-
-        return ctSagas;
-    }*/
-
-
-        #endregion
-
         #region ObservableCollection
         public ObservableCollection<CT_Constructeur> GetById_CollecConstructeurs(int id, string order = "Nom")
         {
@@ -218,132 +78,9 @@ namespace MyMameHelper.SQLite
         }
 
 
-
-        /*
-                /// <summary>
-                /// 
-                /// </summary>
-                /// <param name="Converter"></param>
-                /// <param name="objSelect"></param>
-                /// <returns></returns>
-                public void Collect_Vrac(Func<Dictionary<string, object>, CT_Game> Converter, Obj_Select objSelect, ObservableCollection<CT_Game> collVrac)
-                {
-                    objSelect.Table = PProp.Default.T_Vrac;
-                    GetCollectionOf<CT_Game>(Converter, objSelect, collVrac);           
-                }
-                */
-
-
-
-        /* Personnes
-    public ObservableCollection<T> Collect_Personnes<T>(Func<Dictionary<string, object>, T> ConvertToGifter, Obj_Select objSelect, ObservableCollection<T> obsCollec = null) where T : ICT_Personne
-    {
-        objSelect.Table = PProp.Default.T_Personnes;
-        return GetCollectionOf<T>(ConvertToGifter, objSelect, obsCollec);
-    }*/
-
-
-        /*
-    /// <summary>
-    /// Collection de... problèmes
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="ConvertToProblem"></param>
-    /// <param name="objSelect"></param>
-    /// <param name="obsCollec"></param>
-    /// <returns></returns>
-    public ObservableCollection<T> Collect_Problems<T>(Func<Dictionary<string, object>, T> ConvertToProblem, Obj_Select objSelect, ObservableCollection<T> obsCollec = null) where T : ICT_Problem
-    {
-        objSelect.Table = PProp.Default.T_ProblemType;
-        return GetCollectionOf<T>(ConvertToProblem, objSelect, obsCollec);
-    }
-    */
-
-        /* R2gions
-    /// <summary>
-    /// Renvoie une collection de regions
-    /// </summary>
-    /// <param name="ConvertToRegion"></param>
-    /// <param name="All"></param>
-    /// <param name="colonnes"></param>
-    /// <param name="conditions"></param>
-    /// <param name="groups"></param>
-    /// <returns></returns>
-    public ObservableCollection<T> Collect_Regions<T>(Func<Dictionary<string, object>, T> ConvertToRegion, Obj_Select objSelect, ObservableCollection<T> obsCollec = null) where T : ICT_Region
-    {
-        objSelect.Table = PProp.Default.T_Regions;
-        ObservableCollection<T> collRegions = GetCollectionOf<T>(ConvertToRegion, objSelect, obsCollec);
-        return collRegions; }
-
-
-
-    */
-
-
         #endregion
 
 
-        /*
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public ObservableCollection<T> Collect_MinJeux<T>(Func<Dictionary<string, object>, T> convertToMinGame, Obj_Select objSelect, ObservableCollection<T> collecGames = null) where T : ICT_MinJeu
-    {
-        objSelect.Table = PProp.Default.T_GamesPos;
-
-        Debug.WriteLine($"GetCollectionOf: {typeof(T)}");
-
-        if (collecGames == null)
-        {
-            collecGames = new ObservableCollection<T>();
-            Debug.WriteLine("GetCollectionOf: Création d'une nouvelle collection");
-        }
-        else
-        {
-            Debug.WriteLine("GetCollectionOf: RAZ de la collection");
-            collecGames.Clear();
-        }
-
-        // Création de la requête
-        try
-        {
-            SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
-            sqlCommand.CommandText = $"SELECT [{PProp.Default.T_GamesPos}].[ID], [{PProp.Default.T_Titres}].[Titre], [{PProp.Default.T_Plateformes}].[Plateforme] " +
-                $"FROM [{PProp.Default.T_GamesPos}]" +
-                $"INNER JOIN [{PProp.Default.T_Titres}] ON [{PProp.Default.T_GamesPos}].[GameFi] = [{PProp.Default.T_Titres}].[ID] " +
-                $"INNER JOIN [{PProp.Default.T_Plateformes}] ON [{PProp.Default.T_GamesPos}].[Plateforme] = [{PProp.Default.T_Plateformes}].[ID]";
-
-            Condition_TreatMt(sqlCommand, objSelect.Conditions);
-
-            Debug.WriteLine($"Lancement de la commande {sqlCommand.CommandText}");
-
-            SQLiteDataReader reader = sqlCommand.ExecuteReader();
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    Dictionary<string, object> dico = new Dictionary<string, object>();
-                    for (short i = 0; i < reader.FieldCount; i++)
-                    {
-                        dico.Add(reader.GetName(i), reader[i]);
-                    }
-
-                    T data = convertToMinGame(dico);
-                    if (data == null) continue;
-                    collecGames.Add(data);
-                }
-            }
-        }
-        catch (SQLiteException sqExc)
-        {
-            Debug.WriteLine($"Erreur SQLite: {sqExc}");
-        }
-
-        return collecGames;
-    }
-    */
 
 
         #region generic
@@ -577,7 +314,6 @@ namespace MyMameHelper.SQLite
         }
 
 
-
         public Dictionary<string, T> GetDictOf<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect, string key)
         {
             Debug.WriteLine($"GetDictOf: {typeof(T)}");
@@ -610,6 +346,7 @@ namespace MyMameHelper.SQLite
             }
             return lCollec;
         }
+
 
         /// <summary>
         /// Renvoie sous forme d'observable collection de paire de clés.
@@ -654,6 +391,7 @@ namespace MyMameHelper.SQLite
             return obsCollec;
         }
 
+
         public void RefreshKVPOf<T>(ObservableCollection<KeyValuePair<string, object>> obsResult, Func<Dictionary<string, object>, T> method, string col, Obj_Select objSelect)
         {
             var reader = ResultSelect(objSelect);
@@ -671,6 +409,7 @@ namespace MyMameHelper.SQLite
             }
         }
         #endregion
+
 
         #region Méthodes Type
         /// <summary>
@@ -842,9 +581,6 @@ namespace MyMameHelper.SQLite
         #endregion
 
 
-
-        #region Spéciaux
-
         #region Aff Machine
         private SQLiteDataReader AffMachine_SQL(SqlCond[] conds, SqlOrder order)
         {
@@ -932,7 +668,20 @@ namespace MyMameHelper.SQLite
             return lMachines;
         }
 
-        #endregion
+        #endregion Aff Machine
+
+
+        #region Games
+
+        public List<CT_Game> Get_ListOf_Games(Obj_Select objS)
+        {
+            objS.Table = PProp.Default.T_Games;
+            return GetListOf<CT_Game>(CT_Game.Result2Class, objS);
+
+        }
+
+        #endregion Games
+
 
         #region AffGames
 
@@ -979,6 +728,46 @@ namespace MyMameHelper.SQLite
         }
 
 
+        #endregion
+
+
+        #region MappedGames
+        /// <summary>
+        /// Renvoie une liste de roms selon la concaténation prévue | et ♢
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private List<CT_Rom> RomMapping(SQLiteDataReader reader)
+        {
+            List<CT_Rom> tmp = new List<CT_Rom>();
+
+            //Roms
+            var strRoms = Trans.GetString("Roms", reader);
+            if (strRoms != null)
+            {
+
+
+                var arrTmp = strRoms.Split('|');
+                for (int i = 0; i < arrTmp.Length; i++)
+                {
+                    string[] curr = arrTmp[i].Split('♢');
+
+                    tmp.Add(
+                        new CT_Rom()
+                        {
+                            ID = uint.Parse(curr[0]),
+                            Archive_Name = curr[1],
+                            Description = curr[2]
+                        }
+                    );
+                }
+
+            }
+
+            return tmp;
+        }
+
 
         /// <summary>
         /// Request to have a list of roms with jointure on games.
@@ -986,7 +775,7 @@ namespace MyMameHelper.SQLite
         /// <param name="conds"></param>
         /// <param name="order"></param>
         /// <returns></returns>
-        internal SQLiteDataReader GameWithRoms_SQL(SqlCond[] conds, SqlOrder[] orders)
+        private SQLiteDataReader Select_GameWithRoms(SqlCond[] conds, SqlOrder[] orders)
         {
             Dictionary<string, short> dicCol;
             //string sql = $"SELECT [{tRoms}]*, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
@@ -996,9 +785,6 @@ namespace MyMameHelper.SQLite
                     $"FROM [{tRom}] " +
                     $"WHERE [{tRom}].Game_Id=[{tGame}].ID) AS \"Roms\"" +
                 $" FROM [{tGame}]";
-
-
-
 
 
             SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
@@ -1022,51 +808,28 @@ namespace MyMameHelper.SQLite
 
 
         /// <summary>
-        /// Get a list with roms
+        /// Get a list of Games with Roms
         /// </summary>
         /// <remarks>
         /// Need a request with roms separated by '|'
+        /// No other jointure
         /// </remarks>
         /// <returns></returns>
-        internal List<CT_Game> QueryGameWithRoms()
+        internal List<CT_Game_Mapped> QueryGameWithRoms()
         {
-            List<CT_Game> lGames = new List<CT_Game>();
-            SQLiteDataReader reader = GameWithRoms_SQL(null, null);
+            List<CT_Game_Mapped> lGames = new List<CT_Game_Mapped>();
+            SQLiteDataReader reader = Select_GameWithRoms(null, null);
 
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    CT_Game game = new CT_Game() { };
+                    CT_Game_Mapped game = new CT_Game_Mapped() { };
 
                     game.ID = Trans.GetUInt("ID", reader);
                     game.Game_Name = Trans.GetString("Game_Name", reader);
 
-                    //Roms
-                    var strRoms = Trans.GetString("Roms", reader);
-                    if (strRoms != null)
-                    {
-                        List<CT_Rom> tmp = new List<CT_Rom>();
-
-                        var arrTmp = strRoms.Split('|');
-                        for (int i = 0; i < arrTmp.Length; i++)
-                        {
-                            string[] curr = arrTmp[i].Split('♢');
-
-                            tmp.Add(
-                                new CT_Rom()
-                                {
-                                    ID = uint.Parse(curr[0]),
-                                    Archive_Name = curr[1],
-                                    Description = curr[2]
-                                }
-                            );
-                        }
-
-                        game.Roms = tmp;
-                    }
-
-
+                    game.Roms=RomMapping(reader);
 
                     lGames.Add(game);
                 }
@@ -1076,41 +839,6 @@ namespace MyMameHelper.SQLite
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        /// <remarks>
-        /// </remarks>
-        internal List<Map_RomGame> Build4Game_List()
-        {
-            List<Map_RomGame> lGames = new List<Map_RomGame>();
-            SQLiteDataReader reader = AffGames_SQL(null, null);
-
-            if (reader.HasRows)
-            {
-                //dicCol = Get_Poss(reader);
-
-                while (reader.Read())
-                {
-                    Map_RomGame mr = new Map_RomGame()
-                    {
-
-
-                    };
-                    mr.ID = Trans.GetUInt("ID", reader);
-                    //mr.Archive_Name = Trans.GetString("Archive_Name", reader);
-                    mr.Game_Name = Trans.GetString("Game_Name", reader);
-
-
-                    //Ag.Game_Name = Trans.GetString("Game_Name", reader);
-                    lGames.Add(mr);
-                }
-            }
-
-            return lGames;
-        }
 
 
 
@@ -1280,6 +1008,34 @@ namespace MyMameHelper.SQLite
 
         #endregion
 
+
+        #region Roms
+
+
+        internal void GetList_RawRoms(Obj_Select objSel)
+        {
+            SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
+            sqlCommand.CommandText = $"SELECT * FROM {PProp.Default.T_TempRoms} WHERE [Is_Bios]='True'";
+
+            var reader = sqlCommand.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    Dictionary<string, object> dico = new Dictionary<string, object>();
+                    for (short i = 0; i < reader.FieldCount; i++)
+                    {
+                        dico.Add(reader.GetName(i), reader[i]);
+                    }
+
+                }
+            }
+        }
+
+        #endregion roms
+
+
         #region Aff Roms
         /// <summary>
         /// Selection des roms avec jointure à gauche avec les développers.
@@ -1315,6 +1071,11 @@ namespace MyMameHelper.SQLite
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         private CT_Rom AffRom_Maker(SQLiteDataReader reader)
         {
             CT_Rom Ag = new CT_Rom();
@@ -1322,6 +1083,7 @@ namespace MyMameHelper.SQLite
             Ag.ID = Trans.GetUInt("ID", reader);
             Ag.Archive_Name = Trans.GetString("Archive_Name", reader);
             Ag.Description = Trans.GetString("Description", reader);
+            Ag.Game_Id = Trans.GetUInt("Game_Id", reader);
             Ag.Year = Trans.GetString("Year", reader);
 
             // Modifié le 09/11/2025 car transformation en objet
@@ -1343,9 +1105,6 @@ namespace MyMameHelper.SQLite
 
             return Ag;
         }
-
-
-
 
 
         /// <summary>
@@ -1374,30 +1133,57 @@ namespace MyMameHelper.SQLite
             return lGames;
         }
 
+        #endregion Aff Roms
 
 
-
-        //public CT_Game
-        #endregion
-
-        /*
+        #region MappedRoms
         /// <summary>
-        /// Retourne la liste des Plateformes exploitable
+        /// Rom mappées spécialement pour le déplacement
         /// </summary>
         /// <returns></returns>
-        public List<Aff_Plateforme> List_FormPlateformes()
+        /// <remarks>
+        /// Jointures optimisées pour le déplacement des roms
+        /// - Game
+        /// - Machine
+        /// Faire évoluer si nécessaire
+        /// </remarks>
+        private SQLiteDataReader Select_Roms4Move()
         {
-            List<Aff_Plateforme> lPlateformes = new List<Aff_Plateforme>();
-            string Plateformes = PProp.Default.T_Plateformes;
-            string constructeurs = PProp.Default.T_Constructeurs;
-            Dictionary<string, short> dicCol;
 
-            string sql = $"SELECT [{Plateformes}].[ID], [IDPlateforme], [{Plateformes}].[Generation], [Plateforme], [{constructeurs}].[Nom] AS [Constructeur] FROM[{Plateformes}] " +
-                                $"INNER JOIN[{constructeurs}] ON [{Plateformes}].[Constructeur] = [{constructeurs}].[ID] " +
-                                $"ORDER BY [Constructeur], [Generation]";
+            Dictionary<string, short> dicCol;
+            string sql = $"SELECT [{tRom}].Archive_Name, " +
+                            $" FROM [{tRom}] " +
+                            $" LEFT JOIN [{tGame}] ON Game_Id = [{tGame}].ID " +
+
+                           "";
 
             SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
-            SQLiteDataReader reader = sqlCMD.ExecuteReader();
+
+            SqlCond[] conds = new SqlCond[] { new SqlCond($"[{tRom}].Game_Id", eWhere.Is_Not, null) };
+            Condition_TreatMt(sqlCMD, conds);
+
+            SqlOrder[] orders = new SqlOrder[] { new SqlOrder($"[{tGame}].Game_Name") };
+            Order_TreatMt(sqlCMD, orders);
+
+            Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");
+
+            try
+            {
+                return sqlCMD.ExecuteReader();
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine(exc.Message);
+                return null;
+            }
+        }
+
+
+        public List<CT_Rom> List_Roms4Move(SqlCond[] conds = null, SqlOrder order = null)
+        {
+            
+            List<CT_Rom> lGames = new List<CT_Rom>();
+            SQLiteDataReader reader = Select_Roms4Move();
 
             if (reader.HasRows)
             {
@@ -1405,144 +1191,434 @@ namespace MyMameHelper.SQLite
 
                 while (reader.Read())
                 {
-                    Aff_Plateforme affM = new Aff_Plateforme();
-                    affM.ID = Convert.ToInt32(reader["ID"]);
-                    affM.IDPlateforme = GetNullableInteger(reader["IDPlateforme"]);
-                    affM.Generation = GetNullableInteger(reader["Generation"]);
-                    affM.Constructeur = reader["Constructeur"].ToString();
-                    affM.Plateforme = reader["Plateforme"].ToString();
+                    /*CT_Rom aG = AffRom_Maker(reader);
 
-                    lPlateformes.Add(affM);
+                    lGames.Add(aG);*/
                 }
             }
 
+            return lGames;
+        }
+        #endregion MappedRoms
 
 
-            return lPlateformes;
+
+        #region Obsolete ?
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        /// <remarks>
+        /// </remarks>
+        internal List<Map_RomGame> Build4Game_List()
+        {
+            List<Map_RomGame> lGames = new List<Map_RomGame>();
+            SQLiteDataReader reader = AffGames_SQL(null, null);
+
+            if (reader.HasRows)
+            {
+                //dicCol = Get_Poss(reader);
+
+                while (reader.Read())
+                {
+                    Map_RomGame mr = new Map_RomGame()
+                    {
+
+
+                    };
+                    mr.ID = Trans.GetUInt("ID", reader);
+                    //mr.Archive_Name = Trans.GetString("Archive_Name", reader);
+                    mr.Game_Name = Trans.GetString("Game_Name", reader);
+
+
+                    //Ag.Game_Name = Trans.GetString("Game_Name", reader);
+                    lGames.Add(mr);
+                }
+            }
+
+            return lGames;
+        }
+
+        /* collection
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Converter"></param>
+        /// <param name="objSelect"></param>
+        /// <returns></returns>
+        public void Collect_Vrac(Func<Dictionary<string, object>, CT_Game> Converter, Obj_Select objSelect, ObservableCollection<CT_Game> collVrac)
+        {
+            objSelect.Table = PProp.Default.T_Vrac;
+            GetCollectionOf<CT_Game>(Converter, objSelect, collVrac);           
         }
         */
 
-        /*
-    public ObservableCollection<T> Collec_Versions<T>(uint gamePos, ObservableCollection<T> obsCollec = null) where T : ICT_SupportLabel
-    {
-        Debug.WriteLine($"Collec_Version");
+        /* Collec_Versions
+public ObservableCollection<T> Collec_Versions<T>(uint gamePos, ObservableCollection<T> obsCollec = null) where T : ICT_SupportLabel
+{
+    Debug.WriteLine($"Collec_Version");
 
-        if (obsCollec == null)
+    if (obsCollec == null)
+    {
+        obsCollec = new ObservableCollection<T>();
+        Debug.WriteLine("GetCollectionOf: Création d'une nouvelle collection");
+    }
+    else
+    {
+        obsCollec.Clear();
+        Debug.WriteLine("GetCollectionOf: Raz de la collection");
+    }
+
+    // Version dématérialisée
+    using (SQLiteCommand command = new SQLiteCommand(this.SQLiteConn))
+    {
+        command.CommandText = $"SELECT [{ PProp.Default.T_Supports_Demat}].ID, [{PProp.Default.T_Companies_Demat}].Nom FROM [{PProp.Default.T_Supports_Demat}] INNER JOIN [{PProp.Default.T_Companies_Demat}] ON [{PProp.Default.T_Supports_Demat}].Company = [{PProp.Default.T_Companies_Demat}].ID WHERE [{PProp.Default.T_Supports_Demat}].GamePos = '{gamePos}'";
+        Debug.WriteLine($"Lancement de la requête {command.CommandText}");
+        SQLiteDataReader reader = command.ExecuteReader();
+
+        if (reader.HasRows)
         {
-            obsCollec = new ObservableCollection<T>();
+            while (reader.Read())
+            {
+                T demat = Activator.CreateInstance<T>();
+                demat.Support_Type = SupportType.Demat;
+                for (short i = 0; i < reader.FieldCount; i++)
+                {
+                    Debug.WriteLine(reader.GetName(i));
+                    switch (reader.GetName(i))
+                    {
+                        case "ID":
+                            demat.ID = Convert.ToUInt32(reader[i]);
+                            break;
+                        case "Nom":
+                            demat.Value = Convert.ToString(reader[i]);
+                            break;
+                    }
+
+                }
+                obsCollec.Add(demat);
+            }
+        }
+    }
+    */
+
+        /* Gifters
+/// <summary>
+/// Retourne la liste des gifters
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="method"></param>
+/// <param name="Forced"></param>
+/// <returns></returns>
+public List<T> List_Gifters<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_Personne
+{
+objSelect.Table = PProp.Default.T_Personnes;
+List<T> ctGifters = GetListOf<T>(method, objSelect);
+
+return ctGifters;
+}*/
+
+        /* Version Physique
+
+           // Version Physique
+           using (SQLiteCommand command = new SQLiteCommand(this.SQLiteConn))
+           {
+               command.CommandText = $"SELECT [{ PProp.Default.T_Supports_Phy}].ID, [{PProp.Default.T_Supports_Type}].Support FROM [{PProp.Default.T_Supports_Phy}] INNER JOIN [{PProp.Default.T_Supports_Type}] ON [{PProp.Default.T_Supports_Phy}].Support_Type = [{PProp.Default.T_Supports_Type}].ID WHERE [{PProp.Default.T_Supports_Phy}].GamePos = '{gamePos}'";
+               Debug.WriteLine($"Lancement de la requête {command.CommandText}");
+               SQLiteDataReader reader = command.ExecuteReader();
+
+               if (reader.HasRows)
+               {
+                   while (reader.Read())
+                   {
+                       T demat = Activator.CreateInstance<T>();
+                       demat.Support_Type = SupportType.Physique;
+                       for (short i = 0; i < reader.FieldCount; i++)
+                       {
+                           Debug.WriteLine(reader.GetName(i));
+                           switch (reader.GetName(i))
+                           {
+                               case "ID":
+                                   demat.ID = Convert.ToUInt32(reader[i]);
+                                   break;
+                               case "Support":
+                                   demat.Value = Convert.ToString(reader[i]);
+                                   break;
+                           }
+
+                       }
+                       obsCollec.Add(demat);
+                   }
+               }
+           }
+           */
+
+        /* Version HDD ??
+           // Version HDD
+
+           using (SQLiteCommand command = new SQLiteCommand(this.SQLiteConn))
+           {
+               command.CommandText = $"SELECT [ID], [Chemin] FROM [{PProp.Default.T_Supports_HDD}] WHERE [{PProp.Default.T_Supports_HDD}].GamePos = '{gamePos}'";
+               Debug.WriteLine($"Lancement de la requête {command.CommandText}");
+               SQLiteDataReader reader = command.ExecuteReader();
+
+               if (reader.HasRows)
+               {
+                   while (reader.Read())
+                   {
+                       T demat = Activator.CreateInstance<T>();
+                       demat.Support_Type = SupportType.HDD;
+                       for (short i = 0; i < reader.FieldCount; i++)
+                       {
+                           Debug.WriteLine(reader.GetName(i));
+                           switch (reader.GetName(i))
+                           {
+                               case "ID":
+                                   demat.ID = Convert.ToUInt32(reader[i]);
+                                   break;
+                               case "Chemin":
+                                   demat.Value = Convert.ToString(reader[i]);
+                                   break;
+                           }
+
+                       }
+                       obsCollec.Add(demat);
+                   }
+               }
+           }
+
+           return obsCollec;
+       }
+       */
+
+
+        /* minJeux
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public ObservableCollection<T> Collect_MinJeux<T>(Func<Dictionary<string, object>, T> convertToMinGame, Obj_Select objSelect, ObservableCollection<T> collecGames = null) where T : ICT_MinJeu
+    {
+        objSelect.Table = PProp.Default.T_GamesPos;
+
+        Debug.WriteLine($"GetCollectionOf: {typeof(T)}");
+
+        if (collecGames == null)
+        {
+            collecGames = new ObservableCollection<T>();
             Debug.WriteLine("GetCollectionOf: Création d'une nouvelle collection");
         }
         else
         {
-            obsCollec.Clear();
-            Debug.WriteLine("GetCollectionOf: Raz de la collection");
+            Debug.WriteLine("GetCollectionOf: RAZ de la collection");
+            collecGames.Clear();
         }
 
-        // Version dématérialisée
-        using (SQLiteCommand command = new SQLiteCommand(this.SQLiteConn))
+        // Création de la requête
+        try
         {
-            command.CommandText = $"SELECT [{ PProp.Default.T_Supports_Demat}].ID, [{PProp.Default.T_Companies_Demat}].Nom FROM [{PProp.Default.T_Supports_Demat}] INNER JOIN [{PProp.Default.T_Companies_Demat}] ON [{PProp.Default.T_Supports_Demat}].Company = [{PProp.Default.T_Companies_Demat}].ID WHERE [{PProp.Default.T_Supports_Demat}].GamePos = '{gamePos}'";
-            Debug.WriteLine($"Lancement de la requête {command.CommandText}");
-            SQLiteDataReader reader = command.ExecuteReader();
+            SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
+            sqlCommand.CommandText = $"SELECT [{PProp.Default.T_GamesPos}].[ID], [{PProp.Default.T_Titres}].[Titre], [{PProp.Default.T_Plateformes}].[Plateforme] " +
+                $"FROM [{PProp.Default.T_GamesPos}]" +
+                $"INNER JOIN [{PProp.Default.T_Titres}] ON [{PProp.Default.T_GamesPos}].[GameFi] = [{PProp.Default.T_Titres}].[ID] " +
+                $"INNER JOIN [{PProp.Default.T_Plateformes}] ON [{PProp.Default.T_GamesPos}].[Plateforme] = [{PProp.Default.T_Plateformes}].[ID]";
 
+            Condition_TreatMt(sqlCommand, objSelect.Conditions);
+
+            Debug.WriteLine($"Lancement de la commande {sqlCommand.CommandText}");
+
+            SQLiteDataReader reader = sqlCommand.ExecuteReader();
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    T demat = Activator.CreateInstance<T>();
-                    demat.Support_Type = SupportType.Demat;
+                    Dictionary<string, object> dico = new Dictionary<string, object>();
                     for (short i = 0; i < reader.FieldCount; i++)
                     {
-                        Debug.WriteLine(reader.GetName(i));
-                        switch (reader.GetName(i))
-                        {
-                            case "ID":
-                                demat.ID = Convert.ToUInt32(reader[i]);
-                                break;
-                            case "Nom":
-                                demat.Value = Convert.ToString(reader[i]);
-                                break;
-                        }
-
+                        dico.Add(reader.GetName(i), reader[i]);
                     }
-                    obsCollec.Add(demat);
+
+                    T data = convertToMinGame(dico);
+                    if (data == null) continue;
+                    collecGames.Add(data);
                 }
             }
         }
-        */
-
-        /*
-
-            // Version Physique
-            using (SQLiteCommand command = new SQLiteCommand(this.SQLiteConn))
-            {
-                command.CommandText = $"SELECT [{ PProp.Default.T_Supports_Phy}].ID, [{PProp.Default.T_Supports_Type}].Support FROM [{PProp.Default.T_Supports_Phy}] INNER JOIN [{PProp.Default.T_Supports_Type}] ON [{PProp.Default.T_Supports_Phy}].Support_Type = [{PProp.Default.T_Supports_Type}].ID WHERE [{PProp.Default.T_Supports_Phy}].GamePos = '{gamePos}'";
-                Debug.WriteLine($"Lancement de la requête {command.CommandText}");
-                SQLiteDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        T demat = Activator.CreateInstance<T>();
-                        demat.Support_Type = SupportType.Physique;
-                        for (short i = 0; i < reader.FieldCount; i++)
-                        {
-                            Debug.WriteLine(reader.GetName(i));
-                            switch (reader.GetName(i))
-                            {
-                                case "ID":
-                                    demat.ID = Convert.ToUInt32(reader[i]);
-                                    break;
-                                case "Support":
-                                    demat.Value = Convert.ToString(reader[i]);
-                                    break;
-                            }
-
-                        }
-                        obsCollec.Add(demat);
-                    }
-                }
-            }
-            */
-
-        /*
-            // Version HDD
-
-            using (SQLiteCommand command = new SQLiteCommand(this.SQLiteConn))
-            {
-                command.CommandText = $"SELECT [ID], [Chemin] FROM [{PProp.Default.T_Supports_HDD}] WHERE [{PProp.Default.T_Supports_HDD}].GamePos = '{gamePos}'";
-                Debug.WriteLine($"Lancement de la requête {command.CommandText}");
-                SQLiteDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        T demat = Activator.CreateInstance<T>();
-                        demat.Support_Type = SupportType.HDD;
-                        for (short i = 0; i < reader.FieldCount; i++)
-                        {
-                            Debug.WriteLine(reader.GetName(i));
-                            switch (reader.GetName(i))
-                            {
-                                case "ID":
-                                    demat.ID = Convert.ToUInt32(reader[i]);
-                                    break;
-                                case "Chemin":
-                                    demat.Value = Convert.ToString(reader[i]);
-                                    break;
-                            }
-
-                        }
-                        obsCollec.Add(demat);
-                    }
-                }
-            }
-
-            return obsCollec;
+        catch (SQLiteException sqExc)
+        {
+            Debug.WriteLine($"Erreur SQLite: {sqExc}");
         }
-        */
+
+        return collecGames;
+    }
+    */
+
+        /* Liste des pegis
+/// <summary>
+/// Liste des pegis
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="method"></param>
+/// <returns></returns>
+public List<T> List_PEGIs<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_PEGI
+{
+objSelect.Table = PProp.Default.T_PEGIs;
+List<T> ctPEGI = GetListOf<T>(method, objSelect);
+
+return ctPEGI;
+}
+*/
+
+        /* R2gions
+  /// <summary>
+  /// Renvoie une collection de regions
+  /// </summary>
+  /// <param name="ConvertToRegion"></param>
+  /// <param name="All"></param>
+  /// <param name="colonnes"></param>
+  /// <param name="conditions"></param>
+  /// <param name="groups"></param>
+  /// <returns></returns>
+  public ObservableCollection<T> Collect_Regions<T>(Func<Dictionary<string, object>, T> ConvertToRegion, Obj_Select objSelect, ObservableCollection<T> obsCollec = null) where T : ICT_Region
+  {
+      objSelect.Table = PProp.Default.T_Regions;
+      ObservableCollection<T> collRegions = GetCollectionOf<T>(ConvertToRegion, objSelect, obsCollec);
+      return collRegions; }
+
+
+
+  */
+
+        /* Sagas
+
+/// <summary>
+/// Liste des sagas
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="method"></param>
+/// <returns></returns>
+public List<T> List_Sagas<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_Saga
+{
+  objSelect.Table = PProp.Default.T_Sagas;
+  List<T> ctSagas = GetListOf<T>(method, objSelect);
+
+  return ctSagas;
+}*/
+
+        /* Liste des Plateformes
+/// <summary>
+/// Liste des Plateformes
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="method"></param>
+/// <returns></returns>
+public List<T> List_RawPlateformes<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_Plateforme
+{
+objSelect.Table = PProp.Default.T_Plateformes;
+List<T> cT_Plateformes = GetListOf<T>(method, objSelect);
+
+return cT_Plateformes;
+}*/
+
+        /* liste des Plateformes exploitable
+      /// <summary>
+      /// Retourne la liste des Plateformes exploitable
+      /// </summary>
+      /// <returns></returns>
+      public List<Aff_Plateforme> List_FormPlateformes()
+      {
+          List<Aff_Plateforme> lPlateformes = new List<Aff_Plateforme>();
+          string Plateformes = PProp.Default.T_Plateformes;
+          string constructeurs = PProp.Default.T_Constructeurs;
+          Dictionary<string, short> dicCol;
+
+          string sql = $"SELECT [{Plateformes}].[ID], [IDPlateforme], [{Plateformes}].[Generation], [Plateforme], [{constructeurs}].[Nom] AS [Constructeur] FROM[{Plateformes}] " +
+                              $"INNER JOIN[{constructeurs}] ON [{Plateformes}].[Constructeur] = [{constructeurs}].[ID] " +
+                              $"ORDER BY [Constructeur], [Generation]";
+
+          SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
+          SQLiteDataReader reader = sqlCMD.ExecuteReader();
+
+          if (reader.HasRows)
+          {
+              //dicCol = Get_Poss(reader);
+
+              while (reader.Read())
+              {
+                  Aff_Plateforme affM = new Aff_Plateforme();
+                  affM.ID = Convert.ToInt32(reader["ID"]);
+                  affM.IDPlateforme = GetNullableInteger(reader["IDPlateforme"]);
+                  affM.Generation = GetNullableInteger(reader["Generation"]);
+                  affM.Constructeur = reader["Constructeur"].ToString();
+                  affM.Plateforme = reader["Plateforme"].ToString();
+
+                  lPlateformes.Add(affM);
+              }
+          }
+
+
+
+          return lPlateformes;
+      }
+      */
+
+
+        /* Personnes
+public ObservableCollection<T> Collect_Personnes<T>(Func<Dictionary<string, object>, T> ConvertToGifter, Obj_Select objSelect, ObservableCollection<T> obsCollec = null) where T : ICT_Personne
+{
+objSelect.Table = PProp.Default.T_Personnes;
+return GetCollectionOf<T>(ConvertToGifter, objSelect, obsCollec);
+}*/
+
+
+        /* Collection de problèmes ??
+    /// <summary>
+    /// Collection de... problèmes
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="ConvertToProblem"></param>
+    /// <param name="objSelect"></param>
+    /// <param name="obsCollec"></param>
+    /// <returns></returns>
+    public ObservableCollection<T> Collect_Problems<T>(Func<Dictionary<string, object>, T> ConvertToProblem, Obj_Select objSelect, ObservableCollection<T> obsCollec = null) where T : ICT_Problem
+    {
+        objSelect.Table = PProp.Default.T_ProblemType;
+        return GetCollectionOf<T>(ConvertToProblem, objSelect, obsCollec);
+    }
+    */
+
+
+        /* Liste des problèmes
+ /// <summary>
+ /// Liste des problèmes
+ /// </summary>
+ /// <typeparam name="T"></typeparam>
+ /// <param name="method"></param>
+ /// <returns></returns>
+ public List<T> List_Problems<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_Problem
+ {
+     objSelect.Table = PProp.Default.T_ProblemType;
+     List<T> ctProblems = GetListOf<T>(method, objSelect);
+
+     return ctProblems;
+ }*/
+
+        /* Liste des langues
+/// <summary>
+/// Liste des langues
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="method"></param>
+/// <returns></returns>
+public List<T> List_Langues<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect) where T : ICT_Langue
+{
+   objSelect.Table = PProp.Default.T_Langues;
+   List<T> ctLangues = GetListOf<T>(method, objSelect);
+
+   return ctLangues;
+}*/
         #endregion
     }
 }

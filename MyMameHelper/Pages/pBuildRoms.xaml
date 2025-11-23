@@ -96,8 +96,8 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <RadioButton GroupName="Mode" Content="Mode Archive" Checked="RightMode_Changed" VerticalAlignment="Top" Margin="5" ToolTip="Select by Archive Name"/>
-                    <RadioButton GroupName="Mode" Content="Mode Game" Grid.Column="1" Checked="RightMode_Changed" VerticalAlignment="Top" Margin="5" IsChecked="True" ToolTip="Select by Description"/>
+                    <RadioButton GroupName="Mode" Content="Archive Select" Checked="RightMode_Changed" VerticalAlignment="Top" Margin="5" ToolTip="Select by Archive Name"/>
+                    <RadioButton GroupName="Mode" Content="Description Select" Grid.Column="1" Checked="RightMode_Changed" VerticalAlignment="Top" Margin="5" IsChecked="True" ToolTip="Select by Description"/>
                     <!--CheckBox Content="GetChildren" Grid.Row="1" ToolTip="Add Parent of children" IsChecked="{Binding GetChildren}"/-->
                     <!--CheckBox Content="Horizontal link" Grid.Column="1" Grid.Row="1" ToolTip="Add Brothers" IsChecked="{Binding BrothersChecked}"/-->
                     <Label Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Content="{Binding LeftFilter}" KeyUp="LListView_KeyUp" />

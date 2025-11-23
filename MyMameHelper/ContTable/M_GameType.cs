@@ -17,24 +17,7 @@ namespace MyMameHelper.ContTable
         }
 
 
-        private List<CT_Rom> _RomList = new List<CT_Rom>();
-        /// <summary>
-        /// Clones
-        /// </summary>
-        public List<CT_Rom> Roms 
-        {
-            get => _RomList;
-            set 
-            {
-                if (_RomList != value) 
-                { 
-                    _RomList = value;
-                    NotifyPropertyChanged();    
-                    
-                }
-            
-            }
-        }
+
 
         /// <summary>
         /// Description corresponding to parent rom description

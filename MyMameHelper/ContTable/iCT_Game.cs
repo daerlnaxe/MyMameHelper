@@ -14,8 +14,6 @@ namespace MyMameHelper.ContTable
         string Game_Name { get; set; }
         string Description { get; set; }
  
-        List<CT_Rom> Roms { get; set; }
-
         uint? Machine { get; set; }
 
         bool? Unwanted { get; set; }

@@ -216,6 +216,8 @@ namespace MyMameHelper
 
         }
 
+
+        #region fileManager
         private void Can_ManageFiles(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = DatabaseOk;
@@ -225,6 +227,7 @@ namespace MyMameHelper
         {
             Active_Page = new pFileManager();
         }
+        #endregion fileManager
 
         private void Can_MoveGames1(object sender, CanExecuteRoutedEventArgs e)
         {

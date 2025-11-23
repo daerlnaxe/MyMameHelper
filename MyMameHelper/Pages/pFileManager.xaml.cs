@@ -1,6 +1,7 @@
 ﻿using MyMameHelper.ContTable;
 using MyMameHelper.Parsers;
 using MyMameHelper.SQLite;
+using MyMameHelper.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -38,8 +40,13 @@ namespace MyMameHelper.Pages
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public MyObservableCollection<Aff_Game> DbGames = new MyObservableCollection<Aff_Game>();
-        public List<Aff_Game> MissingGames = new List<Aff_Game>();
+
+        public List<CT_Game_Mapped> IncompleteGames = new List<CT_Game_Mapped>();
+        public List<CT_Rom> MissingRoms = new List<CT_Rom>();
 
 
         private string[] _DirFiles;
@@ -211,35 +218,74 @@ namespace MyMameHelper.Pages
             // Récupérer les fichiers dans le répertoire
             _DirFiles = Directory.GetFiles(PProp.Default.RomSource);
 
-            // Récupérer les données de la base, table roms
-            /*
-            using (SQLite_Req sqReq = new SQLite_Req())
-            {
-                DbGames.ChangeContent = sqReq.AffGames_List();
+            // Récupérer les jeux et les roms associées
+            Load_MapGames();
+            Debug.WriteLine($"Nombre de jeux trouvés: {_GamesMapped.Count}");
 
-            }*/
+
+            List<CT_Game> FilteredGamesMapped = new List<CT_Game>(_GamesMapped);
 
             // Méthode
-            string methodChoosen = (string)cbMethod.SelectionBoxItem;
+            // Construction du chemin de destination
+            //string destPath = "0-Miscellaneous";
+            string arboChoosen = (string)cbArboType.SelectionBoxItem;
+            Debug.WriteLine($"Méthode choisie: '{arboChoosen}'");
 
-
+                            
+            
 
             // Construction des répertoires
-            foreach (Aff_Game dbG in DbGames)
+            foreach (CT_Game_Mapped dbG in FilteredGamesMapped)
             {
-//                string dbgFile = Path.Combine(PProp.Default.RomSource, $"{dbG.Parent_Name}.zip");
-                string destPath = null;
+                
+                string dest = null;
 
-                Console.WriteLine($"{dicMachines[Convert.ToUInt32(dbG.Machine)].Constructeur} | {dbG.Aff_Machine} | {dbG.Game_Name}");
-
-                // Vérifie que le fichier existe
-                //Debug.WriteLine("Test présence "+dbgFile);
-                /*if (!File.Exists(dbgFile))
+                // According to the arborescence type chosen
+                switch (arboChoosen)
                 {
-                    MissingGames.Add(dbG);
-                    continue;
-                }*/
+                    case "Machine":
+                        dest = Get_Path4Machine(dbG);
+                        break;
 
+                    default:
+                        break;
+                }
+
+  
+ 
+                //dest = Path.Combine(dest, $"{dbG.}.zip");
+
+
+                //Console.WriteLine($"{dicMachines[Convert.ToUInt32(dbG.Machine)].Constructeur} | {dbG.Machine.Nom} | {dbG.Game_Name}");
+
+
+
+                // roms
+                foreach (CT_Rom rom in dbG.Roms)
+                {
+                    string romFile = Path.Combine(PProp.Default.RomSource, $"{rom.Archive_Name}");
+
+
+                    // Vérifie que le fichier existe
+                    Debug.WriteLine($"Test présence: '{romFile}'");
+                    if (!File.Exists(romFile))
+                    {
+                        MissingRoms.Add(rom);
+
+                        if (IncompleteGames.FirstOrDefault(x => x == dbG) == null)
+                        {
+                            IncompleteGames.Add(dbG);
+                        }
+
+                        continue;
+                    }
+                }
+
+
+               
+
+                //
+                return;
 
                 if (MoveFiles == true)
                 {
@@ -294,16 +340,18 @@ namespace MyMameHelper.Pages
         }
 
 
+
+
         /// <summary>
         /// Formate un path en combinant 
         /// </summary>
         /// <param name="dbG"></param>
         /// <returns></returns>
-        private string Get_Path4Machine(Aff_Game dbG)
+        private string Get_Path4Machine(CT_Game_Mapped dbG)
         {
             string dest = null;
 
-            dest = Path.Combine(PProp.Default.RomDestination, dicMachines[Convert.ToUInt32(dbG.Machine)].Constructeur, dbG.Aff_Machine);
+            dest = Path.Combine(PProp.Default.RomDestination, dicMachines[Convert.ToUInt32(dbG.Machine)].Constructeur, dbG.Machine.Nom);
 
             if (dbG.Unwanted == true && useUnwanted.IsChecked == true)
             {
@@ -321,6 +369,36 @@ namespace MyMameHelper.Pages
             {
                 List<Aff_Machine> truite = sqReq.List_MachinesJoin();
                 dicMachines = truite.ToDictionary(x => x.ID, x => x);
+            }
+        }
+
+
+        private List<CT_Game_Mapped> _GamesMapped;
+
+
+        /// <summary>
+        /// Construit et lance l'asyncloadmapGames
+        /// </summary>
+        private void Load_MapGames()
+        {
+            // Chargement asynchrone des Jeux et des roms associées
+            AsyncWindowProgress aLoad = new AsyncWindowProgress();
+            aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoad_MapGames);
+            aLoad.ShowDialog();
+        }
+
+        /// <summary>
+        /// Récupère en base les valeurs avec liaison des deux tables
+        /// </summary>
+        /// <param name="aLoad"></param>
+        private void AsyncLoad_MapGames(AsyncWindowProgress aLoad)
+        {
+            aLoad.AsyncMessage("Loading Games and mappel Roms...");
+            using (SQLite_Op sqReq = new SQLite_Op())
+            {
+                _GamesMapped = sqReq.QueryGameWithRoms();
+
+
             }
         }
     }

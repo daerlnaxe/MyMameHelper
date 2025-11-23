@@ -75,11 +75,10 @@ namespace MyMameHelper.ContTable
 
         }
 
-        public CT_Game(string description, string gameName, List<CT_Rom> roms=null)
+        public CT_Game(string description, string gameName)
         {
             this.Description = description;
-            this.Game_Name = gameName;
-            this.Roms = roms;
+            this.Game_Name = gameName;            
         }
 
         public CT_Game(CT_Game game)

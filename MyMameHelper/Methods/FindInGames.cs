@@ -9,9 +9,9 @@ namespace MyMameHelper.Methods
 {
     public static class FindInGames
     {
-        internal static Aff_Game GameByRoms(List<Aff_Game> gamesList, Func<CT_Rom, bool> test)
+        internal static CT_Game_Mapped GameByRoms(List<CT_Game_Mapped> gamesList, Func<CT_Rom, bool> test)
         {
-            foreach (Aff_Game game in gamesList)
+            foreach (CT_Game_Mapped game in gamesList)
             {
                 foreach(CT_Rom rom in game.Roms)
                 {

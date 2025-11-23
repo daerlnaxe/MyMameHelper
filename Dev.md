@@ -18,7 +18,7 @@
 - [ ] Ajouter dans le build
 - [ ] :warning: Réforme en urgence de la base de données.
     - [x] Structure
-    - [ ] Feed par roms, récupératon de la description jusqu'à () + réfléchir à :
+    - [x] Feed par roms, récupératon de la description jusqu'à () + réfléchir à :
         - check avant pour éviter les erreurs ?
         - insert or ignore sous sqlite
         - récupérer l'erreur selon
@@ -99,6 +99,7 @@
 - L'ajout de rom de la liste de gauche à droite bénéficie maintenant d'une fenêtre de progression car le temps de traitement peut aller à 5 minutes.
 
 # -
+## Concept Archive Mode & 
 ## Build Roms
 Chargement de la page:
 - Récupération des tables:
@@ -109,7 +110,14 @@ Passage de gauche à droite:
 - Conversion du nom du manufacturer en Id Developper
 
 
-## Map To Roms
+## Map To Roms (Operationnel)
+- Liste des roms orphelines
+- Deux types de sauvegarde
+  - Roms
+  - Jeu (ajout ou effacement)
+- Lors de la suppression d'un jeu, le SGBD s'occupe de mettre à null game_id
+
+Historique
 - Lister les jeux:
     - ❌ Ils n'existent pas sauf si le build roms crée une base minimale => n'afficherait rien
     - ❌ Toutes les roms non linkées vont polluer une entrée "null".

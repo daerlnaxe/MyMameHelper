@@ -18,7 +18,8 @@ namespace MyMameHelper.ContTable
         string Description { get; set; }
 
         string Year { get; set; }
-        CT_Game Game { get; set; }
+
+        uint? Game_Id { get; set; }
 
         //uint Manufacturer { get; set; }
         CT_Constructeur Manufacturer { get; set; }

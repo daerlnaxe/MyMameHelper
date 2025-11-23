@@ -83,8 +83,8 @@ namespace MyMameHelper.ContTable
             Aff_Genre = game.Aff_Genre;
             Rate = game.Rate;
 
-            foreach (var rom in game.Roms)
-                Roms.Add(new CT_Rom(rom));
+            /*foreach (var rom in game.Roms)
+                Roms.Add(new CT_Rom(rom));*/
         }
 
         public new static Aff_Game Result2Class(Dictionary<string, object> dico)
