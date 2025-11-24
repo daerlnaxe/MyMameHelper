@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyMameHelper.ContTable
 {
-    public class CT_Game : M_GameType, IEquatable<CT_Game>,  iCT_Games
+    public class CT_Game : M_GameType, IEquatable<CT_Game>, iCT_Games
     {
 
 
@@ -19,10 +19,10 @@ namespace MyMameHelper.ContTable
         /// Game  can be modified by user
         /// </summary>
         public string Game_Name { get; set; }
-               
+
         public uint? Machine_Id { get; set; }
 
-        private bool? _UnWanted =  false;
+        private bool? _UnWanted = false;
         public bool? Unwanted
         {
             get { return _UnWanted; }
@@ -36,22 +36,40 @@ namespace MyMameHelper.ContTable
             }
         }
 
-        public uint? Developer_Id { get; set; }
+        #region Developer
+        private uint? _Developer_ID;
+        public uint? Developer_Id
+        {
+            get => _Developer_ID;
+            set
+            {
+                if (value != _Developer_ID)
+                {
+                    _Developer_ID = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        #endregion Developer
 
-        public uint? _Genre_Id;
+
+        #region Genre
+        private uint? _Genre_Id;
 
         public uint? Genre_Id
         {
             get { return _Genre_Id; }
             set
             {
-                if(_Genre_Id != value)
+                if (_Genre_Id != value)
                 {
                     _Genre_Id = value;
                     NotifyPropertyChanged();
                 }
             }
         }
+        #endregion Genre
+
 
         public bool? IsMahjong { get; set; } = false;
         public bool? IsQuizz { get; set; } = false;
@@ -78,7 +96,7 @@ namespace MyMameHelper.ContTable
         public CT_Game(string description, string gameName)
         {
             this.Description = description;
-            this.Game_Name = gameName;            
+            this.Game_Name = gameName;
         }
 
         public CT_Game(CT_Game game)
@@ -86,7 +104,7 @@ namespace MyMameHelper.ContTable
             ID = game.ID;
             Game_Name = game.Game_Name;
             Description = game.Description;
-         //   SourceFile = game.SourceFile;
+            //   SourceFile = game.SourceFile;
             Machine_Id = game.Machine_Id;
             Unwanted = game.Unwanted;
             Developer_Id = game.Developer_Id;
@@ -110,8 +128,8 @@ namespace MyMameHelper.ContTable
 
             cTC.ID = Trans.GetUInt("ID", dico);
             //cTC.Parent_Name = Trans.GetString("Archive_Name", dico);
-            cTC.Game_Name = Trans.GetString("Game_Name", dico);           
-            cTC.Description = Trans.GetString("Description", dico);           
+            cTC.Game_Name = Trans.GetString("Game_Name", dico);
+            cTC.Description = Trans.GetString("Description", dico);
             cTC.Machine_Id = Trans.GetNullableUInt("Machine", dico);
             cTC.Unwanted = Trans.GetBool("Unwanted", dico);
             cTC.Genre_Id = Trans.GetNullableUInt("Genre", dico);

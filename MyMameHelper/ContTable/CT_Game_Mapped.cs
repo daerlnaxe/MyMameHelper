@@ -75,7 +75,7 @@ namespace MyMameHelper.ContTable
                 if (value != _Developer)
                 {
                     _Developer = value;
-                    base.NotifyPropertyChanged();
+                    NotifyPropertyChanged();
                 }
             }
         }

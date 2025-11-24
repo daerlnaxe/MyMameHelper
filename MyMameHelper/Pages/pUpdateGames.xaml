@@ -178,14 +178,14 @@
                     <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5">
                         <StackPanel>
                             <Label Content="Select Genre:" />
-                            <ComboBox x:Name="cboxGenres" ItemsSource="{Binding Genres}" DisplayMemberPath="Nom" SelectedValuePath="ID"/>
+                            <ComboBox x:Name="cboxGenres" ItemsSource="{Binding Genres}" SelectedValue="{Binding SelectedGenreID}" DisplayMemberPath="Nom" SelectedValuePath="ID"/>
                         </StackPanel>
                     </Border>
-                    <!-- Manufacturer -->
+                    <!-- Developer -->
                     <Border Margin="5" CornerRadius="5" BorderBrush="Black" BorderThickness="1" Padding="5">
                         <StackPanel>
                             <Label Content="Select Developer:"/>
-                            <ComboBox x:Name="cboxDevs" ItemsSource="{Binding Developers}" DisplayMemberPath="Nom" SelectedValuePath="ID"/>
+                            <ComboBox ItemsSource="{Binding Developers}" SelectedValue="{Binding DeveloperID}" DisplayMemberPath="Nom" SelectedValuePath="ID"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -216,7 +216,7 @@
             </Grid>
             <StackPanel>
                 <Label Content="Games:"/>
-                <DataGrid x:Name="dgRight" Height="500" ItemsSource="{Binding GamesModified}" AutoGenerateColumns="False" CanUserAddRows="False" SelectedItem="{Binding RightSel}">
+                <DataGrid x:Name="dgRight" Height="500" ItemsSource="{Binding GamesModified}" AutoGenerateColumns="False" CanUserAddRows="False" SelectedItem="{Binding RightSel}" >
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Edit Roms" Command="commands:UICommands.EditRom"/>
@@ -230,12 +230,14 @@
                         <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
                         <DataGridTextColumn Header="Machine" Binding="{Binding Machine.Nom}"  />
                         <DataGridCheckBoxColumn Header="Unwanted" Binding="{Binding Unwanted}" />
-                        <DataGridComboBoxColumn Header="Genre" ItemsSource="{Binding Source={StaticResource ItemsGenres}}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectedValueBinding="{Binding Genre_Id}" />
+                        <DataGridComboBoxColumn Header="Genre" MinWidth="100"
+                                                ItemsSource="{Binding Source={StaticResource ItemsGenres}}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectedValueBinding="{Binding Genre_Id}" />
                         <!--DataGridTextColumn Header="Genre2" Binding="{Binding Genre.Nom}" /-->
                         <DataGridComboBoxColumn Header="Rate" Width="70" SelectedValueBinding="{Binding Rate}" ItemsSource="{StaticResource ItemsRate}"  DisplayMemberPath="Value" SelectedValuePath="Key"/>
                         <DataGridCheckBoxColumn Header="Mahjong" Binding="{Binding IsMahjong}" />
                         <DataGridCheckBoxColumn Header="Quizz" Binding="{Binding IsQuizz}" />
-                        <DataGridComboBoxColumn Header="Developer" ItemsSource="{Binding Source={StaticResource ItemsDevelopers}}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectedValueBinding="{Binding Developer_Id}"/>
+                        <DataGridComboBoxColumn Header="Developer" MinWidth="100" 
+                                                ItemsSource="{Binding Source={StaticResource ItemsDevelopers}}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectedValueBinding="{Binding Developer_Id}"/>
                     </DataGrid.Columns>
                     <!--DataGrid.RowDetailsTemplate>
                         <DataTemplate>

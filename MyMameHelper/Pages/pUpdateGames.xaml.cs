@@ -61,17 +61,50 @@ namespace MyMameHelper.Pages
 
         public MyObservableCollection<CT_Constructeur> Constructeurs { get; set; } = new MyObservableCollection<CT_Constructeur>();
          
+
         #region Machine
         public MyObservableCollection<CT_Machine> Machines { get; set; } = new MyObservableCollection<CT_Machine>();
         public CT_Machine SelectedMachine { get; set; }
         #endregion Machine
 
+        #region Developer
         public MyObservableCollection<CT_Developer> Developers { get; set; } = new MyObservableCollection<CT_Developer>();
+        private uint _DeveloperID;
+        public uint DeveloperID
+        {
+            get => _DeveloperID;
+            set
+            {
+                if (value != _DeveloperID)
+                {
+                    _DeveloperID = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        #endregion Developer
 
+
+        #region Genre
         public MyObservableCollection<CT_Genre> Genres { get; set; } = new MyObservableCollection<CT_Genre>();
 
+        private uint _SelectedGenreID;
+        public uint SelectedGenreID 
+        {  
+            get=>_SelectedGenreID;
+            set
+            {
+                if (value != _SelectedGenreID)
+                {
+                    _SelectedGenreID = value;
+                    NotifyPropertyChanged();
+                }
+            } 
+        }
+        #endregion Genre
 
-       // private Aff_Game _LeftSelected;
+
+        // private Aff_Game _LeftSelected;
         /*public Aff_Game LeftSel
         {
             get { return _LeftSelected; }
@@ -410,21 +443,23 @@ namespace MyMameHelper.Pages
                 /*foreach (CT_Rom rom in game.Roms)
                     rom.Unwanted = cbUnwanted.IsChecked;*/
             
-                // Genre
-                if (cboxGenres.SelectedItem != null)
+                // Permet de modifier le contenu de la combobox en relation
+                if(SelectedGenreID != 0)
                 {
-                    game.Genre = cboxGenres.SelectedItem as CT_Genre;
-                    game.Genre.ID = game.Genre.ID;
-                    
+                    game.Genre_Id = SelectedGenreID;
+                    game.Genre = Genres.FirstOrDefault(x => x.ID == SelectedGenreID);
+                    SelectedGenreID = 0;
                 }
 
+                
                 //Developpeurs
-                if (cboxDevs.SelectedItem != null)
+                if (DeveloperID != 0)
                 {
-                    game.Developer = cboxDevs.SelectedItem as CT_Developer;
-                    game.Developer_Id = game.Developer.ID;
-                    
+                    game.Developer_Id = DeveloperID;
+                    game.Developer = Developers.FirstOrDefault(x => x.ID == DeveloperID);
+                    DeveloperID = 0;
                 }
+            
 
                 if (cboxRate.SelectedItem != null)
                 {
