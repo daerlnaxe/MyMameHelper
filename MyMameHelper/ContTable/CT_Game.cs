@@ -20,7 +20,26 @@ namespace MyMameHelper.ContTable
         /// </summary>
         public string Game_Name { get; set; }
 
-        public uint? Machine_Id { get; set; }
+
+        #region Machine
+
+        
+
+        private uint? _Machine_ID;
+
+        public uint? Machine_Id
+        {
+            get => _Machine_ID;
+            set
+            {
+                if (value != _Machine_ID)
+                {
+                    _Machine_ID = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        #endregion Machine
 
         private bool? _UnWanted = false;
         public bool? Unwanted
@@ -71,8 +90,51 @@ namespace MyMameHelper.ContTable
         #endregion Genre
 
 
-        public bool? IsMahjong { get; set; } = false;
-        public bool? IsQuizz { get; set; } = false;
+        private bool? _IsMahjong = false    ;
+        public bool? IsMahjong 
+        {
+            get => _IsMahjong;
+            set
+            {
+                if(value != _IsMahjong)
+                {
+                    _IsMahjong = value;
+                    NotifyPropertyChanged();
+                }
+
+            }
+        }
+
+
+        private bool? _IsQuizz;
+        public bool? IsQuizz 
+        { 
+            get=>_IsQuizz;
+            set
+            {
+                if(_IsQuizz != value)
+                {
+                    _IsQuizz = value;
+                    NotifyPropertyChanged();
+                }
+            } 
+        }
+
+       
+        private bool? _IsFruit = false ;
+        public bool? IsFruit
+        {
+            get => _IsFruit;
+            set
+            {
+                if (value != _IsFruit)
+                {
+                    _IsFruit = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
 
         public uint? _Rate;
         public uint? Rate
@@ -111,6 +173,7 @@ namespace MyMameHelper.ContTable
             Genre_Id = game.Genre_Id;
             IsMahjong = game.IsMahjong;
             IsQuizz = game.IsQuizz;
+            IsFruit = game.IsFruit;
         }
 
         public bool Equals(CT_Game other)
@@ -137,6 +200,7 @@ namespace MyMameHelper.ContTable
             cTC.Rate = Trans.GetNullableUInt("Rate", dico);
             cTC.IsMahjong = Trans.GetBoolFalse("IsMahjong", dico);
             cTC.IsQuizz = Trans.GetBoolFalse("IsQuizz", dico);
+            cTC.IsFruit = Trans.GetBoolFalse("IsFruit", dico);
 
             return cTC;
         }

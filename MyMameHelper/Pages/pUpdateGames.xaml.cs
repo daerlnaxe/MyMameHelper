@@ -50,7 +50,12 @@ namespace MyMameHelper.Pages
         /// <summary>
         /// Liste des jeux en cours de modification
         /// </summary>
-        public MyObservableCollection<CT_Game_Mapped> GamesModified { get; set; } = new MyObservableCollection<CT_Game_Mapped>();
+        public MyObservableCollection<CT_Game_Mapped> GamesToModify { get; set; } = new MyObservableCollection<CT_Game_Mapped>();
+        
+        /// <summary>
+        /// Liste des jeux à updater
+        /// </summary>
+        public List<CT_Game_Mapped> GamesToUpdate { get; set; } = new List<CT_Game_Mapped>();
         #endregion Game
 
 
@@ -59,13 +64,46 @@ namespace MyMameHelper.Pages
         /// </summary>
         //private List<Aff_Game> _TempGame { get; set; } = new List<Aff_Game>();
 
-        public MyObservableCollection<CT_Constructeur> Constructeurs { get; set; } = new MyObservableCollection<CT_Constructeur>();
-         
+        //  public MyObservableCollection<CT_Constructeur> Constructeurs { get; set; } = new MyObservableCollection<CT_Constructeur>();
+
+
 
         #region Machine
         public MyObservableCollection<CT_Machine> Machines { get; set; } = new MyObservableCollection<CT_Machine>();
-        public CT_Machine SelectedMachine { get; set; }
+        private uint _SelectedMachineID;
+        public uint SelectedMachineID
+        {
+            get => _SelectedMachineID;
+            set
+            {
+                if (value != _SelectedMachineID)
+                {
+                    _SelectedMachineID = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         #endregion Machine
+
+
+
+        /// <summary>
+        /// Unwanted
+        /// </summary>
+        public bool? _CheckedUnwanted= false;
+        public bool? CheckedUnwanted
+        {
+            get => _CheckedUnwanted;
+            set
+            {
+                if (_CheckedUnwanted != value)
+                {
+                    _CheckedUnwanted = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
 
         #region Developer
         public MyObservableCollection<CT_Developer> Developers { get; set; } = new MyObservableCollection<CT_Developer>();
@@ -89,9 +127,9 @@ namespace MyMameHelper.Pages
         public MyObservableCollection<CT_Genre> Genres { get; set; } = new MyObservableCollection<CT_Genre>();
 
         private uint _SelectedGenreID;
-        public uint SelectedGenreID 
-        {  
-            get=>_SelectedGenreID;
+        public uint SelectedGenreID
+        {
+            get => _SelectedGenreID;
             set
             {
                 if (value != _SelectedGenreID)
@@ -99,9 +137,70 @@ namespace MyMameHelper.Pages
                     _SelectedGenreID = value;
                     NotifyPropertyChanged();
                 }
-            } 
+            }
         }
+
+
         #endregion Genre
+
+
+
+
+
+        #region Mechanicals
+        /// <summary>
+        /// Mahjong
+        /// </summary>
+        public bool? _CheckedMahjong = false;
+        public bool? CheckedMahjong
+        {
+            get => _CheckedMahjong;
+            set
+            {
+                if (_CheckedMahjong != value)
+                {
+                    _CheckedMahjong = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Quizz
+        /// </summary>
+        public bool? _CheckedQuizz = false;
+        public bool? CheckedQuizz 
+        { 
+            get=>_CheckedQuizz;
+            set
+            {
+                if (_CheckedQuizz != value)
+                {
+                    _CheckedQuizz = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Fruit
+        /// </summary>
+        public bool? _CheckedFruit = false;
+        public bool? CheckedFruit 
+        { 
+            get=>_CheckedFruit;
+            set
+            {
+                if (_CheckedFruit != value)
+                {
+                    _CheckedFruit = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        #endregion
 
 
         // private Aff_Game _LeftSelected;
@@ -142,14 +241,14 @@ namespace MyMameHelper.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            
+
             using (SQLite_Op sqReq = new SQLite_Op())
             {
                 DbGames.ChangeContent = sqReq.QueryGame4Update(order: new SqlOrder("Game_Name"));
 
                 // Liste des constructeurs ?? 
                 //Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Constructeurs, all: true));
-                
+
                 // Liste des développeurs
                 Developers.ChangeContent = sqReq.GetListOf<CT_Developer>(CT_Developer.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
                 // Liste des Machines
@@ -157,7 +256,7 @@ namespace MyMameHelper.Pages
                 // Liste des genres
                 Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, new Obj_Select(table: PProp.Default.T_Genres, all: true));
             }
-            
+
         }
 
         private void Select_All(object sender, ExecutedRoutedEventArgs e)
@@ -283,21 +382,23 @@ namespace MyMameHelper.Pages
         #region Updater dans la table Games
         private void Can_Update(object sender, CanExecuteRoutedEventArgs e)
         {
-           // e.CanExecute = GamesModified.Count > 0;
+            e.CanExecute = GamesToUpdate.Count > 0;
         }
 
         private void UpdateGames(object sender, ExecutedRoutedEventArgs e)
-        {
-            /* A revoir
-            UpdateDbGames<Aff_Game> sDb = new UpdateDbGames<Aff_Game>();
-            sDb.Update_GamesTable(GamesModified);
+        {           
+            UpdateDbGames<CT_Game_Mapped> sDb = new UpdateDbGames<CT_Game_Mapped>();
+            sDb.Update_GamesTable(GamesToUpdate);
 
-            using (SQLite_Req sqReq = new SQLite_Req())
+            using (SQLite_Op sqReq = new SQLite_Op())
             {
-                DbGames.ChangeContent = sqReq.AffGames_List();
+                DbGames.ChangeContent = sqReq.QueryGame4Update(order: new SqlOrder("Game_Name"));
             }
-            GamesModified.Clear();
-            */
+            //GamesToModify.Clear();
+            GamesToModify.RemoveSilentRange(GamesToUpdate);
+
+            GamesToUpdate.Clear();
+            
         }
         #endregion
 
@@ -312,7 +413,7 @@ namespace MyMameHelper.Pages
         private void Ex_AddGame(object sender, ExecutedRoutedEventArgs e)
         {
             //CT_Machine machine = (CT_Machine)cbMachines.SelectedItem;
-            
+
             List<CT_Game_Mapped> toModify = null;
             if (dg2Organize.SelectedItems.Count == 0)
             {
@@ -320,26 +421,26 @@ namespace MyMameHelper.Pages
             }
 
             //toModify =.Cast<Aff_Game>().ToList();
-            List<CT_Game_Mapped> tmp =new List<CT_Game_Mapped>();
+            List<CT_Game_Mapped> tmp = new List<CT_Game_Mapped>();
             for (int i = 0; i < dg2Organize.SelectedItems.Count; i++)
-            { 
-                tmp.Add((CT_Game_Mapped)dg2Organize.SelectedItems[i]);  
+            {
+                tmp.Add((CT_Game_Mapped)dg2Organize.SelectedItems[i]);
             }
-                
-                
+
+
 
             foreach (CT_Game_Mapped game in tmp)
             {
                 /*if (GamesModified.FirstOrDefault(x => x.Game_Name.Equals(game.Game_Name)) != null)
                     continue;*/
 
-                GamesModified.AddSilent(new CT_Game_Mapped(game));
+                GamesToModify.AddSilent(new CT_Game_Mapped(game));
                 DbGames.Remove(game);
             }
             // _TempGame.AddRange(toModify);
             // DbGames.RemoveSilentRange(toModify);
 
-            GamesModified.SignalChange();
+            GamesToModify.SignalChange();
             //DbGames.SignalChange();
 
 
@@ -375,17 +476,17 @@ namespace MyMameHelper.Pages
 
         private void Can_ResetRight(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = GamesModified.Count > 0;
+            e.CanExecute = GamesToModify.Count > 0;
         }
 
         private void Ex_ResetRight(object sender, ExecutedRoutedEventArgs e)
         {
-          foreach (var g in GamesModified)
+            foreach (var g in GamesToModify)
             {
-              DbGames.Add(g);
+                DbGames.Add(g);
             }
 
-            GamesModified.Clear();
+            GamesToModify.Clear();
         }
 
 
@@ -398,7 +499,7 @@ namespace MyMameHelper.Pages
             SearchPlus sp = new SearchPlus();
             if (sp.ShowDialog() == true)
             {
-              //s  DbGames.ChangeContent = sp.GamesFound.ToList();
+                //s  DbGames.ChangeContent = sp.GamesFound.ToList();
             }
         }
 
@@ -410,12 +511,12 @@ namespace MyMameHelper.Pages
         #region Change
         private void Can_Change(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = GamesModified.Count > 0;
+            e.CanExecute = GamesToModify.Count > 0;
         }
 
         private void Ex_Change(object sender, ExecutedRoutedEventArgs e)
         {
-            
+
             if (dgRight.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Select Game(s)");
@@ -429,53 +530,66 @@ namespace MyMameHelper.Pages
                     continue;
 
                 Trace.WriteLine(game.Game_Name);
-                if (cbMachines.SelectedItem != null)
+
+                // Machines
+                if (SelectedMachineID != 0)
                 {
-                    game.Machine = cbMachines.SelectedItem as CT_Machine;
-                    game.Machine_Id= game.Machine.ID;                  
+                    game.Machine_Id = SelectedMachineID;
+                    game.Machine = Machines.FirstOrDefault(x => x.ID == SelectedMachineID);
                 }
 
                 // Unwanted
-                game.Unwanted = cbUnwanted.IsChecked;
-
-                
+                game.Unwanted = CheckedUnwanted;
 
                 /*foreach (CT_Rom rom in game.Roms)
                     rom.Unwanted = cbUnwanted.IsChecked;*/
-            
-                // Permet de modifier le contenu de la combobox en relation
-                if(SelectedGenreID != 0)
+
+                // Genre
+                if (SelectedGenreID != 0)
                 {
                     game.Genre_Id = SelectedGenreID;
-                    game.Genre = Genres.FirstOrDefault(x => x.ID == SelectedGenreID);
-                    SelectedGenreID = 0;
+                    game.Genre = Genres.FirstOrDefault(x => x.ID == SelectedGenreID);                   
                 }
 
-                
-                //Developpeurs
+
+                //Developpeur
                 if (DeveloperID != 0)
                 {
                     game.Developer_Id = DeveloperID;
-                    game.Developer = Developers.FirstOrDefault(x => x.ID == DeveloperID);
-                    DeveloperID = 0;
+                    game.Developer = Developers.FirstOrDefault(x => x.ID == DeveloperID);                   
                 }
-            
+
 
                 if (cboxRate.SelectedItem != null)
                 {
                     DictionaryEntry rate = (DictionaryEntry)cboxRate.SelectedItem;
                     game.Rate = Convert.ToUInt32(rate.Key); ;
                 }
+
+                // Mechanicals
+                game.IsMahjong = CheckedMahjong;
+                game.IsQuizz = CheckedQuizz;
+                game.IsFruit = CheckedFruit;   
             }
-            cbMachines.SelectedItem = null;
-            
+
+            //cbMachines.SelectedItem = null;
+            // Raz
+            SelectedMachineID = 0;
+            CheckedUnwanted = false;
+            SelectedGenreID = 0;
+            DeveloperID = 0;
+            cboxRate.SelectedIndex = -1;
+            CheckedMahjong = false;
+            CheckedQuizz = false;
+            CheckedFruit = false;
         }
         #endregion
+
 
         #region Edit
         private void Can_EditRom(object sender, CanExecuteRoutedEventArgs e)
         {
-           // e.CanExecute = GamesModified.Count > 0;
+            // e.CanExecute = GamesModified.Count > 0;
         }
 
         private void Ex_EditRom(object sender, ExecutedRoutedEventArgs e)

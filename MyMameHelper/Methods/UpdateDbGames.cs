@@ -14,9 +14,9 @@ namespace MyMameHelper.Methods
 {
     public class UpdateDbGames<T> where T: iCT_Games
     {
-        private ObservableCollection<T> _Games;
+        private IList<T> _Games;
 
-        public void Update_GamesTable(ObservableCollection<T> games)
+        public void Update_GamesTable(IList<T> games)
         {
             _Games = games;
 
