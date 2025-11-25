@@ -16,6 +16,8 @@ namespace MyMameHelper.Methods
     {
         private IList<T> _Games;
 
+        //private bool problem = false;
+
         public void Update_GamesTable(IList<T> games)
         {
             _Games = games;

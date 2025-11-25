@@ -51,7 +51,7 @@ namespace MyMameHelper.Pages
         /// Liste des jeux en cours de modification
         /// </summary>
         public MyObservableCollection<CT_Game_Mapped> GamesToModify { get; set; } = new MyObservableCollection<CT_Game_Mapped>();
-        
+
         /// <summary>
         /// Liste des jeux à updater
         /// </summary>
@@ -90,7 +90,7 @@ namespace MyMameHelper.Pages
         /// <summary>
         /// Unwanted
         /// </summary>
-        public bool? _CheckedUnwanted= false;
+        public bool? _CheckedUnwanted = false;
         public bool? CheckedUnwanted
         {
             get => _CheckedUnwanted;
@@ -170,9 +170,9 @@ namespace MyMameHelper.Pages
         /// Quizz
         /// </summary>
         public bool? _CheckedQuizz = false;
-        public bool? CheckedQuizz 
-        { 
-            get=>_CheckedQuizz;
+        public bool? CheckedQuizz
+        {
+            get => _CheckedQuizz;
             set
             {
                 if (_CheckedQuizz != value)
@@ -188,9 +188,9 @@ namespace MyMameHelper.Pages
         /// Fruit
         /// </summary>
         public bool? _CheckedFruit = false;
-        public bool? CheckedFruit 
-        { 
-            get=>_CheckedFruit;
+        public bool? CheckedFruit
+        {
+            get => _CheckedFruit;
             set
             {
                 if (_CheckedFruit != value)
@@ -386,7 +386,7 @@ namespace MyMameHelper.Pages
         }
 
         private void UpdateGames(object sender, ExecutedRoutedEventArgs e)
-        {           
+        {
             UpdateDbGames<CT_Game_Mapped> sDb = new UpdateDbGames<CT_Game_Mapped>();
             sDb.Update_GamesTable(GamesToUpdate);
 
@@ -397,8 +397,20 @@ namespace MyMameHelper.Pages
             //GamesToModify.Clear();
             GamesToModify.RemoveSilentRange(GamesToUpdate);
 
+            for (int i = 0; i < GamesToModify.Count; i++)
+            {
+                for (int j = 0; j < DbGames.Count; j++)
+                {
+                    if (GamesToModify[i].ID == DbGames[j].ID)
+                    {                        
+                        DbGames.RemoveAt(j);
+                        break;
+                    }
+                }
+            }
+
             GamesToUpdate.Clear();
-            
+
         }
         #endregion
 
@@ -548,7 +560,7 @@ namespace MyMameHelper.Pages
                 if (SelectedGenreID != 0)
                 {
                     game.Genre_Id = SelectedGenreID;
-                    game.Genre = Genres.FirstOrDefault(x => x.ID == SelectedGenreID);                   
+                    game.Genre = Genres.FirstOrDefault(x => x.ID == SelectedGenreID);
                 }
 
 
@@ -556,7 +568,7 @@ namespace MyMameHelper.Pages
                 if (DeveloperID != 0)
                 {
                     game.Developer_Id = DeveloperID;
-                    game.Developer = Developers.FirstOrDefault(x => x.ID == DeveloperID);                   
+                    game.Developer = Developers.FirstOrDefault(x => x.ID == DeveloperID);
                 }
 
 
@@ -569,7 +581,10 @@ namespace MyMameHelper.Pages
                 // Mechanicals
                 game.IsMahjong = CheckedMahjong;
                 game.IsQuizz = CheckedQuizz;
-                game.IsFruit = CheckedFruit;   
+                game.IsFruit = CheckedFruit;
+
+                // Add to games requiring an update
+                GamesToUpdate.Add(game);
             }
 
             //cbMachines.SelectedItem = null;

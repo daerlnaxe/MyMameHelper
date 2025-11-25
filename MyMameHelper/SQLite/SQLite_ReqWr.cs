@@ -567,23 +567,25 @@ namespace MyMameHelper.SQLite
             Debug.WriteLine($"Update de la collection");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
+
+
             for (int i = 0; i < Games.Count; i++)
             {
                 T game = Games[i];
                 //  string vals = null;
 
                 sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Games}]" +
-                                        $"SET " +
-                                        $"[Game_Name]=@Game_Name, " +
-                                        $"[Description]=@Description, " +
-                                        $"[Machine_Id]=@Machine_Id, " +
-                                        $"[Genre_Id]=@Genre_Id, " +
-                                        $"[Rate]=@Rate, " +
-                                        $"[Unwanted]=@Unwanted, " +
-                                        $"[IsMahjong]=@IsMahjong, " +
-                                        $"[IsQuizz]=@IsQuizz " +
-                                        $"[Developer_Id]=@Developer_Id " +
-                                        $"WHERE ID=@ID";
+                                        $" SET" +
+                                        $" [Game_Name]=@Game_Name" +
+                                        $" ,[Description]=@Description" +
+                                        $" ,[Machine_Id]=@Machine_Id" +
+                                        $" ,[Genre_Id]=@Genre_Id" +
+                                        $" ,[Rate]=@Rate" +
+                                        $" ,[Unwanted]=@Unwanted" +
+                                        $" ,[IsMahjong]=@IsMahjong" +
+                                        $" ,[IsQuizz]=@IsQuizz" +
+                                        $" ,[Developer_Id]=@Developer_Id" +
+                                        $" WHERE ID=@ID";
 
                 sqlCmd.Parameters.Add($"@Game_Name", DbType.String).Value = Games[i].Game_Name;
                 sqlCmd.Parameters.Add($"@Description", DbType.String).Value = Games[i].Description;
@@ -598,10 +600,15 @@ namespace MyMameHelper.SQLite
                 // condition
                 sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = Games[i].ID;
 
+                Debug.WriteLine($"Update_Games: {sqlCmd.CommandText}");
+
                 ExecNQ(sqlCmd);
                 UpdateProgress?.Invoke(this, i * 100 / Games.Count);
 
+
+               
             }
+            
         }
 
         /// <summary>
