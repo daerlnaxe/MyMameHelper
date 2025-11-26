@@ -479,7 +479,7 @@ namespace MyMameHelper.Pages
             aLoad.AsyncMessage("Loading enhanced Roms...");
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                _RomsMapped = sqReq.List_Roms4Move();
+                _RomsMapped = sqReq.List_4Machine();
 
 
             }

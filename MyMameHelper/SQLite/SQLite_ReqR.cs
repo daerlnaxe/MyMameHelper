@@ -1162,7 +1162,7 @@ namespace MyMameHelper.SQLite
         /// - Machine
         /// Faire évoluer si nécessaire
         /// </remarks>
-        private SQLiteDataReader Select_Roms4Move()
+        private SQLiteDataReader Select_4Machine()
         {
 
             Dictionary<string, short> dicCol;
@@ -1196,11 +1196,11 @@ namespace MyMameHelper.SQLite
         }
 
 
-        public List<CT_Rom_Mapped> List_Roms4Move(SqlCond[] conds = null, SqlOrder order = null)
+        public List<CT_Rom_Mapped> List_4Machine(SqlCond[] conds = null, SqlOrder order = null)
         {
 
             List<CT_Rom_Mapped> lGames = new List<CT_Rom_Mapped>();
-            SQLiteDataReader reader = Select_Roms4Move();
+            SQLiteDataReader reader = Select_4Machine();
 
             if (reader.HasRows)
             {
