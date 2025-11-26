@@ -16,7 +16,7 @@
         </Style>
     </Page.Resources>
     <Page.CommandBindings>
-        <CommandBinding Command="commands:UICommands.Proceed" Executed="Proceed_Roms"/>
+        <CommandBinding Command="commands:UICommands.Proceed" Executed="Proceed_Roms" />
     </Page.CommandBindings>
     <!--  -->
     <Grid>

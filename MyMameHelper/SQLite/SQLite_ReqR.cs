@@ -22,8 +22,8 @@ namespace MyMameHelper.SQLite
     public sealed partial class SQLite_Op
     {
         #region commun
-        
-        
+
+
         string tRom = PProp.Default.T_Roms;
         string tGenre = PProp.Default.T_Genres;
         string tMachine = PProp.Default.T_Machines;
@@ -805,20 +805,20 @@ namespace MyMameHelper.SQLite
                             $", [{tDeveloper}].Nom AS \"Developer\"" +
                             $", [{tMachine}].Nom AS \"Machine\"" +
                             $", [{tGenre}].Nom AS \"Genre\"" +
-                //$"(SELECT group_concat([{tRom}].Archive_Name, '|') " +
-                /*$"(SELECT group_concat(Roms.ID || '♢' || Roms.Archive_Name || '♢' || Roms.Description, '|')" +
-                /    $"FROM [{tRom}] " +
-                /    $"WHERE [{tRom}].Game_Id=[{tGame}].ID) AS \"Roms\"" +*/
-                            $" FROM [{tGame}]" + 
-                            $" LEFT JOIN [{tDeveloper}] ON [{tDeveloper}].ID=[{tGame}].Developer_Id"+
-                            $" LEFT JOIN [{tMachine}] ON [{tMachine}].ID=[{tGame}].Machine_Id"+
-                            $" LEFT JOIN [{tGenre}] ON [{tGenre}].ID=[{tGame}].Genre_Id"+
+                            //$"(SELECT group_concat([{tRom}].Archive_Name, '|') " +
+                            /*$"(SELECT group_concat(Roms.ID || '♢' || Roms.Archive_Name || '♢' || Roms.Description, '|')" +
+                            /    $"FROM [{tRom}] " +
+                            /    $"WHERE [{tRom}].Game_Id=[{tGame}].ID) AS \"Roms\"" +*/
+                            $" FROM [{tGame}]" +
+                            $" LEFT JOIN [{tDeveloper}] ON [{tDeveloper}].ID=[{tGame}].Developer_Id" +
+                            $" LEFT JOIN [{tMachine}] ON [{tMachine}].ID=[{tGame}].Machine_Id" +
+                            $" LEFT JOIN [{tGenre}] ON [{tGenre}].ID=[{tGame}].Genre_Id" +
                             $"";
 
 
             SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
-           /* Condition_TreatMt(sqlCMD, conds);
-            Order_TreatMt(sqlCMD, orders);*/
+            /* Condition_TreatMt(sqlCMD, conds);
+             Order_TreatMt(sqlCMD, orders);*/
 
             Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");
 
@@ -878,7 +878,7 @@ namespace MyMameHelper.SQLite
 
             List<CT_Game_Mapped> lGames = new List<CT_Game_Mapped>();
             SQLiteDataReader reader = Select_GameFullM();
-            
+
             //List<CT_Rom> romsList = GetListOf(CT_Rom.Result2Class, new Obj_Select(PProp.Default.T_Roms, all: true));
 
             if (reader.HasRows)
@@ -898,7 +898,7 @@ namespace MyMameHelper.SQLite
 
                     // Machine                    
                     game.Machine = new CT_Machine();
-                    game.Machine.ID = Convert.ToUInt16 (game.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader)) ;
+                    game.Machine.ID = Convert.ToUInt16(game.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader));
                     game.Machine.Nom = Trans.GetString("Machine", reader);
 
                     // Developer                    
@@ -907,7 +907,7 @@ namespace MyMameHelper.SQLite
                     game.Developer.Nom = Trans.GetString("Developer", reader);
 
                     game.Roms = RomMapping(reader);
-                 //   game.Machine = CT_Machine.Result2Class(reader);
+                    //   game.Machine = CT_Machine.Result2Class(reader);
 
                     //game.Machine_id
 
@@ -1167,10 +1167,11 @@ namespace MyMameHelper.SQLite
 
             Dictionary<string, short> dicCol;
             string sql = $"SELECT [{tRom}].ID, [{tRom}].Archive_Name, [{tRom}].Game_Id" +
-                            $" , [{tGame}].Game_Name" +
+                            $", [{tGame}].Game_Name" +
+                            $", [{tMachine}].ID AS \"Machine_Id\", [{tMachine}].Nom AS \"Machine_Name\"" +
                             $" FROM [{tRom}] " +
                             $" LEFT JOIN [{tGame}] ON Game_Id = [{tGame}].ID " +
-
+                            $" LEFT JOIN [{tMachine}] ON Machine_Id = [{tMachine}].ID " +
                            "";
 
             SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
@@ -1210,15 +1211,29 @@ namespace MyMameHelper.SQLite
                     CT_Rom_Mapped aRom = new CT_Rom_Mapped();
                     aRom.ID = Trans.GetUInt("ID", reader);
                     aRom.Archive_Name = Trans.GetString("Archive_Name", reader);
+                    aRom.Game_Id = Trans.GetNullableUInt("Game_Id", reader);
+                    aRom.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader);
 
 
-                    CT_Game game = new CT_Game();
+                    // Jeu                   
                     if (aRom.Game_Id != null)
                     {
+                        CT_Game_Mapped game = new CT_Game_Mapped();
                         game.ID = uint.Parse(aRom.Game_Id.ToString());
                         game.Game_Name = Trans.GetString("Game_Name", reader);
+                        //game.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader);
+                        aRom.Game = game;
                     }
 
+
+                    // Machine
+                    if (aRom.Machine_Id != null)
+                    {
+                        CT_Machine machine = new CT_Machine();
+                        machine.ID = uint.Parse(aRom.Machine_Id.ToString());
+                        machine.Nom = Trans.GetString("Machine_Name", reader);
+                        aRom.Machine = machine;
+                    }
 
                     lGames.Add(aRom);
                 }

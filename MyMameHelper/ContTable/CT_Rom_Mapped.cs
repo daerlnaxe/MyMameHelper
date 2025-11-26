@@ -17,7 +17,7 @@ namespace MyMameHelper.ContTable
         /// <remarks>
         /// Ajout le 15/11/2025 pour changement
         /// </remarks>
-        private CT_Game _Game = new CT_Game();
+        private CT_Game _Game;// = new CT_Game();
         public CT_Game Game
         {
             get => _Game;
@@ -33,7 +33,9 @@ namespace MyMameHelper.ContTable
         }
 
 
-        private CT_Machine _Machine = new CT_Machine();
+        
+        public uint? Machine_Id { get; set; }
+        private CT_Machine _Machine;// = new CT_Machine();
         public CT_Machine Machine
         {
             get => _Machine;

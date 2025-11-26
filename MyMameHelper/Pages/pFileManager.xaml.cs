@@ -18,7 +18,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -51,7 +50,7 @@ namespace MyMameHelper.Pages
 
 
         private string[] _DirFiles;
-        private Dictionary<uint, Aff_Machine> dicMachines;
+        private Dictionary<uint, Aff_Machine> _DicMachines;
 
         private string _RomFolder;
         public string Rom_Folder
@@ -67,6 +66,7 @@ namespace MyMameHelper.Pages
             }
         }
 
+
         private string _Destination_Folder;
         public string Destination_Folder
         {
@@ -81,12 +81,17 @@ namespace MyMameHelper.Pages
             }
         }
 
+
         #region Checkboxes
         public Boolean MoveFiles { get; set; }
 
         public bool OverWriteFiles { get; set; }
         #endregion
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         public pFileManager()
         {
             InitializeComponent();
@@ -97,6 +102,18 @@ namespace MyMameHelper.Pages
             DataContext = this;
 
         }
+
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Récupération des machines
+            using (SQLite_Op sqReq = new SQLite_Op())
+            {
+                List<Aff_Machine> truite = sqReq.List_MachinesJoin();
+                _DicMachines = truite.ToDictionary(x => x.ID, x => x);
+            }
+        }
+
 
 
         /*
@@ -137,7 +154,9 @@ namespace MyMameHelper.Pages
         {
             using (var fbd = new System.Windows.Forms.FolderBrowserDialog())
             {
-                DialogResult result = fbd.ShowDialog();
+
+
+                System.Windows.Forms.DialogResult result = fbd.ShowDialog();
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
                     Rom_Folder = fbd.SelectedPath;
@@ -148,12 +167,13 @@ namespace MyMameHelper.Pages
 
         }
 
+
         private void DF_Button_Click(object sender, RoutedEventArgs e)
         {
             using (var fbd = new System.Windows.Forms.FolderBrowserDialog())
             {
                 fbd.SelectedPath = Properties.Settings.Default.RomDestination;
-                DialogResult result = fbd.ShowDialog();
+                System.Windows.Forms.DialogResult result = fbd.ShowDialog();
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
                     Destination_Folder = fbd.SelectedPath;
@@ -220,8 +240,24 @@ namespace MyMameHelper.Pages
         private void Proceed_Roms(object sender, ExecutedRoutedEventArgs e)
         {
 
-            if (System.Windows.MessageBox.Show("Are you sure ?", "", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+            if (MessageBox.Show("Are you sure ?", "", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                 return;
+
+
+            if (!Directory.Exists(PProp.Default.RomSource))
+            {            
+                MessageBox.Show("Enter a valid Rom Source ", "Error - Directory", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+
+            if (string.IsNullOrEmpty(Destination_Folder))
+            {
+                MessageBox.Show("Enter a valid Destination Folder", "Error - Directory", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+                
+
 
             // Récupérer les fichiers dans le répertoire
             _DirFiles = Directory.GetFiles(PProp.Default.RomSource);
@@ -238,11 +274,13 @@ namespace MyMameHelper.Pages
             //string destPath = "0-Miscellaneous";
             string arboChoosen = (string)cbArboType.SelectionBoxItem;
             Debug.WriteLine($"Méthode choisie: '{arboChoosen}'");
-                        
 
-            // Construction des répertoires
+
+            // Pour chaque jeu
             foreach (CT_Rom_Mapped romMapped in FilteredGamesMapped)
-            {                
+            {
+                Debug.WriteLine($"Travail sur : '{romMapped.Archive_Name}'");
+
                 string dest = Destination_Folder;
 
                 var dbG = romMapped.Game;
@@ -256,6 +294,7 @@ namespace MyMameHelper.Pages
                         break;
 
                     default:
+                        dest = PProp.Default.RomSource;
                         break;
                 }
 
@@ -267,10 +306,14 @@ namespace MyMameHelper.Pages
                 //Console.WriteLine($"{dicMachines[Convert.ToUInt32(dbG.Machine)].Constructeur} | {dbG.Machine.Nom} | {dbG.Game_Name}");
 
                 string romFile = Path.Combine(PProp.Default.RomSource, $"{romMapped.Archive_Name}.zip");
+
+
                 // Vérifie que le fichier existe
-                Debug.WriteLine($"Test présence: '{romFile}'");
+                Debug.Write($"Test présence '{romFile}': ");
                 if (!File.Exists(romFile))
                 {
+                    Debug.WriteLine("Absent");
+
                     MissingRoms.Add(romMapped);
 
                     if (IncompleteGames.FirstOrDefault(x => x == dbG) == null)
@@ -281,6 +324,7 @@ namespace MyMameHelper.Pages
                     continue;
                 }
 
+                Debug.WriteLine("Présent");
 
                 // Déplacement + option d'écrasement.
                 string destFile = Path.Combine(dest, $"{romMapped.Archive_Name}.zip");
@@ -291,18 +335,18 @@ namespace MyMameHelper.Pages
 
                     if (OverWrite.IsChecked == true)
                         overW = true;
-                    
 
+                    //var tesDir = Path.GetDF(dest);
 
-                    if (!Directory.Exists(Path.GetDirectoryName(dest)))
-                        Directory.CreateDirectory(Path.GetDirectoryName(dest));
+                    if (!Directory.Exists(dest))
+                        Directory.CreateDirectory(dest);
 
                     if (dbG.Unwanted == true && useUnwanted.IsChecked == true)
-                        File.Create(dest);
+                        File.Create(destFile);
 
 
                     // Déplacement des fichiers
-                    if (MoveFiles )
+                    if (MoveFiles)
                     {
                         if (!OverWriteFiles)
                         {
@@ -316,7 +360,7 @@ namespace MyMameHelper.Pages
                         File.Move(romFile, destFile);
                     }
                     else
-                        File.Copy(romFile, dest, overW);
+                        File.Copy(romFile, destFile, overW);
                 }
                 catch (IOException ioExc)
                 {
@@ -335,45 +379,45 @@ namespace MyMameHelper.Pages
             System.Windows.MessageBox.Show("File operation finished", "Finished", MessageBoxButton.OK, MessageBoxImage.Information);
 
             return;
-           // throw new Exception("A revoir");
-           /* foreach (Aff_Game dbG in DbGames)
-            {
+            // throw new Exception("A revoir");
+            /* foreach (Aff_Game dbG in DbGames)
+             {
 
-                /*
+                 /*
 
 
-                // Construction du chemin de destination
-                string dest = "0-Miscellaneous";
-                switch (methodChoosen)
-                {
-                    case "Machine":
-                        dest = Get_Path4Machine(dbG);
-                        break;
-                }
+                 // Construction du chemin de destination
+                 string dest = "0-Miscellaneous";
+                 switch (methodChoosen)
+                 {
+                     case "Machine":
+                         dest = Get_Path4Machine(dbG);
+                         break;
+                 }
 
-                dest = Path.Combine(dest, $"{ dbG.Parent_Name}.zip");
+                 dest = Path.Combine(dest, $"{ dbG.Parent_Name}.zip");
 
-                // Déplacement + option d'écrasement.
+                 // Déplacement + option d'écrasement.
 
-                try
-                {
-                    bool overW = false;
+                 try
+                 {
+                     bool overW = false;
 
-                    if (OverWrite.IsChecked == true)
-                        overW = true;
+                     if (OverWrite.IsChecked == true)
+                         overW = true;
 
-                    if (!Directory.Exists(Path.GetDirectoryName(dest)))
-                        Directory.CreateDirectory(Path.GetDirectoryName(dest));
+                     if (!Directory.Exists(Path.GetDirectoryName(dest)))
+                         Directory.CreateDirectory(Path.GetDirectoryName(dest));
 
-                    if (dbG.Unwanted == true && useUnwanted.IsChecked == true)
-                        File.Create(dest);
-                    else
-                        File.Copy(dbgFile, dest, overW);
-                }
-                catch (Exception exc)
-                {
-                    Console.WriteLine(exc.Message);
-                }*/
+                     if (dbG.Unwanted == true && useUnwanted.IsChecked == true)
+                         File.Create(dest);
+                     else
+                         File.Copy(dbgFile, dest, overW);
+                 }
+                 catch (Exception exc)
+                 {
+                     Console.WriteLine(exc.Message);
+                 }*/
             /*}*/
         }
 
@@ -381,16 +425,24 @@ namespace MyMameHelper.Pages
 
 
         /// <summary>
-        /// Formate un path en combinant 
+        /// Formate un path en combinant le répertoire de destination, le nom du constructeur, la machine
         /// </summary>
         /// <param name="dbG"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Limite les erreurs en renvoyant dans un dossier spécifique
+        /// </remarks>
         private string Get_Path4Machine(CT_Rom_Mapped romMapped)
         {
-            
+
+            if (romMapped.Machine == null || romMapped.Machine_Id == null)
+                return  Path.Combine(PProp.Default.RomDestination, "_No_Machine");
+
             string dest = null;
 
-            dest = Path.Combine(PProp.Default.RomDestination, dicMachines[Convert.ToUInt32(romMapped.Machine.ID)].Constructeur, romMapped.Machine.Nom);
+
+
+            dest = Path.Combine(PProp.Default.RomDestination, romMapped.Machine.Nom);
 
             if (romMapped.Game.Unwanted == true && useUnwanted.IsChecked == true)
             {
@@ -401,15 +453,7 @@ namespace MyMameHelper.Pages
         }
 
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Récupération des machines
-            using (SQLite_Op sqReq = new SQLite_Op())
-            {
-                List<Aff_Machine> truite = sqReq.List_MachinesJoin();
-                dicMachines = truite.ToDictionary(x => x.ID, x => x);
-            }
-        }
+
 
 
         private List<CT_Rom_Mapped> _RomsMapped;
@@ -440,5 +484,8 @@ namespace MyMameHelper.Pages
 
             }
         }
+
+
+
     }
 }
