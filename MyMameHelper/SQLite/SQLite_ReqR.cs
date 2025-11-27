@@ -812,7 +812,7 @@ namespace MyMameHelper.SQLite
                             $" FROM [{tGame}]" +                    
                             $" LEFT JOIN [{tMachine}] ON [{tMachine}].ID=[{tGame}].Machine_Id" +
                             $" LEFT JOIN [{tGenre}] ON [{tGenre}].ID=[{tGame}].Genre_Id" +
-                            $" LEFT JOIN [{tConstructor}] ON [{tConstructor}].ID=[{tMachine}].Constructor_Id" +                            
+                           // $" LEFT JOIN [{tDeveloper}] ON [{tDeveloper}].ID=[{tMachine}].Developer_Id" +     // Désactivé pour le moment                        
                             $"";
 
 
@@ -1162,7 +1162,7 @@ namespace MyMameHelper.SQLite
         /// - Machine
         /// Faire évoluer si nécessaire
         /// </remarks>
-        private SQLiteDataReader Select_4Machine()
+        private SQLiteDataReader Select_Rom2Machine()
         {
 
             Dictionary<string, short> dicCol;
@@ -1196,11 +1196,17 @@ namespace MyMameHelper.SQLite
         }
 
 
-        public List<CT_Rom_Mapped> List_4Machine(SqlCond[] conds = null, SqlOrder order = null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="conds"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        public List<CT_Rom_Mapped> List_Rom2Machine(SqlCond[] conds = null, SqlOrder order = null)
         {
 
             List<CT_Rom_Mapped> lGames = new List<CT_Rom_Mapped>();
-            SQLiteDataReader reader = Select_4Machine();
+            SQLiteDataReader reader = Select_Rom2Machine();
 
             if (reader.HasRows)
             {

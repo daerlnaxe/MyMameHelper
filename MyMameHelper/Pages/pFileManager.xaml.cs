@@ -292,7 +292,9 @@ namespace MyMameHelper.Pages
                     case "Machine":
                         dest = Get_Path4Machine(romMapped);
                         break;
-
+                    case "Manufacturer/Machine":
+                        //dest = Get
+                        break;
                     default:
                         dest = PProp.Default.RomSource;
                         break;
@@ -462,11 +464,11 @@ namespace MyMameHelper.Pages
         /// <summary>
         /// Construit et lance l'asyncloadmapGames
         /// </summary>
-        private void Get_RomMapped()
+        private void Get_Rom2Machine()
         {
             // Chargement asynchrone des Jeux et des roms associées
             AsyncWindowProgress aLoad = new AsyncWindowProgress();
-            aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoad_RomMapped);
+            aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoad_Rom2Machine);
             aLoad.ShowDialog();
         }
 
@@ -474,12 +476,12 @@ namespace MyMameHelper.Pages
         /// Récupère en base les valeurs avec liaison des deux tables
         /// </summary>
         /// <param name="aLoad"></param>
-        private void AsyncLoad_RomMapped(AsyncWindowProgress aLoad)
+        private void AsyncLoad_Rom2Machine(AsyncWindowProgress aLoad)
         {
             aLoad.AsyncMessage("Loading enhanced Roms...");
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                _RomsMapped = sqReq.List_4Machine();
+                _RomsMapped = sqReq.List_Rom2Machine();
 
 
             }

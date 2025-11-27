@@ -39,7 +39,7 @@
         <!-- Colonne de gauche Raw -->
         <DockPanel Grid.RowSpan="2">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                <Label Content="Developers Found:" DockPanel.Dock="Top"/>
+                <Label Content="Manufacturers Found:" DockPanel.Dock="Top"/>
                 <Label Content="{Binding  GameManufacturers.Count}" DockPanel.Dock="Top"/>
 
             </StackPanel>
@@ -59,7 +59,7 @@
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Developer" Binding="{Binding Manufacturer}" />
+                    <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" />
 
                 </DataGrid.Columns>
             </DataGrid>
@@ -67,7 +67,7 @@
         </DockPanel>
         <!-- Colonne de droite TO Database -->
         <DockPanel Grid.Column="2">
-            <Label Content="Developers to Add:" DockPanel.Dock="Top"/>
+            <Label Content="Manufacturers to Add:" DockPanel.Dock="Top"/>
             <StackPanel DockPanel.Dock="Right">
                 <Button Content="Save" Command="commands:UICommands.SaveCmd" />
             </StackPanel>
@@ -79,7 +79,7 @@
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Developer" Binding="{Binding Nom}" />
+                    <DataGridTextColumn Header="Manufacturer" Binding="{Binding Nom}" />
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>

@@ -26,7 +26,7 @@
         </Style>
         <!-- On ne peut pas binder une colonne de datagrid avec autre chose que static -->
         <CollectionViewSource x:Key="ItemsGenres" Source="{Binding Genres}" />
-        <CollectionViewSource x:Key="ItemsDevelopers" Source="{Binding Developers}" />
+        <!--CollectionViewSource x:Key="ItemsDevelopers" Source="{Binding Developers}" /-->
         <CollectionViewSource x:Key="ItemsMachines" Source="{Binding Machines}" />
         <collections:ArrayList x:Key="ItemsRate">
             <collections:DictionaryEntry Key="0" Value="0"/>
@@ -113,7 +113,7 @@
                         <DataGridTextColumn Header="Machine" Binding="{Binding Machine.Nom}" />
                         <DataGridCheckBoxColumn Header="Unwanted" Binding="{Binding Unwanted}" />
                         <DataGridTextColumn Header="Genre" Binding="{Binding Genre.Nom}" />
-                        <DataGridTextColumn Header="Developer" Binding="{Binding Developer.Nom}" />
+                        <!--DataGridTextColumn Header="Developer" Binding="{Binding Developer.Nom}" /-->
                         <DataGridComboBoxColumn Header="Rate" SelectedValueBinding="{Binding Rate}" ItemsSource="{StaticResource ItemsRate}"  DisplayMemberPath="Value" SelectedValuePath="Key"/>
                         <DataGridCheckBoxColumn Header="Mahjong" Binding="{Binding IsMahjong}" />
                         <DataGridCheckBoxColumn Header="Quizz" Binding="{Binding IsQuizz}" />
@@ -176,8 +176,8 @@
                         <Label Content="Select Genre:" />
                         <ComboBox x:Name="cboxGenres" ItemsSource="{Binding Genres}" SelectedValue="{Binding SelectedGenreID}" DisplayMemberPath="Nom" SelectedValuePath="ID"/>
                         <!-- Developer -->
-                        <Label Content="Select Developer:"/>
-                        <ComboBox ItemsSource="{Binding Developers}" SelectedValue="{Binding DeveloperID}" DisplayMemberPath="Nom" SelectedValuePath="ID"/>
+                        <!--Label Content="Select Developer:"/>
+                        <ComboBox ItemsSource="{Binding Developers}" SelectedValue="{Binding DeveloperID}" DisplayMemberPath="Nom" SelectedValuePath="ID"/-->
                         <!-- Rate -->
                         <Label Content="Select Rate:" />
                         <ComboBox x:Name="cboxRate" ItemsSource="{StaticResource ItemsRate}" DisplayMemberPath="Value" SelectedValuePath="Key"/>
@@ -229,8 +229,8 @@
                         <DataGridComboBoxColumn Header="Genre" MinWidth="100"
                                                 ItemsSource="{Binding Source={StaticResource ItemsGenres}}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectedValueBinding="{Binding Genre_Id}" />
                         <!--DataGridTextColumn Header="Genre2" Binding="{Binding Genre.Nom}" /-->
-                        <DataGridComboBoxColumn Header="Developer" MinWidth="100" 
-                                                ItemsSource="{Binding Source={StaticResource ItemsDevelopers}}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectedValueBinding="{Binding Developer_Id}"/>
+                        <!--DataGridComboBoxColumn Header="Developer" MinWidth="100" 
+                                                ItemsSource="{Binding Source={StaticResource ItemsDevelopers}}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectedValueBinding="{Binding Developer_Id}"/-->
                         <DataGridComboBoxColumn Header="Rate" Width="70" SelectedValueBinding="{Binding Rate}" ItemsSource="{StaticResource ItemsRate}"  DisplayMemberPath="Value" SelectedValuePath="Key"/>
                         <DataGridCheckBoxColumn Header="Mahjong" Binding="{Binding IsMahjong}" />
                         <DataGridCheckBoxColumn Header="Quizz" Binding="{Binding IsQuizz}" />

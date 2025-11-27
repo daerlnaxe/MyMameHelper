@@ -147,7 +147,7 @@ namespace MyMameHelper.Windows
 
         private void Create_DataBase_Click(object sender, RoutedEventArgs e)
         {
-            SQLiteDb.Create(DataBase_Path);
+            SQLiteNewDb.Create(DataBase_Path);
         }
 
         #endregion
@@ -560,7 +560,7 @@ namespace MyMameHelper.Windows
             ofD.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
             if (ofD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                SQLiteDb.Update_Structure(ofD.FileName);
+                SQLiteNewDb.Update_Structure(ofD.FileName);
             }
         }
 

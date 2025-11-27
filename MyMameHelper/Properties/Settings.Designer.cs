@@ -187,5 +187,14 @@ namespace MyMameHelper.Properties {
                 return ((string)(this["T_Manufacturers"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Informations")]
+        public string T_SQLInfo {
+            get {
+                return ((string)(this["T_SQLInfo"]));
+            }
+        }
     }
 }

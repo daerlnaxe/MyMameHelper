@@ -209,7 +209,7 @@
     <Compile Include="SQLite\eWhere.cs" />
     <Compile Include="SQLite\Obj_Select.cs" />
     <Compile Include="SQLite\SqlCond.cs" />
-    <Compile Include="SQLite\SQLiteDb.cs" />
+    <Compile Include="SQLite\SQLiteNewDb.cs" />
     <Compile Include="SQLite\SQLite_Req.cs" />
     <Compile Include="SQLite\SQLite_ReqR.cs" />
     <Compile Include="SQLite\SQLite_ReqWr.cs" />
