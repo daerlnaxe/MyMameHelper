@@ -28,7 +28,7 @@ namespace MyMameHelper.SQLite
         {
             Debug.WriteLine($"Insertion de la companie: {ctC.Nom}");
 
-            string sql = $"INSERT INTO [{PProp.Default.T_Developers}] ([Nom]) VALUES (@Nom)";
+            string sql = $"INSERT INTO [{PProp.Default.T_Constructors}] ([Nom]) VALUES (@Nom)";
             SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
             sqlCmd.Parameters.Add("@Nom", DbType.String).Value = ctC.Nom;
 
@@ -260,7 +260,7 @@ namespace MyMameHelper.SQLite
 
 
                 // 
-                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO  [{PProp.Default.T_Developers}] (" +
+                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO  [{PProp.Default.T_Constructors}] (" +
                                         "[Nom] " +
                                         ") VALUES ";
 
@@ -595,7 +595,7 @@ namespace MyMameHelper.SQLite
                 sqlCmd.Parameters.Add($"@Rate", DbType.UInt32).Value = Games[i].Rate;
                 sqlCmd.Parameters.Add($"@IsMahjong", DbType.Boolean).Value = Games[i].IsMahjong;
                 sqlCmd.Parameters.Add($"@IsQuizz", DbType.Boolean).Value = Games[i].IsQuizz;
-                sqlCmd.Parameters.Add($"@Developer_Id", DbType.UInt32).Value = Games[i].Developer_Id;
+                //sqlCmd.Parameters.Add($"@Developer_Id", DbType.UInt32).Value = Games[i].Developer_Id; Levé pour le moment
 
                 // condition
                 sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = Games[i].ID;
@@ -641,7 +641,7 @@ namespace MyMameHelper.SQLite
             sqlCmd.Parameters.Add($"@Rate", DbType.UInt32).Value = gameCont.Rate;
             sqlCmd.Parameters.Add($"@IsMahjong", DbType.Boolean).Value = gameCont.IsMahjong;
             sqlCmd.Parameters.Add($"@IsQuizz", DbType.Boolean).Value = gameCont.IsQuizz;
-            sqlCmd.Parameters.Add($"@Developer_Id", DbType.UInt32).Value = gameCont.Developer_Id;
+            //sqlCmd.Parameters.Add($"@Developer_Id", DbType.UInt32).Value = gameCont.Developer_Id; Levé pour le moment
 
             // condition
             sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = gameCont.ID;
@@ -708,7 +708,7 @@ namespace MyMameHelper.SQLite
             Debug.WriteLine($"Update de {ctComp.Nom}");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
-            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Developers}] SET [Nom]=@Nom WHERE ID=@ID";
+            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Constructors}] SET [Nom]=@Nom WHERE ID=@ID";
 
             sqlCmd.Parameters.Add($"@Nom", DbType.String).Value = ctComp.Nom;
 

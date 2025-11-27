@@ -136,10 +136,10 @@ namespace MyMameHelper.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Developers")]
-        public string T_Developers {
+        [global::System.Configuration.DefaultSettingValueAttribute("Constructors")]
+        public string T_Constructors {
             get {
-                return ((string)(this["T_Developers"]));
+                return ((string)(this["T_Constructors"]));
             }
         }
         

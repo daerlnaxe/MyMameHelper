@@ -18,7 +18,7 @@ namespace MyMameHelper.ContTable
 
         bool? Unwanted { get; set; }
 
-        uint? Developer_Id { get; set; }
+        uint? Constructeur_ID { get; set; }
 
         uint? Genre_Id { get; set; }
 

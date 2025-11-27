@@ -111,7 +111,7 @@
     <Compile Include="Commands\UICommands.cs" />
     <Compile Include="Commands\SaveToVracCommand.cs" />
     <Compile Include="Commands\SearchCommand.cs" />
-    <Compile Include="ContTable\CT_Developer.cs" />
+    <None Include="ContTable\CT_Developer.cs" />
     <Compile Include="ContTable\CT_Game_Mapped.cs" />
     <Compile Include="ContTable\CT_Rom_Mapped.cs" />
     <Compile Include="ContTable\Map_RomGame.cs" />

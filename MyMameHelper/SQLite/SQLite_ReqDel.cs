@@ -50,7 +50,7 @@ namespace MyMameHelper.SQLite
 
         public void Delete_Companie(SqlCond[] conditions)
         {
-            string sql = $"DELETE FROM {PProp.Default.T_Developers}";
+            string sql = $"DELETE FROM {PProp.Default.T_Constructors}";
             SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
 
             Condition_TreatMt(command, conditions);

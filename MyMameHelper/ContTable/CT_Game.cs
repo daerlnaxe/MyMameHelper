@@ -56,15 +56,15 @@ namespace MyMameHelper.ContTable
         }
 
         #region Developer
-        private uint? _Developer_ID;
-        public uint? Developer_Id
+        private uint? _Constructeur_ID;
+        public uint? Constructeur_ID
         {
-            get => _Developer_ID;
+            get => _Constructeur_ID;
             set
             {
-                if (value != _Developer_ID)
+                if (value != _Constructeur_ID)
                 {
-                    _Developer_ID = value;
+                    _Constructeur_ID = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -169,7 +169,7 @@ namespace MyMameHelper.ContTable
             //   SourceFile = game.SourceFile;
             Machine_Id = game.Machine_Id;
             Unwanted = game.Unwanted;
-            Developer_Id = game.Developer_Id;
+            Constructeur_ID = game.Constructeur_ID;
             Genre_Id = game.Genre_Id;
             IsMahjong = game.IsMahjong;
             IsQuizz = game.IsQuizz;
@@ -196,7 +196,7 @@ namespace MyMameHelper.ContTable
             cTC.Machine_Id = Trans.GetNullableUInt("Machine", dico);
             cTC.Unwanted = Trans.GetBool("Unwanted", dico);
             cTC.Genre_Id = Trans.GetNullableUInt("Genre", dico);
-            cTC.Developer_Id = Trans.GetNullableUInt("Developer", dico);
+            cTC.Constructeur_ID = Trans.GetNullableUInt("Constructor_Id", dico);
             cTC.Rate = Trans.GetNullableUInt("Rate", dico);
             cTC.IsMahjong = Trans.GetBoolFalse("IsMahjong", dico);
             cTC.IsQuizz = Trans.GetBoolFalse("IsQuizz", dico);

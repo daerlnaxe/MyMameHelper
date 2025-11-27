@@ -64,9 +64,9 @@ namespace MyMameHelper.ContTable
 
 
         /// <summary>
-        /// Developer
+        /// Developer : désactivé pour le moment
         /// </summary>
-        private CT_Developer _Developer;
+        /*private CT_Developer _Developer;
         public CT_Developer Developer
         {
             get { return _Developer; }
@@ -78,7 +78,7 @@ namespace MyMameHelper.ContTable
                     NotifyPropertyChanged();
                 }
             }
-        }
+        }*/
 
 
         public CT_Game_Mapped()
@@ -100,7 +100,7 @@ namespace MyMameHelper.ContTable
             /*Aff_Machine = game.Aff_Machine;*/
 
             //Unwanted = game.Unwanted;
-            Developer = game.Developer;
+            //Constructeur = game.Constructeur;
             //  Aff_Developer = game.Aff_Developer;
             //Genre_Id = game.Genre_Id;
             //Aff_Genre = game.Aff_Genre;

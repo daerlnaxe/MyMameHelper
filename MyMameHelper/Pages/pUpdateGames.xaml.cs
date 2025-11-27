@@ -106,6 +106,7 @@ namespace MyMameHelper.Pages
 
 
         #region Developer
+        /* Désactivé pour le moment
         public MyObservableCollection<CT_Developer> Developers { get; set; } = new MyObservableCollection<CT_Developer>();
         private uint _DeveloperID;
         public uint DeveloperID
@@ -119,7 +120,7 @@ namespace MyMameHelper.Pages
                     NotifyPropertyChanged();
                 }
             }
-        }
+        }*/
         #endregion Developer
 
 
@@ -249,8 +250,8 @@ namespace MyMameHelper.Pages
                 // Liste des constructeurs ?? 
                 //Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Constructeurs, all: true));
 
-                // Liste des développeurs
-                Developers.ChangeContent = sqReq.GetListOf<CT_Developer>(CT_Developer.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
+                // Liste des développeurs désactivé pour le moment
+                //Developers.ChangeContent = sqReq.GetListOf<CT_Developer>(CT_Developer.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
                 // Liste des Machines
                 Machines.ChangeContent = sqReq.GetListOf<CT_Machine>(CT_Machine.Result2Class, new Obj_Select(table: PProp.Default.T_Machines, all: true));
                 // Liste des genres
@@ -563,13 +564,13 @@ namespace MyMameHelper.Pages
                     game.Genre = Genres.FirstOrDefault(x => x.ID == SelectedGenreID);
                 }
 
-
+                /* Désactivé pour le moment
                 //Developpeur
-                if (DeveloperID != 0)
+                if (ConstructorID != 0)
                 {
-                    game.Developer_Id = DeveloperID;
-                    game.Developer = Developers.FirstOrDefault(x => x.ID == DeveloperID);
-                }
+                    game.Constructeur_ID = ConstructorID;
+                    game.Constructeur = Constructors.FirstOrDefault(x => x.ID == ConstructorID);
+                }*/
 
 
                 if (cboxRate.SelectedItem != null)
@@ -592,7 +593,7 @@ namespace MyMameHelper.Pages
             SelectedMachineID = 0;
             CheckedUnwanted = false;
             SelectedGenreID = 0;
-            DeveloperID = 0;
+            // ConstructorID = 0; Désactivé pour le moment
             cboxRate.SelectedIndex = -1;
             CheckedMahjong = false;
             CheckedQuizz = false;

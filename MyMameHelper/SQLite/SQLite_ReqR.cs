@@ -29,13 +29,13 @@ namespace MyMameHelper.SQLite
         string tMachine = PProp.Default.T_Machines;
         string tGame = PProp.Default.T_Games;
         string tManufacturer = PProp.Default.T_Manufacturers;
-        string tDeveloper = PProp.Default.T_Developers;
+        string tConstructor = PProp.Default.T_Constructors;
         #endregion
 
         #region 1 Element
         public CT_Constructeur Get_Companie(SqlCond[] conds)
         {
-            Obj_Select objCompanie = new Obj_Select(table: PProp.Default.T_Developers, all: true);
+            Obj_Select objCompanie = new Obj_Select(table: PProp.Default.T_Constructors, all: true);
             objCompanie.AddConds(conds);
 
             return Get_OneResult<CT_Constructeur>(CT_Constructeur.Result2Class, objCompanie);
@@ -802,17 +802,17 @@ namespace MyMameHelper.SQLite
             Dictionary<string, short> dicCol;
             //string sql = $"SELECT [{tRoms}]*, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
             string sql = $"SELECT [{tGame}].*" +
-                            $", [{tDeveloper}].Nom AS \"Developer\"" +
+//                            $", [{tDeveloper}].Nom AS \"Developer\"" +
                             $", [{tMachine}].Nom AS \"Machine\"" +
                             $", [{tGenre}].Nom AS \"Genre\"" +
                             //$"(SELECT group_concat([{tRom}].Archive_Name, '|') " +
                             /*$"(SELECT group_concat(Roms.ID || '♢' || Roms.Archive_Name || '♢' || Roms.Description, '|')" +
                             /    $"FROM [{tRom}] " +
                             /    $"WHERE [{tRom}].Game_Id=[{tGame}].ID) AS \"Roms\"" +*/
-                            $" FROM [{tGame}]" +
-                            $" LEFT JOIN [{tDeveloper}] ON [{tDeveloper}].ID=[{tGame}].Developer_Id" +
+                            $" FROM [{tGame}]" +                    
                             $" LEFT JOIN [{tMachine}] ON [{tMachine}].ID=[{tGame}].Machine_Id" +
                             $" LEFT JOIN [{tGenre}] ON [{tGenre}].ID=[{tGame}].Genre_Id" +
+                            $" LEFT JOIN [{tConstructor}] ON [{tConstructor}].ID=[{tMachine}].Constructor_Id" +                            
                             $"";
 
 
@@ -889,11 +889,11 @@ namespace MyMameHelper.SQLite
                 {
                     CT_Game_Mapped game = new CT_Game_Mapped(Game_Maker(reader));
                     game.Genre_Id = Trans.GetNullableUInt("Genre_Id", reader);
-                    game.Developer_Id = Trans.GetNullableUInt("Developer_Id", reader);
+                    //game.Constructeur_ID = Trans.GetNullableUInt("Developer_Id", reader);
 
                     // Genre                                       
                     game.Genre = new CT_Genre();
-                    game.Genre.ID = Convert.ToUInt16(game.Genre_Id = Trans.GetNullableUInt("Developer_Id", reader));
+                    game.Genre.ID = Convert.ToUInt16(game.Genre_Id = Trans.GetNullableUInt("Genre_Id", reader));
                     game.Genre.Nom = Trans.GetString("Genre", reader);
 
                     // Machine                    
@@ -901,10 +901,10 @@ namespace MyMameHelper.SQLite
                     game.Machine.ID = Convert.ToUInt16(game.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader));
                     game.Machine.Nom = Trans.GetString("Machine", reader);
 
-                    // Developer                    
-                    game.Developer = new CT_Developer();
-                    game.Developer.ID = Convert.ToUInt16(game.Developer_Id = Trans.GetNullableUInt("Developer_Id", reader));
-                    game.Developer.Nom = Trans.GetString("Developer", reader);
+                    // Constructeur  désactivé pour le moment                  
+                    /*game.Constructeur = new CT_Constructeur();
+                    game.Constructeur.ID = Convert.ToUInt16(game.Constructeur_ID = Trans.GetNullableUInt("Constructor_Id", reader));
+                    game.Constructeur.Nom = Trans.GetString("Constructor", reader);*/
 
                     game.Roms = RomMapping(reader);
                     //   game.Machine = CT_Machine.Result2Class(reader);

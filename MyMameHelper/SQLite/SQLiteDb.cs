@@ -20,6 +20,18 @@ namespace MyMameHelper.SQLite
     /// </summary>
     class SQLiteDb
     {
+        static string tGames = Properties.Settings.Default.T_Games;
+        static string tBios = Properties.Settings.Default.T_Bios;
+        static string tMechanicals = Properties.Settings.Default.T_Mechanics;
+        static string tManufacturers = Properties.Settings.Default.T_Manufacturers;
+        //static string tDeveloppers = Properties.Settings.Default.T_Developers;
+        static string tConstructors = Properties.Settings.Default.T_Constructors;
+        static string tGenres = Properties.Settings.Default.T_Genres;
+        static string tMachines = Properties.Settings.Default.T_Machines;
+        static string tRoms = Properties.Settings.Default.T_Roms;
+        static string tempRoms = Properties.Settings.Default.T_TempRoms;
+
+
         static SQLiteConnection _MaConn;
 
         /// <summary>
@@ -77,15 +89,7 @@ namespace MyMameHelper.SQLite
         /// </summary>
         private static void Create_Structure()
         {
-            string tGames = Properties.Settings.Default.T_Games;
-            string tBios = Properties.Settings.Default.T_Bios;
-            string tMechanicals = Properties.Settings.Default.T_Mechanics;
-            string tManufacturers = Properties.Settings.Default.T_Manufacturers;
-            string tDeveloppers = Properties.Settings.Default.T_Developers;
-            string tGenres = Properties.Settings.Default.T_Genres;
-            string tMachines = Properties.Settings.Default.T_Machines;
-            string tRoms = Properties.Settings.Default.T_Roms;
-            string tempRoms = Properties.Settings.Default.T_TempRoms;
+
 
             // Création du minimum
             // Table Games (Elle permet des options en plus, personnalisables, pour les roms. Elle est liée à roms, genres)
@@ -96,8 +100,10 @@ namespace MyMameHelper.SQLite
             CreateTable($"CREATE Table [{tMechanicals}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Meca_Name] VARCHAR UNIQUE);");
             // Constructeurs
             CreateTable($"CREATE TABLE [{tManufacturers}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
-            // Companies
-            CreateTable($"CREATE TABLE [{tDeveloppers}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            // Developers Désactivé pour le moment
+            //CreateTable($"CREATE TABLE [{tDeveloppers}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            // Constructors
+            CreateTable($"CREATE TABLE [{tConstructors}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
             // Genres (liée à Games)
             CreateTable($"CREATE TABLE [{tGenres}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
             // Machines
@@ -155,13 +161,13 @@ namespace MyMameHelper.SQLite
         /// </summary>
         private static void Alter_Structure()
         {
-            string tGames = Properties.Settings.Default.T_Games;
-            string tBios = Properties.Settings.Default.T_Bios;
-            string tMechanicals = Properties.Settings.Default.T_Mechanics;
-            string tManufacturers = Properties.Settings.Default.T_Manufacturers;
-            string tMachines = Properties.Settings.Default.T_Machines;
-            string tRoms = Properties.Settings.Default.T_Roms;
-            string tempRoms = Properties.Settings.Default.T_TempRoms;
+            // string tGames = Properties.Settings.Default.T_Games;
+            //string tBios = Properties.Settings.Default.T_Bios;
+            //string tMechanicals = Properties.Settings.Default.T_Mechanics;
+            //string tManufacturers = Properties.Settings.Default.T_Manufacturers;
+            //string tMachines = Properties.Settings.Default.T_Machines;
+            //string tRoms = Properties.Settings.Default.T_Roms;
+            //string tempRoms = Properties.Settings.Default.T_TempRoms;
 
             AlterTable($"ALTER TABLE [{tGames}] ADD [Machine_Id] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [Description] VARCHAR");
@@ -169,7 +175,7 @@ namespace MyMameHelper.SQLite
             //AlterTable($"ALTER TABLE [{tGames}] ADD [Roms] VARCHAR");
             #endregion
             AlterTable($"ALTER TABLE [{tGames}] ADD [Unwanted] BOOLEAN");
-            AlterTable($"ALTER TABLE [{tGames}] ADD [Developer_Id] INTEGER");
+            //AlterTable($"ALTER TABLE [{tGames}] ADD [Developer_Id] INTEGER"); Désactivé pour le moment
             AlterTable($"ALTER TABLE [{tGames}] ADD [Rate] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [Genre_Id] INTEGER");
             AlterTable($"ALTER TABLE [{tGames}] ADD [IsMahJong] INTEGER");
@@ -187,7 +193,8 @@ namespace MyMameHelper.SQLite
 
             // machines
             AlterTable($"ALTER TABLE [{tMachines}] ADD [Revision] VARCHAR;");
-            AlterTable($"ALTER TABLE [{tMachines}] ADD [Constructeur] INTEGER");
+            AlterTable($"ALTER TABLE [{tMachines}] ADD [HardwareName] VARCHAR;"); // CPS1, CPS2....
+            AlterTable($"ALTER TABLE [{tMachines}] ADD [Constructeur_Id] INTEGER");
             AlterTable($"ALTER TABLE [{tMachines}] ADD [Year] INTEGER;");
             AlterTable($"ALTER TABLE [{tMachines}] ADD [AllowCPath] BOOLEAN;");
 
@@ -218,47 +225,82 @@ namespace MyMameHelper.SQLite
 
         private static void Fill_Basics_Data()
         {
-            string tDeveloppers = Properties.Settings.Default.T_Developers;
+            /*string tDeveloppers = Properties.Settings.Default.T_Developers;
             string tGenres = Properties.Settings.Default.T_Genres;
-            string tMachines = Properties.Settings.Default.T_Machines;
+            string tMachines = Properties.Settings.Default.T_Machines;*/
 
-            RequeteNonQuery($"INSERT INTO [{tDeveloppers}] ([Nom])" +
+            // Constructeurs de Bornes (Feed manuel)            
+            RequeteNonQuery($"INSERT INTO [{tConstructors}] ([Nom])" +
                 $"VALUES" +
-                $"('Capcom')," +
-                $"('Konami')," +
-                $"('Sega')");
+                $"('Atari')" +
+                $" ,('Capcom')" +
+                $" ,('Data East')" +
+                $" ,('Konami')" +
+                $" ,('Irem')" +
+                $" ,('Midway')" +                
+                $" ,('Namco')" +
+                $" ,('Sega')" +
+                $" ,('SNK')" +
+                $" ,('Taito')" +
+                $" ,('Williams')" +
+                ""
+                );
 
 
             RequeteNonQuery($"INSERT INTO [{tGenres}] ([Nom])" +
                 $"VALUES" +
-                $"('Shoot Them Up')," +
-                $"('Fight');");
+                $"('Beat 'em up')" +
+                $"(, 'Fight')" +                
+                $"(, 'Platform')" +
+                $"(, 'Puzzle')" +
+                $"(, 'Shoot Them Up')" +                
+                $";");
 
-            // Table Constructeur
-            CT_Constructeur ct = Query_One<CT_Constructeur>(CT_Constructeur.Result2Class, $"SELECT [ID] FROM [{tDeveloppers}] WHERE [Nom]='Sega'");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 1',  {ct.ID}, 1983)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Appoooh',  {ct.ID}, 1984)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 2',  {ct.ID}, 1985)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System E',  {ct.ID}, 1985)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Hang-On',  {ct.ID}, 1985)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 16',  {ct.ID}, 1986)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('OutRun',  {ct.ID}, 1986)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('X-Board',  {ct.ID}, 1987)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 24',  {ct.ID}, 1988)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Y-Board',  {ct.ID}, 1988)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 18',  {ct.ID}, 1989)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System C',  {ct.ID}, 1989)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Mega-Play',  {ct.ID}, 1991)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 32',  {ct.ID}, 1990)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Titan Video',  {ct.ID}, 1994)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('H1-Board',  {ct.ID}, 1995)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Model 1',  {ct.ID}, 1992)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Model 2',  {ct.ID}, 1993)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Model 3',  {ct.ID}, 1996)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('AtomisWave',  {ct.ID}, 1)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Naomi',  {ct.ID}, 1998)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Naomi 2',  {ct.ID}, 2000)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System SP',  {ct.ID}, 2005)");
+
+            // Table Machines
+            // Capcom
+            CT_Constructeur ct = Query_One<CT_Constructeur>(CT_Constructeur.Result2Class, $"SELECT [ID] FROM [{tConstructors}] WHERE [Nom]='Sega'");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Capcom Play System 1', 'CPS-1', {ct.ID}, 1988)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Capcom Play System 2', 'CPS-2', {ct.ID}, 1993)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Capcom Play System 3', 'CPS-3', {ct.ID}, 1996)");
+
+
+            // Sega
+            ct = Query_One<CT_Constructeur>(CT_Constructeur.Result2Class, $"SELECT [ID] FROM [{tConstructors}] WHERE [Nom]='Sega'");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 2'      , {ct.ID}, 1980)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 3'      , {ct.ID}, 1982)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 1'      , {ct.ID}, 1983)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Appoooh'       , {ct.ID}, 1984)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System E'      , {ct.ID}, 1985)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Hang-On'       , {ct.ID}, 1985)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 16'     , {ct.ID}, 1986)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('OutRun'        , {ct.ID}, 1986)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('X-Board'       , {ct.ID}, 1987)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Y-Board'       , {ct.ID}, 1988)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 24'     , {ct.ID}, 1988)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System C'      , {ct.ID}, 1989)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 18'     , {ct.ID}, 1989)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System 32'     , {ct.ID}, 1990)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Mega-Play' , 'MP',  {ct.ID}, 1991)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Model 1'   , 'Model-1' ,{ct.ID}, 1992)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Model 2'   , 'Model-2',{ct.ID}, 1993)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Titan Video'   ,  {ct.ID}, 1994)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('H1-Board'      ,  {ct.ID}, 1995)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('Model 3'       ,  {ct.ID}, 1996)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Naomi'     , 'Naomi', {ct.ID}, 1998)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Naomi 2'   , 'Naomi-2', {ct.ID}, 2000)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('AtomisWave'    ,  {ct.ID}, 2003)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([Nom], [Constructeur], [Year]) VALUES ('System SP'     ,  {ct.ID}, 2005)");
+
+
+
+
+            //
+
+
+
+
+
         }
 
         static internal T Query_One<T>(Func<Dictionary<string, object>, T> method, string reqSql)

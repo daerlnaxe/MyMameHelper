@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace MyMameHelper.ContTable
 {
-    public class CT_Developer
+    public class CT_Constructeur
     {
         public uint ID { get; set; }
         public string Nom { get; set; }
 
-        public CT_Developer()
+        public CT_Constructeur()
         {
 
         }
 
-        public CT_Developer(string n)
+        public CT_Constructeur(string n)
         {
             Nom = n;
         }
@@ -27,9 +27,9 @@ namespace MyMameHelper.ContTable
         /// </summary>
         /// <param name="dico"></param>
         /// <returns></returns>
-        public static CT_Developer Result2Class(Dictionary<string, object> dico)
+        public static CT_Constructeur Result2Class(Dictionary<string, object> dico)
         {
-            CT_Developer cTC = new CT_Developer();
+            CT_Constructeur cTC = new CT_Constructeur();
 
             cTC.ID = Trans.GetUInt("ID", dico);
             cTC.Nom = Trans.GetString("Nom", dico);
