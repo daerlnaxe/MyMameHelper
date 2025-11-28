@@ -129,6 +129,8 @@
     <Compile Include="Methods\MameXMLRaw.cs" />
     <Compile Include="Methods\SaveInDB.cs" />
     <Compile Include="Methods\UpdateDbRoms.cs" />
+    <Compile Include="Models\AsyncWorkBool.cs" />
+    <Compile Include="Models\IAsyncProgressWork.cs" />
     <Compile Include="Pages\pBuildManus.xaml.cs">
       <DependentUpon>pBuildManus.xaml</DependentUpon>
     </Compile>
@@ -144,6 +146,9 @@
     <Compile Include="SQLite\SQL_Element.cs" />
     <Compile Include="Windows\AsyncLoading.xaml.cs">
       <DependentUpon>AsyncLoading.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\AsyncWindowProgressG.xaml.cs">
+      <DependentUpon>AsyncWindowProgressG.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\RawRomSearch.xaml.cs">
       <DependentUpon>RawRomSearch.xaml</DependentUpon>
@@ -245,6 +250,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\pBuildRoms.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\AsyncWindowProgressG.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

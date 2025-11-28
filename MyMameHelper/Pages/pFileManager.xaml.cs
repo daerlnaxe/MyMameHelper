@@ -1,4 +1,5 @@
 ﻿using MyMameHelper.ContTable;
+using MyMameHelper.Models;
 using MyMameHelper.Parsers;
 using MyMameHelper.SQLite;
 using MyMameHelper.Windows;
@@ -286,6 +287,8 @@ namespace MyMameHelper.Pages
 
             }
 
+            
+
 
             // Pour chaque jeu
             foreach (CT_Rom_Mapped romMapped in FilteredGamesMapped)
@@ -477,21 +480,29 @@ namespace MyMameHelper.Pages
         /// </summary>
         private void Get_RomMapped(string typeRqst)
         {
+            // warning aucun intérêt ici de charger en asynchrone vu que c'est un travail en base
 
             // Chargement asynchrone des Jeux et des roms associées
-            AsyncWindowProgress aLoad = new AsyncWindowProgress();
-            aLoad.Arguments = new List<object> { typeRqst };
-            aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoad_RomMapped);
+            AsyncWindowProgressG aLoad = new AsyncWindowProgressG();
+            AsyncWorkBool mProgress = new AsyncWorkBool();
+            mProgress.Arguments = new List<object> { typeRqst };
+
+            //            mProgress.go += new AsyncWindowProgress.AsyncBoolAction(AsyncLoad_RomMapped);
+            mProgress.go = new AsyncWorkBool.AsyncBoolAction(AsyncLoad_RomMapped);
+
+            bool test = false;
+            aLoad.ProgressContext = mProgress;
             aLoad.ShowDialog();
+
         }
 
         /// <summary>
         /// Récupère en base les valeurs avec liaison des deux tables
         /// </summary>
         /// <param name="aLoad"></param>
-        private void AsyncLoad_RomMapped(AsyncWindowProgress aLoad)
+        private bool AsyncLoad_RomMapped(AsyncWindowProgressG aLoad)
         {
-            string typeRqst = (string)aLoad.Arguments[0];
+            string typeRqst = (string)aLoad.ProgressContext.Arguments[0];
           
 
             aLoad.AsyncMessage("Loading enhanced Roms...");
@@ -519,6 +530,7 @@ namespace MyMameHelper.Pages
 
 
             }
+            return true;
         }
 
 

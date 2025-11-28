@@ -23,7 +23,13 @@ namespace MyMameHelper.Windows
     /// </summary>
     public partial class ProgressWindow : Window, INotifyPropertyChanged
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public delegate void DoWorkEventHandler(ProgressWindow sender, DoWorkEventArgs e);
+        
         public event DoWorkEventHandler DoWork;
 
         public event PropertyChangedEventHandler PropertyChanged;

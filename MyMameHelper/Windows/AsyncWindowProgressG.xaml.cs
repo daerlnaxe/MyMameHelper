@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyMameHelper.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -17,25 +18,10 @@ using System.Windows.Shapes;
 namespace MyMameHelper.Windows
 {
     /// <summary>
-    /// Lance un travail en fond quand on chare la page
+    /// Lance un travail en fond quand on charge la page
     /// </summary>
-    public partial class AsyncWindowProgress : Window, INotifyPropertyChanged
+    public partial class AsyncWindowProgressG : Window, INotifyPropertyChanged
     {
-        public delegate void AsyncAction(AsyncWindowProgress window);
-        public delegate bool AsyncBoolAction(AsyncWindowProgress window);
-
-
-        /// <summary>
-        /// 
-        /// 
-        /// </summary>
-        public AsyncAction go { get; set; }
-        //; 
-        
-
-
-
-
         // maj interface
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -45,7 +31,8 @@ namespace MyMameHelper.Windows
         }
 
 
-        public List<object> Arguments { get; set; } = new List<object>();
+        internal IAsyncProgressWork ProgressContext {get;set;}
+
 
         //
         public int Total { get; set; } = 100;
@@ -103,7 +90,7 @@ namespace MyMameHelper.Windows
             this.Dispatcher?.Invoke(new Action(() => this.Close()));
         }
 
-        public AsyncWindowProgress()
+        public AsyncWindowProgressG()
         {
             InitializeComponent();
             DataContext = this;
@@ -118,17 +105,23 @@ namespace MyMameHelper.Windows
         {
             AsyncCallback ra = new AsyncCallback(Finished);
             
-            go?.BeginInvoke(this, ra, null);
+            //go?.BeginInvoke(this, ra, null);
+            //ProgressContext.go?.BeginInvoke(this,ra, null);
 
+            
+
+            ProgressContext?.BeginGo(this, ra, null);
 
             return;
-            Task t = Task.Run(() => go);
+            /*Task t = Task.Run(() => go);
             Task.WaitAll(t);
-            Console.WriteLine("Fini");
+            Console.WriteLine("Fini");*/
         }
 
-        private void Finished(IAsyncResult a)
+        public object Resultat {  get; private set; }
+        internal void Finished(IAsyncResult ar)
         {
+            Resultat = ProgressContext.EndGo(ar);
 
             Progress_Value = 100;
             Console.WriteLine("Fini");

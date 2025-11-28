@@ -1,5 +1,6 @@
 ﻿using MyMameHelper.ContTable;
 using MyMameHelper.Methods;
+using MyMameHelper.Models;
 using MyMameHelper.SQLite;
 using MyMameHelper.Windows;
 using System;
@@ -390,13 +391,27 @@ namespace MyMameHelper.Pages
 
              rawRomsSelected = tmp;*/
 
-            AsyncWindowProgress window;
+
 
 
 
             #region 2025/11/06 split pour async
+            AsyncWindowProgressG windowG = new AsyncWindowProgressG();
+            windowG.Total = rawRomsSelected.Count;
+            windowG.Message_Value = "Linking Roms";
 
 
+            bool test = false;
+            AsyncWorkBool mProgress = new AsyncWorkBool();
+            mProgress.Arguments = new List<object>() { rawRomsSelected };
+            mProgress.go += new AsyncWorkBool.AsyncBoolAction( Link2Roms);
+
+            windowG.ProgressContext = mProgress;
+            windowG.ShowDialog();
+
+            test= (bool)windowG.Resultat;
+
+            /*
             window = new AsyncWindowProgress();
 
             window.Total = rawRomsSelected.Count;
@@ -408,7 +423,9 @@ namespace MyMameHelper.Pages
             window.go += new AsyncWindowProgress.AsyncAction(Link2Roms);
             window.ShowDialog();
 
-            rawRomsSelected = (List<RawMameRom>)window.Arguments[0];
+            rawRomsSelected = (List<RawMameRom>)window.Arguments[0];*/
+
+
             #endregion
 
             /*
@@ -434,7 +451,7 @@ namespace MyMameHelper.Pages
             
             #endregion
             }*/
-
+            AsyncWindowProgress window;
 
             window = new AsyncWindowProgress();
             window.Arguments = new List<object>() { rawRomsSelected };
@@ -532,9 +549,9 @@ namespace MyMameHelper.Pages
         /// 
         /// </summary>
         /// <param name="window"></param>
-        private void Link2Roms(AsyncWindowProgress window)
+        private bool Link2Roms(AsyncWindowProgressG window)
         {
-            List<RawMameRom> rawRomsSelected = (List<RawMameRom>)window.Arguments[0]; // ajouté en splittant vers de l'async
+            List<RawMameRom> rawRomsSelected = (List<RawMameRom>)window.ProgressContext.Arguments[0]; // ajouté en splittant vers de l'async
 
             // Make a list with only the clone of
             List<RawMameRom> cloneof_list = new List<RawMameRom>(RawRomsCollec.Where(x => !string.IsNullOrEmpty(x.Clone_Of)));
@@ -610,10 +627,13 @@ namespace MyMameHelper.Pages
                 i++;
             }
 
-            window.Arguments[0] = tmp;
+            window.ProgressContext.Arguments[0] = tmp;
 
             Debug.WriteLine($"Fin Total,  temps: {swTotal.ElapsedMilliseconds} ms");
             swTotal.Stop();
+
+            // 28//11/2025
+            return true;
         }
 
 

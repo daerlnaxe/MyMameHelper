@@ -72,7 +72,7 @@ namespace MyMameHelper.ContTable
             }
             catch
             {
-                Debug.WriteLine($"Column {key} missing, Database alteration ?");
+                //Debug.WriteLine($"Column {key} missing, Database alteration ?");
                 return 0;
                 //throw new Exception($"Column {key} missing, Database alteration");
 
@@ -91,7 +91,7 @@ namespace MyMameHelper.ContTable
             }
             catch
             {
-                Debug.WriteLine($"Column {key} missing, Database alteration ?");
+                //Debug.WriteLine($"Column {key} missing, Database alteration ?");
                 return 0;
                 //throw new Exception($"Column {key} missing, Database alteration");
 
