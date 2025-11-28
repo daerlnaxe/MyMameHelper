@@ -1152,6 +1152,68 @@ namespace MyMameHelper.SQLite
 
 
         #region MappedRoms
+        private CT_Rom_Mapped RomMapper(SQLiteDataReader reader)
+        {
+            CT_Rom_Mapped aRom = new CT_Rom_Mapped();
+            aRom.ID = Trans.GetUInt("ID", reader);
+            aRom.Archive_Name = Trans.GetString("Archive_Name", reader);
+            aRom.Game_Id = Trans.GetNullableUInt("Game_Id", reader);
+            aRom.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader);
+
+
+            // Jeu                   
+            if (aRom.Game_Id != null)
+            {
+                CT_Game_Mapped game = new CT_Game_Mapped();
+                game.ID = uint.Parse(aRom.Game_Id.ToString());
+                game.Game_Name = Trans.GetString("Game_Name", reader);
+                //game.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader);
+                aRom.Game = game;
+            }
+
+
+            // Machine
+            if (aRom.Machine_Id != null)
+            {
+                CT_Machine machine = new CT_Machine();
+                machine.ID = uint.Parse(aRom.Machine_Id.ToString());
+                machine.Nom = Trans.GetString("Machine_Name", reader);
+                aRom.Machine = machine;
+            }
+
+            return aRom;
+        }
+
+        private SQLiteDataReader Select_Rom2Game()
+        {
+            string sql = $"SELECT [{tRom}].ID, [{tRom}].Archive_Name, [{tRom}].Game_Id" +
+                            $", [{tGame}].Game_Name" +       
+                            $" FROM [{tRom}] " +
+                            $" LEFT JOIN [{tGame}] ON Game_Id = [{tGame}].ID " +
+                            "";
+
+            SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
+
+            SqlCond[] conds = new SqlCond[] { new SqlCond($"Game_Id", eWhere.Is_Not, null) };
+            Condition_TreatMt(sqlCMD, conds);
+
+            SqlOrder[] orders = new SqlOrder[] { new SqlOrder($"Game_Name") };
+            Order_TreatMt(sqlCMD, orders);
+
+            Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");
+
+            try
+            {
+                return sqlCMD.ExecuteReader();
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine(exc.Message);
+                return null;
+            }
+        }
+
+
         /// <summary>
         /// Rom mappées spécialement pour le déplacement
         /// </summary>
@@ -1165,7 +1227,7 @@ namespace MyMameHelper.SQLite
         private SQLiteDataReader Select_Rom2Machine()
         {
 
-            Dictionary<string, short> dicCol;
+            //Dictionary<string, short> dicCol;
             string sql = $"SELECT [{tRom}].ID, [{tRom}].Archive_Name, [{tRom}].Game_Id" +
                             $", [{tGame}].Game_Name" +
                             $", [{tMachine}].ID AS \"Machine_Id\", [{tMachine}].Nom AS \"Machine_Name\"" +
@@ -1214,32 +1276,27 @@ namespace MyMameHelper.SQLite
 
                 while (reader.Read())
                 {
-                    CT_Rom_Mapped aRom = new CT_Rom_Mapped();
-                    aRom.ID = Trans.GetUInt("ID", reader);
-                    aRom.Archive_Name = Trans.GetString("Archive_Name", reader);
-                    aRom.Game_Id = Trans.GetNullableUInt("Game_Id", reader);
-                    aRom.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader);
+                    CT_Rom_Mapped aRom = RomMapper(reader);
 
+                    lGames.Add(aRom);
+                }
+            }
 
-                    // Jeu                   
-                    if (aRom.Game_Id != null)
-                    {
-                        CT_Game_Mapped game = new CT_Game_Mapped();
-                        game.ID = uint.Parse(aRom.Game_Id.ToString());
-                        game.Game_Name = Trans.GetString("Game_Name", reader);
-                        //game.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader);
-                        aRom.Game = game;
-                    }
+            return lGames;
+        }
 
+        public List<CT_Rom_Mapped> List_Rom2Game(SqlCond[] conds = null, SqlOrder order = null)
+        {
+            List<CT_Rom_Mapped> lGames = new List<CT_Rom_Mapped>();
+            SQLiteDataReader reader = Select_Rom2Game();
 
-                    // Machine
-                    if (aRom.Machine_Id != null)
-                    {
-                        CT_Machine machine = new CT_Machine();
-                        machine.ID = uint.Parse(aRom.Machine_Id.ToString());
-                        machine.Nom = Trans.GetString("Machine_Name", reader);
-                        aRom.Machine = machine;
-                    }
+            if (reader.HasRows)
+            {
+                //dicCol = Get_Poss(reader);
+
+                while (reader.Read())
+                {
+                    CT_Rom_Mapped aRom = RomMapper(reader);
 
                     lGames.Add(aRom);
                 }
@@ -1251,16 +1308,16 @@ namespace MyMameHelper.SQLite
 
 
 
-        #region Obsolete ?
+            #region Obsolete ?
 
 
-        /// <summary>
-        /// Request to have a list of roms with jointure on games.
-        /// </summary>
-        /// <param name="conds"></param>
-        /// <param name="order"></param>
-        /// <returns></returns>
-        //[Deprecated]
+            /// <summary>
+            /// Request to have a list of roms with jointure on games.
+            /// </summary>
+            /// <param name="conds"></param>
+            /// <param name="order"></param>
+            /// <returns></returns>
+            //[Deprecated]
         internal SQLiteDataReader AffGames_SQL(SqlCond[] conds, SqlOrder order)
         {
 

@@ -36,6 +36,14 @@ namespace MyMameHelper.ContTable
         
         public uint? Machine_Id { get; set; }
         private CT_Machine _Machine;// = new CT_Machine();
+
+        public CT_Rom_Mapped() { }
+        public CT_Rom_Mapped(CT_Rom rom) : base(rom)
+        {
+        }
+
+
+
         public CT_Machine Machine
         {
             get => _Machine;

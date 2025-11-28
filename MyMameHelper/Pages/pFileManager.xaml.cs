@@ -236,6 +236,7 @@ namespace MyMameHelper.Pages
             System.Windows.MessageBox.Show($"{i} File(s) Moved", "", MessageBoxButton.OK, MessageBoxImage.Information);
 
         }*/
+        private List<CT_Rom_Mapped> _RomsMapped;
 
         private void Proceed_Roms(object sender, ExecutedRoutedEventArgs e)
         {
@@ -245,7 +246,7 @@ namespace MyMameHelper.Pages
 
 
             if (!Directory.Exists(PProp.Default.RomSource))
-            {            
+            {
                 MessageBox.Show("Enter a valid Rom Source ", "Error - Directory", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
@@ -256,24 +257,34 @@ namespace MyMameHelper.Pages
                 MessageBox.Show("Enter a valid Destination Folder", "Error - Directory", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-                
+
 
 
             // Récupérer les fichiers dans le répertoire
             _DirFiles = Directory.GetFiles(PProp.Default.RomSource);
 
-            // Récupérer les jeux et les roms associées
-            Get_RomMapped();
-            Debug.WriteLine($"Nombre de roms trouvées: {_RomsMapped.Count}");
 
 
-            List<CT_Rom_Mapped> FilteredGamesMapped = new List<CT_Rom_Mapped>(_RomsMapped);
 
             // Méthode
             // Construction du chemin de destination
             //string destPath = "0-Miscellaneous";
             string arboChoosen = (string)cbArboType.SelectionBoxItem;
             Debug.WriteLine($"Méthode choisie: '{arboChoosen}'");
+
+
+            // Récupérer les jeux et les roms associées
+            Get_RomMapped(arboChoosen);
+
+            List<CT_Rom_Mapped> FilteredGamesMapped = new List<CT_Rom_Mapped>(_RomsMapped);
+
+            Debug.WriteLine($"Nombre de roms trouvées: {FilteredGamesMapped.Count}");
+
+            if(FilteredGamesMapped.Count == 0)
+            {
+                System.Windows.MessageBox.Show("No rom found", "Finished", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            }
 
 
             // Pour chaque jeu
@@ -296,7 +307,7 @@ namespace MyMameHelper.Pages
                         //dest = Get
                         break;
                     default:
-                        dest = PProp.Default.RomSource;
+                        dest = PProp.Default.RomDestination;
                         break;
                 }
 
@@ -438,7 +449,7 @@ namespace MyMameHelper.Pages
         {
 
             if (romMapped.Machine == null || romMapped.Machine_Id == null)
-                return  Path.Combine(PProp.Default.RomDestination, "_No_Machine");
+                return Path.Combine(PProp.Default.RomDestination, "_No_Machine");
 
             string dest = null;
 
@@ -458,17 +469,19 @@ namespace MyMameHelper.Pages
 
 
 
-        private List<CT_Rom_Mapped> _RomsMapped;
+
 
 
         /// <summary>
         /// Construit et lance l'asyncloadmapGames
         /// </summary>
-        private void Get_Rom2Machine()
+        private void Get_RomMapped(string typeRqst)
         {
+
             // Chargement asynchrone des Jeux et des roms associées
             AsyncWindowProgress aLoad = new AsyncWindowProgress();
-            aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoad_Rom2Machine);
+            aLoad.Arguments = new List<object> { typeRqst };
+            aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoad_RomMapped);
             aLoad.ShowDialog();
         }
 
@@ -476,12 +489,33 @@ namespace MyMameHelper.Pages
         /// Récupère en base les valeurs avec liaison des deux tables
         /// </summary>
         /// <param name="aLoad"></param>
-        private void AsyncLoad_Rom2Machine(AsyncWindowProgress aLoad)
+        private void AsyncLoad_RomMapped(AsyncWindowProgress aLoad)
         {
+            string typeRqst = (string)aLoad.Arguments[0];
+          
+
             aLoad.AsyncMessage("Loading enhanced Roms...");
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                _RomsMapped = sqReq.List_Rom2Machine();
+                switch (typeRqst)
+                {
+                    case "Machine":
+                        _RomsMapped = sqReq.List_Rom2Machine();
+                        break;
+                    default:
+                        _RomsMapped = sqReq.List_Rom2Game();
+                            /*
+                        List<CT_Rom> tmp = sqReq.AffRoms_List();
+                        _RomsMapped = new List<CT_Rom_Mapped>();
+
+                        for (int i = 0; i < tmp.Count; i++) 
+                        {
+                            _RomsMapped.Add(new CT_Rom_Mapped( tmp[i]));
+                        }
+                         */
+                        break;
+                }
+
 
 
             }
