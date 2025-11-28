@@ -24,8 +24,6 @@ namespace MyMameHelper.Windows
         public delegate void AsyncAction(AsyncLoading windows);
         public AsyncAction go;
 
-
-
         // maj interface
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -34,6 +32,22 @@ namespace MyMameHelper.Windows
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        public long Total { get; set; } = 100;
+
+        public long _Progress_Value = 0;
+        public long Progress_Value
+        {
+            get { return _Progress_Value; }
+            set
+            {
+                if (value != _Progress_Value)
+                {
+                    _Progress_Value = value;
+                    // OnPropertyChanged("Progress_Value"); 
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public void AsyncClose()
         {

@@ -470,11 +470,6 @@ namespace MyMameHelper.Pages
 
 
 
-
-
-
-
-
         /// <summary>
         /// Construit et lance l'asyncloadmapGames
         /// </summary>
@@ -495,6 +490,7 @@ namespace MyMameHelper.Pages
             aLoad.ShowDialog();
 
         }
+
 
         /// <summary>
         /// Récupère en base les valeurs avec liaison des deux tables

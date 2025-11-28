@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="43*"/>
         </Grid.RowDefinitions>
-        <ProgressBar Height="43" Margin="10,0,10,20"  VerticalAlignment="Bottom" Grid.Row="2" Grid.ColumnSpan="3"/>
+        <ProgressBar Height="43" Margin="10,0,10,20" Value="{Binding Progress_Value}" Maximum="{Binding Total}" VerticalAlignment="Bottom" Grid.Row="2" Grid.ColumnSpan="3"/>
         <Label x:Name="label" Content="Label:" HorizontalAlignment="Left" Margin="0" Grid.Row="1" VerticalAlignment="Top" Height="26" Width="41"/>
         <Label x:Name="label1" Content="{Binding Inform}" Grid.Column="1" Grid.Row="1"/>
 

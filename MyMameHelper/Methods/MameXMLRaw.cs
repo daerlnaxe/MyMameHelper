@@ -19,7 +19,7 @@ namespace MyMameHelper.Methods
 
         private uint _Line;
 
-        private  List<RawMameRom> _RomsCollec { get; set; } = new List<RawMameRom>();
+        private List<RawMameRom> _RomsCollec { get; set; } = new List<RawMameRom>();
 
         public List<RawMameRom> TryToParse(string filename)
         {
@@ -34,35 +34,54 @@ namespace MyMameHelper.Methods
 
         private void AsyncParse(AsyncLoading windows)
         {
+            /* XmlDocument doc = new XmlDocument();
+             doc.Load(_Filename);
+             int count = doc.SelectNodes("//machine").Count;
+             doc = null;*/
 
-            XmlTextReader textReader = new XmlTextReader(_Filename);
-                        
-            while (textReader.Read())
+
+            FileStream fs = File.OpenRead(_Filename);
+            using (XmlTextReader textReader = new XmlTextReader(fs))
             {
-                if (textReader.NodeType == XmlNodeType.Element && textReader.Name == "machine")
+                long total =fs.Length;
+                windows.Total = 100;
+                windows.Progress_Value = 0;
+                // XmlTextReader textReader = new XmlTextReader(_Filename);
+
+                while (textReader.Read())
                 {
-                    RawMameRom mRaw = new RawMameRom();
-                    _RomsCollec.Add(mRaw);
+                    // Progression toutes les X Ko (évite de spammer l’UI)
+                    if (fs.Position - windows.Progress_Value > 10000) // 10 Ko
+                    {
+                        int percent = (int)(fs.Position * 100 / total);
+                        // UpdateProgress(percent);
+                        windows.Progress_Value = percent;
+                    }
 
-                    mRaw.Name = textReader.GetAttribute("name");
-                    mRaw.Source_File = textReader.GetAttribute("sourcefile");
+                    if (textReader.NodeType == XmlNodeType.Element && textReader.Name == "machine")
+                    {
+                        RawMameRom mRaw = new RawMameRom();
+                        _RomsCollec.Add(mRaw);
 
-                    mRaw.Is_Mechanical = textReader.GetAttribute("ismechanical") == "yes" ? true : false;
-                    mRaw.Is_Bios = textReader.GetAttribute("isbios") == "yes" ? true : false;
+                        mRaw.Name = textReader.GetAttribute("name");
+                        mRaw.Source_File = textReader.GetAttribute("sourcefile");
 
-                    mRaw.Clone_Of = textReader.GetAttribute("cloneof");
-                    mRaw.Rom_Of = textReader.GetAttribute("romof");
-                    mRaw.Sample_Of = textReader.GetAttribute("sampleof");
+                        mRaw.Is_Mechanical = textReader.GetAttribute("ismechanical") == "yes" ? true : false;
+                        mRaw.Is_Bios = textReader.GetAttribute("isbios") == "yes" ? true : false;
 
-                    GetRomsInfos(textReader, mRaw);
+                        mRaw.Clone_Of = textReader.GetAttribute("cloneof");
+                        mRaw.Rom_Of = textReader.GetAttribute("romof");
+                        mRaw.Sample_Of = textReader.GetAttribute("sampleof");
+
+                        GetRomsInfos(textReader, mRaw);
+                    }
+
+                    //  Informer l'utilisateur
+                    _Line++;
+                    if (_Line % 1000 == 0)
+                        aLoad.AsyncInform($"{_Line} lines readed");
                 }
-
-                //  Informer l'utilisateur
-                _Line++;
-                if (_Line % 1000 == 0)
-                    aLoad.AsyncInform($"{_Line} lines readed");
             }
-
             //return roms;
 
             //MessageBox.Show($"Erreur:\n{exc.Message}", "", MessageBoxButton.OK, MessageBoxImage.Error);
