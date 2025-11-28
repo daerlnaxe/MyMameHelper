@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.SQLite;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
 
@@ -28,7 +29,7 @@ namespace MyMameHelper.SQLite
         string tGenre = PProp.Default.T_Genres;
         string tMachine = PProp.Default.T_Machines;
         string tGame = PProp.Default.T_Games;
-        string tManufacturer = PProp.Default.T_Manufacturers;
+        string tManufacturer = PProp.Default.T_MameManufacturers;
         string tConstructor = PProp.Default.T_Constructors;
         #endregion
 
@@ -73,7 +74,7 @@ namespace MyMameHelper.SQLite
         {
             ObservableCollection<CT_Constructeur> collec = new ObservableCollection<CT_Constructeur>();
 
-            Obj_Select objSelect = new Obj_Select(table: PProp.Default.T_Manufacturers, all: true);
+            Obj_Select objSelect = new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true);
             objSelect.Conditions = new SqlCond[] { new SqlCond { Colonne = "ID", Operateur = eWhere.Equal, Valeur = id.ToString() } };
             objSelect.Orders = new SqlOrder[] { new SqlOrder("Nom") };
 
@@ -587,7 +588,7 @@ namespace MyMameHelper.SQLite
         #region Aff Machine
         private SQLiteDataReader AffMachine_SQL(SqlCond[] conds, SqlOrder order)
         {
-            string constructeurs = PProp.Default.T_Manufacturers;
+            string constructeurs = PProp.Default.T_MameManufacturers;
             //string machines = PProp.Default.T_Machines;
 
             Dictionary<string, short> dicCol;
@@ -802,17 +803,17 @@ namespace MyMameHelper.SQLite
             Dictionary<string, short> dicCol;
             //string sql = $"SELECT [{tRoms}]*, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
             string sql = $"SELECT [{tGame}].*" +
-//                            $", [{tDeveloper}].Nom AS \"Developer\"" +
+                            //                            $", [{tDeveloper}].Nom AS \"Developer\"" +
                             $", [{tMachine}].Nom AS \"Machine\"" +
                             $", [{tGenre}].Nom AS \"Genre\"" +
                             //$"(SELECT group_concat([{tRom}].Archive_Name, '|') " +
                             /*$"(SELECT group_concat(Roms.ID || '♢' || Roms.Archive_Name || '♢' || Roms.Description, '|')" +
                             /    $"FROM [{tRom}] " +
                             /    $"WHERE [{tRom}].Game_Id=[{tGame}].ID) AS \"Roms\"" +*/
-                            $" FROM [{tGame}]" +                    
+                            $" FROM [{tGame}]" +
                             $" LEFT JOIN [{tMachine}] ON [{tMachine}].ID=[{tGame}].Machine_Id" +
                             $" LEFT JOIN [{tGenre}] ON [{tGenre}].ID=[{tGame}].Genre_Id" +
-                           // $" LEFT JOIN [{tDeveloper}] ON [{tDeveloper}].ID=[{tMachine}].Developer_Id" +     // Désactivé pour le moment                        
+                            // $" LEFT JOIN [{tDeveloper}] ON [{tDeveloper}].ID=[{tMachine}].Developer_Id" +     // Désactivé pour le moment                        
                             $"";
 
 
@@ -1025,12 +1026,14 @@ namespace MyMameHelper.SQLite
         #endregion
 
 
-        #region Roms
+        #region RawRoms
 
         internal void GetList_RawRoms(Obj_Select objSel)
         {
             SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
             sqlCommand.CommandText = $"SELECT * FROM {PProp.Default.T_TempRoms} WHERE [Is_Bios]='True'";
+
+            Trace.WriteLine($"Requete SQL: {sqlCommand.CommandText}");
 
             var reader = sqlCommand.ExecuteReader();
 
@@ -1046,6 +1049,33 @@ namespace MyMameHelper.SQLite
 
                 }
             }
+        }
+
+        /// <summary>
+        /// Renvoie des raw roms groupés selon le source file.
+        /// </summary>
+        internal Dictionary<string, object[]> Get_RRGroupedSFile()
+        {
+            SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
+            sqlCommand.CommandText = $"SELECT Source_File, IsDevice, count(*) FROM {PProp.Default.T_TempRoms} GROUP BY Source_File;";
+
+            Trace.WriteLine($"Requete SQL: {sqlCommand.CommandText}");
+
+            var reader = sqlCommand.ExecuteReader();
+
+            Dictionary<string, object[]> resultat = new Dictionary<string, object[]>();
+
+            if (reader.HasRows)
+            {
+                
+
+                while (reader.Read())
+                {
+                    resultat.Add((string)reader[0], new object[] { reader[1], reader[2] });
+                }
+            }
+
+            return resultat;
         }
 
         #endregion roms
@@ -1187,7 +1217,7 @@ namespace MyMameHelper.SQLite
         private SQLiteDataReader Select_Rom2Game()
         {
             string sql = $"SELECT [{tRom}].ID, [{tRom}].Archive_Name, [{tRom}].Game_Id" +
-                            $", [{tGame}].Game_Name" +       
+                            $", [{tGame}].Game_Name" +
                             $" FROM [{tRom}] " +
                             $" LEFT JOIN [{tGame}] ON Game_Id = [{tGame}].ID " +
                             "";
@@ -1308,16 +1338,16 @@ namespace MyMameHelper.SQLite
 
 
 
-            #region Obsolete ?
+        #region Obsolete ?
 
 
-            /// <summary>
-            /// Request to have a list of roms with jointure on games.
-            /// </summary>
-            /// <param name="conds"></param>
-            /// <param name="order"></param>
-            /// <returns></returns>
-            //[Deprecated]
+        /// <summary>
+        /// Request to have a list of roms with jointure on games.
+        /// </summary>
+        /// <param name="conds"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        //[Deprecated]
         internal SQLiteDataReader AffGames_SQL(SqlCond[] conds, SqlOrder order)
         {
 

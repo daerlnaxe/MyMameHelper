@@ -101,7 +101,9 @@ namespace MyMameHelper.Pages
             using (SQLite_Op sqReq = new SQLite_Op())
             {
                 sqReq.UpdateProgress += ((x, y) => sender.SetProgress(y));
-                sqReq.Insert_RomsInTemp(RomsCollec);
+                // Insertion des rawroms
+                sqReq.Insert_RawRomsInTemp(RomsCollec);
+                
             }
         }
 

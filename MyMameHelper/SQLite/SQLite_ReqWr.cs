@@ -43,7 +43,7 @@ namespace MyMameHelper.SQLite
         {
             Debug.WriteLine($"Insertion du constructeur: {ctC.Nom}");
 
-            string sql = $"INSERT INTO [{PProp.Default.T_Manufacturers}] ([Nom]) VALUES (@Nom)";
+            string sql = $"INSERT INTO [{PProp.Default.T_MameManufacturers}] ([Nom]) VALUES (@Nom)";
             SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
             sqlCmd.Parameters.Add("@Nom", DbType.String).Value = ctC.Nom;
 
@@ -82,13 +82,13 @@ namespace MyMameHelper.SQLite
             Debug.WriteLine($"Insertion de la machine: {ctM.Nom}");
 
             string sql = $"INSERT INTO [{PProp.Default.T_Machines}] " +
-                            $"([Nom], [Constructeur], [Year], [AllowCPath]) " +
+                            $"([Nom], [Constructeur_ID], [Year], [AllowCPath]) " +
                             $"VALUES " +
-                            $"(@Nom, @Constructor, @Year, @AllowCPath)";
+                            $"(@Nom, @Constructor_ID, @Year, @AllowCPath)";
 
             SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
             sqlCmd.Parameters.Add("@Nom", DbType.String).Value = ctM.Nom;
-            sqlCmd.Parameters.Add("@Constructor", DbType.UInt32).Value = ctM.IDConstructeur;
+            sqlCmd.Parameters.Add("@Constructor_ID", DbType.UInt32).Value = ctM.IDConstructeur;
             sqlCmd.Parameters.Add("@Year", DbType.UInt32).Value = ctM.Year;
             sqlCmd.Parameters.Add("@AllowCPath", DbType.Boolean).Value = ctM.AllowCPath;
 
@@ -355,7 +355,7 @@ namespace MyMameHelper.SQLite
         /// Insère une collection de roms dans la table temp
         /// </summary>
         /// <param name="Roms"></param>
-        public void Insert_RomsInTemp(ObservableCollection<RawMameRom> Roms)
+        public void Insert_RawRomsInTemp(IList<RawMameRom> Roms)
         {
             uint max = 50;
             Debug.WriteLine($"Insertion de la collection de roms brutes");
@@ -379,7 +379,8 @@ namespace MyMameHelper.SQLite
                                         "[Is_Mechanical], " +
                                         "[Description], " +
                                         "[Year], " +
-                                        "[Manufacturer] " +
+                                        "[Manufacturer], " +
+                                        "[IsDevice] " +
                                         ") VALUES ";
 
                 for (int j = 0; j < max; j++)
@@ -399,7 +400,8 @@ namespace MyMameHelper.SQLite
                                           $"@Is_Mechanical{j}, " +
                                           $"@Description{j}, " +
                                           $"@Year{j}, " +
-                                          $"@Manufacturer{j}" +
+                                          $"@Manufacturer{j}," +
+                                          $"@IsDevice{j}" +
                                           $")";
 
                     sqlCmd.Parameters.Add($"@Name{j}", DbType.String).Value = Roms[i].Name;
@@ -412,6 +414,7 @@ namespace MyMameHelper.SQLite
                     sqlCmd.Parameters.Add($"@Description{j}", DbType.String).Value = Roms[i].Description;
                     sqlCmd.Parameters.Add($"@Year{j}", DbType.String).Value = Roms[i].Year;
                     sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.String).Value = Roms[i].Manufacturer;
+                    sqlCmd.Parameters.Add($"@IsDevice{j}", DbType.String).Value = Roms[i].Is_Device;
 
                     if (j < max - 1)
                         i++;
@@ -727,7 +730,7 @@ namespace MyMameHelper.SQLite
             Debug.WriteLine($"Update de {ctConst.Nom}");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
-            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Manufacturers}] SET [Nom]=@Nom WHERE ID=@ID";
+            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_MameManufacturers}] SET [Nom]=@Nom WHERE ID=@ID";
 
             sqlCmd.Parameters.Add($"@Nom", DbType.String).Value = ctConst.Nom;
 

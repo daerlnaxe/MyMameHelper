@@ -23,7 +23,7 @@ namespace MyMameHelper.SQLite
         static string tGames = Properties.Settings.Default.T_Games;
         static string tBios = Properties.Settings.Default.T_Bios;
         static string tMechanicals = Properties.Settings.Default.T_Mechanics;
-        static string tManufacturers = Properties.Settings.Default.T_Manufacturers;
+        static string tMameManufacturers = Properties.Settings.Default.T_MameManufacturers;
         //static string tDeveloppers = Properties.Settings.Default.T_Developers;
         static string tConstructors = Properties.Settings.Default.T_Constructors;
         static string tGenres = Properties.Settings.Default.T_Genres;
@@ -99,8 +99,8 @@ namespace MyMameHelper.SQLite
             CreateTable($"CREATE Table [{tBios}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Bios_Name] VARCHAR UNIQUE);");
             // Mechanicals
             CreateTable($"CREATE Table [{tMechanicals}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Meca_Name] VARCHAR UNIQUE);");
-            // Constructeurs
-            CreateTable($"CREATE TABLE [{tManufacturers}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            // Constructeurs, va faire le lien 
+            CreateTable($"CREATE TABLE [{tMameManufacturers}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
             // Developers Désactivé pour le moment
             //CreateTable($"CREATE TABLE [{tDeveloppers}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
             // Constructors
@@ -200,6 +200,8 @@ namespace MyMameHelper.SQLite
             // machines
             AlterTable($"ALTER TABLE [{tMachines}] ADD [Revision] VARCHAR;");
             AlterTable($"ALTER TABLE [{tMachines}] ADD [HardwareName] VARCHAR;"); // CPS1, CPS2....
+            AlterTable($"ALTER TABLE [{tMachines}] ADD [MameCode] VARCHAR;"); // Naomi, Sega16 ... dans sourcefile après /
+            AlterTable($"ALTER TABLE [{tMachines}] ADD [MainCPU] VARCHAR;"); // z80,...
             AlterTable($"ALTER TABLE [{tMachines}] ADD [Constructeur_Id] INTEGER");
             AlterTable($"ALTER TABLE [{tMachines}] ADD [Year] INTEGER;");
             AlterTable($"ALTER TABLE [{tMachines}] ADD [AllowCPath] BOOLEAN;");
@@ -224,7 +226,7 @@ namespace MyMameHelper.SQLite
             AlterTable($"ALTER TABLE [{tempRoms}] ADD [Is_Mechanical] BOOLEAN");
             AlterTable($"ALTER TABLE [{tempRoms}] ADD [Description] VARCHAR");
             AlterTable($"ALTER TABLE [{tempRoms}] ADD [Year] VARCHAR");
-            AlterTable($"ALTER TABLE [{tempRoms}] ADD [Manufacturer] VARCHAR");
+            AlterTable($"ALTER TABLE [{tempRoms}] ADD [Manufacturer] VARCHAR");     // Correspond au champ xml manufacturer
 
             //
         }
@@ -268,9 +270,9 @@ namespace MyMameHelper.SQLite
             // Table Machines
             // Capcom
             CT_Constructeur ct = Query_One<CT_Constructeur>(CT_Constructeur.Result2Class, $"SELECT [ID] FROM [{tConstructors}] WHERE [Nom]='Capcom'");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Capcom Play System 1', 'CPS-1', {ct.ID}, 1988)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Capcom Play System 2', 'CPS-2', {ct.ID}, 1993)");
-            RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Capcom Play System 3', 'CPS-3', {ct.ID}, 1996)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [MameCode], [MainCPU], [Constructeur], [Year]) VALUES (1, 'Capcom Play System 1', 'CPS1',,'CPS-1', {ct.ID}, 1988)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [Constructeur], [Year]) VALUES (2, 'Capcom Play System 2', 'CPS-2', {ct.ID}, 1993)");
+            RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [Constructeur], [Year]) VALUES (3, 'Capcom Play System 3', 'CPS-3', {ct.ID}, 1996)");
 
 
             // Sega

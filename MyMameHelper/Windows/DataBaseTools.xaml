@@ -23,7 +23,7 @@
         <CommandBinding Command="commands:UICommands.EditGenre" CanExecute="Can_EditGenre" Executed="Ex_EditGenre"/>
         <CommandBinding Command="commands:UICommands.RemoveGenre" CanExecute="Can_RemoveGenre" Executed="Ex_RemoveGenre"/>
         <!-- Machine -->
-        <CommandBinding Command="commands:UICommands.AddMachine" CanExecute="Can_AddMachine" Executed="Ex_AddMachine"/>
+        <!--CommandBinding Command="commands:UICommands.AddMachine" CanExecute="Can_AddMachine" Executed="Ex_AddMachine"/-->
         <CommandBinding Command="commands:UICommands.EditMachine" CanExecute="Can_EditMachine" Executed="Ex_EditMachine"/>
         <CommandBinding Command="commands:UICommands.LinkAMachine" Executed="Ex_LinkAMachine"/>
         <CommandBinding Command="commands:UICommands.RemoveMachine" CanExecute="Can_RemoveMachine" Executed="Ex_RemoveMachine"/>
@@ -98,6 +98,15 @@
                             <DataGridCheckBoxColumn Binding="{Binding AllowCPath}" Header="CPath"/>
                         </DataGrid.Columns>
                     </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Machine">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Button Content="Build Machines"  Click="Build_Machines" ToolTip="Build Machines From Mame's Temp Roms"/> 
                 </Grid>
             </TabItem>
             <TabItem Header="Manufacturers">

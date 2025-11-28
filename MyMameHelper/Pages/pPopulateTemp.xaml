@@ -62,7 +62,8 @@
                     <DataGridCheckBoxColumn Header="Bios" Binding="{Binding Is_Bios}"/>
                     <DataGridCheckBoxColumn Header="Mechanical" Binding="{Binding Is_Mechanical}"/>
                     <DataGridTextColumn Header="Year" Binding="{Binding Year}"/>
-                    <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}"/>                    
+                    <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}"/>
+                    <DataGridTextColumn Header="Device" Binding="{Binding Is_Device}"/>                    
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

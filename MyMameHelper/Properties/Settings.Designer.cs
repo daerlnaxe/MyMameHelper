@@ -181,10 +181,10 @@ namespace MyMameHelper.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Manufacturers")]
-        public string T_Manufacturers {
+        [global::System.Configuration.DefaultSettingValueAttribute("MameManufacturers")]
+        public string T_MameManufacturers {
             get {
-                return ((string)(this["T_Manufacturers"]));
+                return ((string)(this["T_MameManufacturers"]));
             }
         }
         

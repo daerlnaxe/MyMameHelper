@@ -47,7 +47,7 @@ namespace MyMameHelper.Pages
                 using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     #region Collection of Devs
-                    Obj_Select obsDev = new Obj_Select(PProp.Default.T_Manufacturers, all: true);
+                    Obj_Select obsDev = new Obj_Select(PProp.Default.T_MameManufacturers, all: true);
                     companies = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, obsDev);
                     #endregion
 

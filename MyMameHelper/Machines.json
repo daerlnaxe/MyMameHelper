@@ -1,0 +1,85 @@
+{
+  "constructeurs": [
+    {
+      "id": 1,
+      "nom": "atari",
+      "machines": [
+        {
+
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "nom": "capcom",
+      "machines": [
+        {
+
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nom": "data east",
+      "machines": [
+        {
+
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "nom": "konami",
+      "machines": [
+        {
+
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "nom": "irem",
+      "machines": [
+        {
+
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "nom": "midway",
+      "machines": [
+        {
+
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "nom": "namco",
+      "machines": [
+        {
+
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "nom": "sega",
+      "machines": [
+        {
+
+        }
+      ]
+    },
+
+    "$\" ,(9,'SNK')\"",
+    "+",
+    "$\" ,(10,'Taito')\"",
+    "+",
+    "$\" ,(11,'Williams')\"",
+    "+",
+    ""
+
+  ]
+}

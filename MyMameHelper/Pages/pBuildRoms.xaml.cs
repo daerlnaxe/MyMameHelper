@@ -112,7 +112,7 @@ namespace MyMameHelper.Pages
                 using (SQLite_Op sqReq = new SQLite_Op())
                 {
                     //2025 levé Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
-                    Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
+                    Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
                     _RomsInDb = sqReq.AffRoms_List();
                     _GamesInDB = sqReq.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, colonnes: new[] { "ID", "Game_Name" }, all: true));
                 }
@@ -1189,7 +1189,7 @@ namespace MyMameHelper.Pages
                     // Mise à jour de la liste des constructeurs
                     using (SQLite_Op sqReq = new SQLite_Op())
                     {
-                        Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
+                        Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
                     }
                 }
                 else

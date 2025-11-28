@@ -47,8 +47,8 @@
     <Setting Name="T_Mechanics" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Mechanicals</Value>
     </Setting>
-    <Setting Name="T_Manufacturers" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Manufacturers</Value>
+    <Setting Name="T_MameManufacturers" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">MameManufacturers</Value>
     </Setting>
     <Setting Name="T_SQLInfo" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Informations</Value>

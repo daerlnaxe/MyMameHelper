@@ -68,10 +68,13 @@ namespace MyMameHelper.Methods
 
                         mRaw.Is_Mechanical = textReader.GetAttribute("ismechanical") == "yes" ? true : false;
                         mRaw.Is_Bios = textReader.GetAttribute("isbios") == "yes" ? true : false;
+                        mRaw.Is_Device = textReader.GetAttribute("isdevice") != null;
 
                         mRaw.Clone_Of = textReader.GetAttribute("cloneof");
                         mRaw.Rom_Of = textReader.GetAttribute("romof");
                         mRaw.Sample_Of = textReader.GetAttribute("sampleof");
+
+
 
                         GetRomsInfos(textReader, mRaw);
                     }

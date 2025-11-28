@@ -123,8 +123,12 @@
     <Compile Include="ContTable\iCT_Rom.cs" />
     <Compile Include="ContTable\M_GameType.cs" />
     <Compile Include="ContTable\RawMameRom.cs" />
+    <Compile Include="Methods\TableFeeder.cs" />
     <Compile Include="Methods\FindInGames.cs" />
     <Compile Include="Methods\Keyboard.cs" />
+    <None Include="Machines.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Methods\MameXMLParser.cs" />
     <Compile Include="Methods\MameXMLRaw.cs" />
     <Compile Include="Methods\SaveInDB.cs" />

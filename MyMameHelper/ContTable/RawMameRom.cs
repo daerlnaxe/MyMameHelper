@@ -19,6 +19,10 @@ namespace MyMameHelper.ContTable
         #region type
         public bool Is_Bios { get; set; }
         public bool Is_Mechanical { get; set; }
+        /// <summary>
+        /// Matériel, normalement pas un jeu
+        /// </summary>
+        public bool Is_Device { get; internal set; }
         #endregion
 
         public string Description { get; set; }
@@ -26,6 +30,7 @@ namespace MyMameHelper.ContTable
         public string Year { get; set; }
 
         public string Manufacturer { get; set; }
+
 
         public static RawMameRom Result2Class(Dictionary<string, object> dico)
         {

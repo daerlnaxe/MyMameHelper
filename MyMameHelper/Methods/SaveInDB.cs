@@ -29,7 +29,7 @@ namespace MyMameHelper.Methods
 
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                MainWindow.NumberOf_Dev = sqReq.Count(PProp.Default.T_Manufacturers);
+                MainWindow.NumberOf_Dev = sqReq.Count(PProp.Default.T_MameManufacturers);
                 return true;
             }
 

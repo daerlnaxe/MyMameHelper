@@ -1,4 +1,5 @@
 ﻿using MyMameHelper.ContTable;
+using MyMameHelper.Methods;
 using MyMameHelper.SQLite;
 using MyMameHelper.SQLite;
 using System;
@@ -97,7 +98,7 @@ namespace MyMameHelper.Windows
 
 
                     // Liste des constructeurs 
-                    var objSelConst = new Obj_Select(table: PProp.Default.T_Manufacturers, all: true);
+                    var objSelConst = new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true);
                     objSelConst.AddOrders(new SqlOrder("Nom"));
                     Constructors.ChangeContent = sqRead.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, objSelConst);
 
@@ -364,6 +365,7 @@ namespace MyMameHelper.Windows
             e.CanExecute = true;
         }
 
+        /*
         private void Ex_AddMachine(object sender, ExecutedRoutedEventArgs e)
         {
             CT_Constructeur ctConst = (CT_Constructeur)dgConstructors.SelectedItem;
@@ -384,7 +386,7 @@ namespace MyMameHelper.Windows
                     Machines.ChangeContent = sqReq.List_MachinesJoin(new SqlCond[] { condition });
                 }
             }
-        }
+        }*/
 
         private void Can_EditMachine(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -451,13 +453,13 @@ namespace MyMameHelper.Windows
             wLinkMachine linkMachine = new wLinkMachine();
             if (linkMachine.ShowDialog() == true)
             {
-                using (SQLite_Op sqReq = new SQLite_Op())
+                using (SQLite_Op sqOP = new SQLite_Op())
                 {
                     var ctMachine = linkMachine.Machine;
-                    sqReq.Update_Machine(ctMachine);
+                    sqOP.Update_Machine(ctMachine);
 
                     SqlCond condition = new SqlCond("Constructeurs.ID", eWhere.Like, linkMachine.Machine.IDConstructeur);
-                    Machines.ChangeContent = sqReq.List_MachinesJoin(new SqlCond[] { condition });
+                    Machines.ChangeContent = sqOP.List_MachinesJoin(new SqlCond[] { condition });
                 }
             }
         }
@@ -565,5 +567,21 @@ namespace MyMameHelper.Windows
         }
 
 
+        /// <summary>
+        /// Construction des machines en se servant des roms temporaires de MAME
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Build_Machines(object sender, RoutedEventArgs e)
+        {
+            using (SQLite_Op sqOP = new SQLite_Op())
+            {
+                var srcFiles = sqOP.Get_RRGroupedSFile();
+
+                TableFeeder.Machine(srcFiles);
+            }
+
+
+        }
     }
 }
