@@ -17,8 +17,11 @@ namespace MyMameHelper.SQLite
         {
             try
             {
-                SQLiteCommand creatTables = new SQLiteCommand(reqSql, SQLiteConn);
-                creatTables.ExecuteNonQuery();
+                SQLiteCommand creatTable = new SQLiteCommand(reqSql, SQLiteConn);
+                Trace.WriteLine($"Exec: {creatTable.CommandText}");
+
+
+                creatTable.ExecuteNonQuery();
                 return 1;
             }
             catch (SQLiteException exc)
@@ -37,8 +40,10 @@ namespace MyMameHelper.SQLite
         {
             try
             {
-                SQLiteCommand creatTables = new SQLiteCommand(reqSql, SQLiteConn);
-                creatTables.ExecuteNonQuery();
+                SQLiteCommand alterTable = new SQLiteCommand(reqSql, SQLiteConn);
+                Trace.WriteLine($"Exec: {alterTable.CommandText}");
+
+                alterTable.ExecuteNonQuery();
                 return 1;
             }
             catch (SQLiteException exc)

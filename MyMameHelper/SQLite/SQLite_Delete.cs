@@ -133,10 +133,15 @@ namespace MyMameHelper.SQLite
         /// </summary>
         public void Drop_TMachine()
         {
-            string sql = $"DROP DATABASE {PProp.Default.T_Machines}";
+            string sql = $"DROP TABLE {PProp.Default.T_Machines}";
             SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
-                        
-            ExecNQ(command);
+
+            Trace.WriteLine($"Exec: {command.CommandText}");
+
+            if (!ExecNQ(command))
+            {
+                throw new Exception("Drop Machine failed");
+            }
         }
     }
 }

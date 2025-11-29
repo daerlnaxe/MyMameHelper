@@ -238,7 +238,7 @@ namespace MyMameHelper.Windows
                 using (SQLite_OP sqReq = new SQLite_OP())
                 {
                     sqReq.Insert_Genre(new CT_Genre() { Nom = lval.Valeur });
-                    var objSelGenres= new Obj_Select(table: PProp.Default.T_Genres, all: true);
+                    var objSelGenres = new Obj_Select(table: PProp.Default.T_Genres, all: true);
                     objSelGenres.AddOrders(new SqlOrder("Nom"));
 
                     Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, objSelGenres);
@@ -574,15 +574,22 @@ namespace MyMameHelper.Windows
         /// <param name="e"></param>
         private void Build_Machines(object sender, RoutedEventArgs e)
         {
-            using (SQLite_OP sqOP = new SQLite_OP())
+            try
             {
-                sqOP.Drop_TMachine();
+                using (SQLite_OP sqOP = new SQLite_OP())
+                {
+                    sqOP.Drop_TMachine();
+                    sqOP.Create_TMachine();
 
-                var srcFiles = sqOP.Get_RRGroupedSFile();
+                    var srcFiles = sqOP.Get_RRGroupedSFile();
 
-                TableFeeder.Machine(srcFiles);
+                    TableFeeder.Machine(srcFiles);
+                }
             }
-
+            catch (Exception ex) 
+            { 
+                Trace.WriteLine($"Erreur à la construction des machines: {ex}"); 
+            }
 
         }
     }

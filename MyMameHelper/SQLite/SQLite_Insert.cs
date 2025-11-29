@@ -7,6 +7,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -163,20 +164,43 @@ namespace MyMameHelper.SQLite
         /// Insère une machine dans la BDD
         /// </summary>
         /// <param name="ctM"></param>
-        public void Insert_Machine(CT_Machine ctM)
+        public void Insert_Machine(CT_Machine ctM, bool ignore, bool preservePK)
         {
             Debug.WriteLine($"Insertion de la machine: {ctM.Nom}");
 
-            string sql = $"INSERT INTO [{PProp.Default.T_Machines}] " +
-                            $"([Nom], [Constructeur_ID], [Year], [AllowCPath]) " +
-                            $"VALUES " +
-                            $"(@Nom, @Constructor_ID, @Year, @AllowCPath)";
+            // Add ignore if asked
+            string sqlIgnore = "";
+            if (ignore)
+                sqlIgnore = "OR IGNORE";
+
+
+            string sql = $"INSERT {sqlIgnore} INTO [{tMachine}] ";
+            if (preservePK)
+            {
+                sql += $"([ID], [Nom], [Constructeur_ID], [Year], [AllowCPath]) " +
+                        $"VALUES " +
+                        $"(@ID, @Nom, @Constructor_ID, @Year, @AllowCPath)";
+            }
+            else
+            {
+                sql += $"([Nom], [Constructeur_ID], [Year], [AllowCPath]) " +
+                        $"VALUES " +
+                        $"(@Nom, @Constructor_ID, @Year, @AllowCPath)";
+            }
+
+
 
             SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
+
+            if (preservePK)
+                sqlCmd.Parameters.Add("@ID", DbType.UInt64).Value = ctM.ID;
+
             sqlCmd.Parameters.Add("@Nom", DbType.String).Value = ctM.Nom;
             sqlCmd.Parameters.Add("@Constructor_ID", DbType.UInt32).Value = ctM.IDConstructeur;
             sqlCmd.Parameters.Add("@Year", DbType.UInt32).Value = ctM.Year;
             sqlCmd.Parameters.Add("@AllowCPath", DbType.Boolean).Value = ctM.AllowCPath;
+
+            Trace.WriteLine($"Inser: {sqlCmd.CommandText}");
 
             ExecNQ(sqlCmd);
         }
