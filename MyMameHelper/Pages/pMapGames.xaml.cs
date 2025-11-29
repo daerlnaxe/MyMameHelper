@@ -284,7 +284,7 @@ namespace MyMameHelper.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             // Chargement 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 /*Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
                 /*Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));*/
@@ -331,7 +331,7 @@ namespace MyMameHelper.Pages
         private void AsyncLoad_MapGames(AsyncWindowProgress aLoad)
         {
             aLoad.AsyncMessage("Loading Games and mappel Roms...");
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 _TmpGames = sqReq.QueryGameWithRoms();
 
@@ -356,7 +356,7 @@ namespace MyMameHelper.Pages
         {
             aLoad.AsyncMessage("Loading Orphean Roms...");
 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 var selOrphean = new Obj_Select(table: PProp.Default.T_Roms, new string[] { "ID", "Archive_Name", "Game_Id", "Description" });
                 selOrphean.AddConds(new SqlCond("Game_Id", eWhere.Is, null));
@@ -523,7 +523,7 @@ namespace MyMameHelper.Pages
         /// </remarks>
         private void SaveRoms_Click(object sender, RoutedEventArgs e)
         {
-            using (SQLite_Op sqOp = new SQLite_Op())
+            using (SQLite_OP sqOp = new SQLite_OP())
             {
                 // Update des roms
                 sqOp.Update_Roms(RomsToUpdate);
@@ -580,7 +580,7 @@ namespace MyMameHelper.Pages
         /// <param name="value"></param>
         private void Add_GameOnDB(string value)
         {
-            using (SQLite_Op sqOP = new SQLite_Op())
+            using (SQLite_OP sqOP = new SQLite_OP())
             {
                 sqOP.Insert_Game(
                     new CT_Game()
@@ -613,7 +613,7 @@ namespace MyMameHelper.Pages
             {
                 SqlCond[] sqlCond = new SqlCond[1];
 
-                using (SQLite_Op sqOp = new SQLite_Op())
+                using (SQLite_OP sqOp = new SQLite_OP())
                 {
                     sqOp.Delete_Game(new SqlCond[] { new SqlCond("ID", eWhere.Equal, game.ID) });
 

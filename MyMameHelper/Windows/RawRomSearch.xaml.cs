@@ -52,7 +52,7 @@ namespace MyMameHelper.Windows
             InitializeComponent();
             DataContext = this;
 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 Obj_Select objDev = new Obj_Select(PProp.Default.T_TempRoms, colonnes: new string[] { "Manufacturer" }, groups: new string[] { "Manufacturer" });
                 objDev.AddConds(new SqlCond("Manufacturer", eWhere.Not_Like, "Null"));
@@ -143,7 +143,7 @@ namespace MyMameHelper.Windows
             SqlCond[] sqlConds = conditions.Count == 0 ? null : conditions.ToArray();
 
 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 Obj_Select objSel = new Obj_Select(PProp.Default.T_TempRoms, all: true);
                 objSel.AddConds(sqlConds);

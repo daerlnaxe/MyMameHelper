@@ -51,7 +51,7 @@ namespace MyMameHelper.Windows
             InitializeComponent();
             DataContext = this;
 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 Constructeurs.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
             }
@@ -76,7 +76,7 @@ namespace MyMameHelper.Windows
             ComboBox cb = (ComboBox)sender;
             int idConstruct = Convert.ToInt32(cb.SelectedValue);
 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 Obj_Select obj_Select = new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" });
                 obj_Select.AddConds(new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()));

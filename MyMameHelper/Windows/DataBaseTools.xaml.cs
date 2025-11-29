@@ -333,7 +333,7 @@ namespace MyMameHelper.Windows
 
                 using (SQLite_OP sqReq = new SQLite_OP())
                 {
-                    sqReq.Update_Constructeur(ctConst);
+                    sqReq.Update_MameManufacturer(ctConst);
                     Constructors.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
                 }
             }
@@ -503,7 +503,7 @@ namespace MyMameHelper.Windows
 
                 using (SQLite_OP sqReq = new SQLite_OP())
                 {
-                    sqReq.Update_Constructor(ctManu);
+                    sqReq.Update_MameManufacturer(ctManu);
                     Manufacturers.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_Constructors, all: true));
                 }
             }

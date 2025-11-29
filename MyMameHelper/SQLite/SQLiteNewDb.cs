@@ -61,7 +61,7 @@ namespace MyMameHelper.SQLite
 
             string tMachines = Properties.Settings.Default.T_Machines;
 
-            
+
             try
             {
 
@@ -124,7 +124,7 @@ namespace MyMameHelper.SQLite
             // Information pour SQLITE
             _SQLite_Op.Create_TSqlInfo();
 
-            
+
         }
 
         /// <summary>
@@ -190,39 +190,37 @@ namespace MyMameHelper.SQLite
             string tGenres = Properties.Settings.Default.T_Genres;
             string tMachines = Properties.Settings.Default.T_Machines;*/
 
-            // Constructeurs de Bornes (Feed manuel)            
-            RequeteNonQuery($"INSERT INTO [{tConstructors}] ([ID],[Nom])" +
-                $"VALUES" +
-                $"(1,'Atari')" +
-                $" ,(2,'Capcom')" +
-                $" ,(3,'Data East')" +
-                $" ,(4,'Konami')" +
-                $" ,(5,'Irem')" +
-                $" ,(6,'Midway')" +                
-                $" ,(7,'Namco')" +
-                $" ,(8,'Sega')" +
-                $" ,(9,'SNK')" +
-                $" ,(10,'Taito')" +
-                $" ,(11,'Williams')" +
-                ""
-                );
+            // Constructeurs de Bornes (Feed manuel)
+            List<CT_Constructor> constructors = new List<CT_Constructor>();
+            constructors.Add(new CT_Constructor() { ID = 1, Nom = "Atari" });
+            constructors.Add(new CT_Constructor() { ID = 2, Nom = "Capcom" });
+            constructors.Add(new CT_Constructor() { ID = 3, Nom = "Data East" });
+            constructors.Add(new CT_Constructor() { ID = 4, Nom = "Konami" });
+            constructors.Add(new CT_Constructor() { ID = 5, Nom = "Irem" });
+            constructors.Add(new CT_Constructor() { ID = 6, Nom = "Midway" });
+            constructors.Add(new CT_Constructor() { ID = 7, Nom = "Namco" });
+            constructors.Add(new CT_Constructor() { ID = 8, Nom = "Sega" });
+            constructors.Add(new CT_Constructor() { ID = 9, Nom = "SNK" });
+            constructors.Add(new CT_Constructor() { ID = 10, Nom = "Taito" });
+            constructors.Add(new CT_Constructor() { ID = 11, Nom = "Williams" });
+
+            _SQLite_Op.Insert_Constructors(constructors, ignore: false, preservePK: true);
 
 
+            // Genres
+            List<CT_Genre> genres = new List<CT_Genre>();
+            genres.Add(new CT_Genre() { ID=1, Nom= "Beat 'em up" });
+            genres.Add(new CT_Genre() { ID=2, Nom= "Fight" });
+            genres.Add(new CT_Genre() { ID=3, Nom= "Platform" });
+            genres.Add(new CT_Genre() { ID=4, Nom= "Puzzle" });
+            genres.Add(new CT_Genre() { ID=5, Nom= "Shoot Them Up'" });
 
-
-            RequeteNonQuery($"INSERT INTO [{tGenres}] ([Nom])" +
-                $"VALUES" +
-                $"('Beat 'em up')" +
-                $"(, 'Fight')" +                
-                $"(, 'Platform')" +
-                $"(, 'Puzzle')" +
-                $"(, 'Shoot Them Up')" +                
-                $";");
+            _SQLite_Op.Insert_Genres(genres, ignore: false, preservePK:true);
 
 
             // Table Machines
             // Capcom
-            CT_MameManufacturer ct = Query_One<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, $"SELECT [ID] FROM [{tConstructors}] WHERE [Nom]='Capcom'");
+           /* CT_MameManufacturer ct = Query_One<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, $"SELECT [ID] FROM [{tConstructors}] WHERE [Nom]='Capcom'");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [MameCode], [MainCPU], [Constructeur], [Year]) VALUES (1, 'Capcom Play System 1', 'CPS1',,'CPS-1', {ct.ID}, 1988)");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [Constructeur], [Year]) VALUES (2, 'Capcom Play System 2', 'CPS-2', {ct.ID}, 1993)");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [Constructeur], [Year]) VALUES (3, 'Capcom Play System 3', 'CPS-3', {ct.ID}, 1996)");
@@ -254,7 +252,7 @@ namespace MyMameHelper.SQLite
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [Constructeur], [Year]) VALUES ('Naomi 2'   , 'Naomi-2', {ct.ID}, 2000)");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [Constructeur], [Year]) VALUES ('AtomisWave'    ,  {ct.ID}, 2003)");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [Constructeur], [Year]) VALUES ('System SP'     ,  {ct.ID}, 2005)");
-
+           */
             // 
 
 
@@ -265,6 +263,8 @@ namespace MyMameHelper.SQLite
 
         static internal T Query_One<T>(Func<Dictionary<string, object>, T> method, string reqSql)
         {
+            throw new NotImplementedException("A voir à quoi ça servait");
+            /*
             try
             {
                 SQLiteCommand command = new SQLiteCommand(reqSql, _MaConn);
@@ -286,7 +286,7 @@ namespace MyMameHelper.SQLite
             catch (SQLiteException exc)
             {
                 Debug.WriteLine($"Erreur SQliteDb CreateTable: {reqSql} \n {exc.Message} \n");
-            }
+            }*/
             return default(T);
         }
 
@@ -295,7 +295,7 @@ namespace MyMameHelper.SQLite
 
 
 
-
+        /*
         static internal short RequeteNonQuery(string reqSql)
         {
 
@@ -303,7 +303,7 @@ namespace MyMameHelper.SQLite
             creatTables.ExecuteNonQuery();
             return 0;
 
-        }
+        }*/
 
 
     }

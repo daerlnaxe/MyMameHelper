@@ -208,6 +208,11 @@ namespace MyMameHelper.SQLite
 
         #region insertion de collection
 
+        /// <summary>
+        /// Insère une collection de jeux
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Games"></param>
         public void Insert_CollecInGames<T>(IList<T> Games) where T : iCT_Games
         {
             uint max = 100;
@@ -264,6 +269,12 @@ namespace MyMameHelper.SQLite
         }
 
 
+        /// <summary>
+        /// Insère une collection de constructeurs
+        /// </summary>
+        /// <param name="constructors"></param>
+        /// <param name="ignore"></param>
+        /// <param name="preservePK"></param>
         public void Insert_Constructors(IList<CT_Constructor> constructors, bool ignore, bool preservePK)
         {
             uint max = 10;
@@ -329,6 +340,84 @@ namespace MyMameHelper.SQLite
 
                 ExecNQ(sqlCmd);
                 UpdateProgress?.Invoke(this, i * 100 / constructors.Count);
+                Debug.WriteLine($"{i} - {sw.ElapsedMilliseconds}");
+            }
+            Debug.WriteLine($"{sw.ElapsedMilliseconds}");
+
+
+        }
+
+
+        /// <summary>
+        /// Insère une collection de genres
+        /// </summary>
+        /// <param name="genres"></param>
+        /// <param name="ignore"></param>
+        /// <param name="preservePK"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        internal void Insert_Genres(IList<CT_Genre> genres, bool ignore, bool preservePK)
+        {
+            uint max = 10;
+            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            // Add ignore if asked
+            string sqlIgnore = "";
+            if (ignore)
+                sqlIgnore = "OR IGNORE";
+
+            // Add Key if asked
+            if (preservePK)
+            {
+                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tGenre}] (" +
+                        "[ID], [Nom] " +
+                        ") VALUES ";
+            }
+            else
+            {
+                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tGenre}] (" +
+                        "[Nom] " +
+                        ") VALUES ";
+            }
+
+
+            for (int i = 0; i < genres.Count; i++)
+            {
+                CT_Genre dev = genres[i];
+                //  string vals = null;
+
+
+                for (int j = 0; j < max; j++)
+                {
+                    if (i == genres.Count)
+                        break;
+                    if (j != 0)
+                        sqlCmd.CommandText += ", (";
+
+                    // Si l'on préserve les PK
+                    if (preservePK)
+                        sqlCmd.CommandText += "@ID{j}, ";
+
+                    sqlCmd.CommandText += $"@Nom{j} ";
+                    sqlCmd.CommandText += $")";
+
+                    // Si l'on préserve les PK
+                    if (preservePK)
+                        sqlCmd.Parameters.Add($"@ID{j}", DbType.UInt64).Value = genres[i].ID;
+
+                    sqlCmd.Parameters.Add($"@Nom{j}", DbType.String).Value = genres[i].Nom;
+
+                    // a surveiller si bug
+                    if (j < max - 1)
+                        i++;
+                }
+
+                //Trace.WriteLine($"Requete: {sqlCmd.CommandText}");
+
+                ExecNQ(sqlCmd);
+                UpdateProgress?.Invoke(this, i * 100 / genres.Count);
                 Debug.WriteLine($"{i} - {sw.ElapsedMilliseconds}");
             }
             Debug.WriteLine($"{sw.ElapsedMilliseconds}");
