@@ -17,7 +17,7 @@ namespace MyMameHelper.Methods
     /// </summary>
     internal static class SaveInDB
     {
-        internal static bool Insert_Manus(List<CT_Constructeur> manufacturers)
+        internal static bool Insert_Manus(List<CT_MameManufacturer> manufacturers)
         {
             AsyncWindowProgress awP = new AsyncWindowProgress();
             awP.Arguments = new List<object>() { manufacturers };
@@ -27,7 +27,7 @@ namespace MyMameHelper.Methods
             awP.go += new AsyncWindowProgress.AsyncAction(Insert_AsyncManus);
             awP.ShowDialog();
 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 MainWindow.NumberOf_Dev = sqReq.Count(PProp.Default.T_MameManufacturers);
                 return true;
@@ -46,9 +46,9 @@ namespace MyMameHelper.Methods
         internal static void Insert_AsyncManus(AsyncWindowProgress windows)
         {
             // probleme problème
-            List<CT_Constructeur> Manufacturers = (List<CT_Constructeur>)windows.Arguments[0];
+            List<CT_MameManufacturer> Manufacturers = (List<CT_MameManufacturer>)windows.Arguments[0];
 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 sqReq.UpdateProgress += ((x, y) => windows.AsyncUpProgressPercent(y));
                 sqReq.Insert_Manus(Manufacturers, true);

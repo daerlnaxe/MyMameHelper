@@ -22,7 +22,7 @@ namespace MyMameHelper.ContTable
         uint? Game_Id { get; set; }
 
         //uint Manufacturer { get; set; }
-        CT_Constructeur Manufacturer { get; set; }
+        CT_MameManufacturer Manufacturer { get; set; }
 
 
         bool IsParent { get; set; }

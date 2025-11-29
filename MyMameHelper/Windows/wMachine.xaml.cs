@@ -22,7 +22,7 @@ namespace MyMameHelper.Windows
     /// </summary>
     public partial class wMachine : Window
     { 
-        public MyObservableCollection<CT_Constructeur> Constructeurs { get; set; }
+        public MyObservableCollection<CT_MameManufacturer> Constructeurs { get; set; }
 
         /*
                 public uint IdConstructeur { get; set; }

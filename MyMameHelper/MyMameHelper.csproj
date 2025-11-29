@@ -113,6 +113,7 @@
     <Compile Include="Commands\SearchCommand.cs" />
     <None Include="ContTable\CT_Developer.cs" />
     <Compile Include="ContTable\CT_Game_Mapped.cs" />
+    <Compile Include="ContTable\CT_Constructor.cs" />
     <Compile Include="ContTable\CT_Rom_Mapped.cs" />
     <Compile Include="ContTable\Map_RomGame.cs" />
     <Compile Include="ContTable\CT_Bios.cs" />
@@ -147,6 +148,9 @@
     <Compile Include="Pages\pBuildRoms.xaml.cs">
       <DependentUpon>pBuildRoms.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SQLite\SQLite_Create.cs" />
+    <Compile Include="SQLite\SQLite_Update.cs" />
+    <Compile Include="SQLite\SQLite__Common.cs" />
     <Compile Include="SQLite\SQL_Element.cs" />
     <Compile Include="Windows\AsyncLoading.xaml.cs">
       <DependentUpon>AsyncLoading.xaml</DependentUpon>
@@ -175,7 +179,7 @@
     <Compile Include="Methods\SaveDb.cs" />
     <Compile Include="ContTable\CT.cs" />
     <Compile Include="ContTable\CT_Base.cs" />
-    <Compile Include="ContTable\CT_Constructeur.cs" />
+    <Compile Include="ContTable\CT_MameManufacturer.cs" />
     <Compile Include="ContTable\Aff_Machine.cs" />
     <Compile Include="ContTable\CT_Gen.cs" />
     <Compile Include="ContTable\CT_Machine.cs" />
@@ -192,7 +196,7 @@
     <Compile Include="Pages\pUpdateGames.xaml.cs">
       <DependentUpon>pUpdateGames.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SQLite\SQLite_ReqDel.cs" />
+    <Compile Include="SQLite\SQLite_Delete.cs" />
     <Compile Include="Windows\AsyncWindowProgress.xaml.cs">
       <DependentUpon>AsyncWindowProgress.xaml</DependentUpon>
     </Compile>
@@ -221,7 +225,7 @@
     <Compile Include="SQLite\SQLiteNewDb.cs" />
     <Compile Include="SQLite\SQLite_Req.cs" />
     <Compile Include="SQLite\SQLite_ReqR.cs" />
-    <Compile Include="SQLite\SQLite_ReqWr.cs" />
+    <Compile Include="SQLite\SQLite_Insert.cs" />
     <Compile Include="SQLite\SqlOrder.cs" />
     <Compile Include="Windows\DataBaseTools.xaml.cs">
       <DependentUpon>DataBaseTools.xaml</DependentUpon>

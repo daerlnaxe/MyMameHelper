@@ -108,7 +108,7 @@ namespace MyMameHelper.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             // Récupération des machines
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 List<Aff_Machine> truite = sqReq.List_MachinesJoin();
                 _DicMachines = truite.ToDictionary(x => x.ID, x => x);
@@ -502,7 +502,7 @@ namespace MyMameHelper.Pages
           
 
             aLoad.AsyncMessage("Loading enhanced Roms...");
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 switch (typeRqst)
                 {

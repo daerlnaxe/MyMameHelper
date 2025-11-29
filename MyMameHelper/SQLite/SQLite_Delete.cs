@@ -12,8 +12,24 @@ using PProp = MyMameHelper.Properties.Settings;
 
 namespace MyMameHelper.SQLite
 {
-    public sealed partial class SQLite_Op
+    public sealed partial class SQLite_OP
     {
+
+        #region UNIQUE
+        internal bool Flush_TempRoms()
+        {
+            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+            sqlCmd.CommandText = $"DELETE FROM [{PProp.Default.T_TempRoms}];";
+            sqlCmd.CommandText += $"UPDATE sqlite_sequence SET [seq]=@seq WHERE [name]=@name;";
+
+            sqlCmd.Parameters.AddWithValue("@seq", 0);
+            sqlCmd.Parameters.AddWithValue("@name", PProp.Default.T_TempRoms);
+
+            return ExecNQ(sqlCmd);
+
+        }
+        #endregion
+
 
         public void Delete_Game(SqlCond[] conditions)
         {
@@ -48,9 +64,9 @@ namespace MyMameHelper.SQLite
 
         }
 
-        public void Delete_Companie(SqlCond[] conditions)
+        public void Delete_Constructor(SqlCond[] conditions)
         {
-            string sql = $"DELETE FROM {PProp.Default.T_Constructors}";
+            string sql = $"DELETE FROM {tConstructor}";
             SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
 
             Condition_TreatMt(command, conditions);
@@ -59,9 +75,9 @@ namespace MyMameHelper.SQLite
 
         }
 
-        public void Delete_Constructor(SqlCond[] conditions)
+        public void Delete_MameManufacturer(SqlCond[] conditions)
         {
-            string sql = $"DELETE FROM {PProp.Default.T_MameManufacturers}";
+            string sql = $"DELETE FROM {tMameManufacturer}";
             SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
 
             Condition_TreatMt(command, conditions);
@@ -112,5 +128,15 @@ namespace MyMameHelper.SQLite
         }
 
 
+        /// <summary>
+        /// Drop de la table machine
+        /// </summary>
+        public void Drop_TMachine()
+        {
+            string sql = $"DROP DATABASE {PProp.Default.T_Machines}";
+            SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
+                        
+            ExecNQ(command);
+        }
     }
 }

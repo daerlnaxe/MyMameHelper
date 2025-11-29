@@ -20,26 +20,20 @@ namespace MyMameHelper.SQLite
     /// <summary>
     /// ??, ouvrir une connexion
     /// </summary>
-    public sealed partial class SQLite_Op
+    public sealed partial class SQLite_OP
     {
         #region commun
 
 
-        string tRom = PProp.Default.T_Roms;
-        string tGenre = PProp.Default.T_Genres;
-        string tMachine = PProp.Default.T_Machines;
-        string tGame = PProp.Default.T_Games;
-        string tManufacturer = PProp.Default.T_MameManufacturers;
-        string tConstructor = PProp.Default.T_Constructors;
         #endregion
 
         #region 1 Element
-        public CT_Constructeur Get_Companie(SqlCond[] conds)
+        public CT_MameManufacturer Get_Companie(SqlCond[] conds)
         {
             Obj_Select objCompanie = new Obj_Select(table: PProp.Default.T_Constructors, all: true);
             objCompanie.AddConds(conds);
 
-            return Get_OneResult<CT_Constructeur>(CT_Constructeur.Result2Class, objCompanie);
+            return Get_OneResult<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, objCompanie);
         }
 
         private T Get_OneResult<T>(Func<Dictionary<string, object>, T> method, Obj_Select objSelect)
@@ -70,15 +64,15 @@ namespace MyMameHelper.SQLite
 
 
         #region ObservableCollection
-        public ObservableCollection<CT_Constructeur> GetById_CollecConstructeurs(int id, string order = "Nom")
+        public ObservableCollection<CT_MameManufacturer> GetById_CollecConstructeurs(int id, string order = "Nom")
         {
-            ObservableCollection<CT_Constructeur> collec = new ObservableCollection<CT_Constructeur>();
+            ObservableCollection<CT_MameManufacturer> collec = new ObservableCollection<CT_MameManufacturer>();
 
             Obj_Select objSelect = new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true);
             objSelect.Conditions = new SqlCond[] { new SqlCond { Colonne = "ID", Operateur = eWhere.Equal, Valeur = id.ToString() } };
             objSelect.Orders = new SqlOrder[] { new SqlOrder("Nom") };
 
-            return new ObservableCollection<CT_Constructeur>(GetCollectionOf<CT_Constructeur>(CT_Constructeur.Result2Class, objSelect));
+            return new ObservableCollection<CT_MameManufacturer>(GetCollectionOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, objSelect));
         }
 
 
@@ -1057,7 +1051,7 @@ namespace MyMameHelper.SQLite
         internal Dictionary<string, object[]> Get_RRGroupedSFile()
         {
             SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
-            sqlCommand.CommandText = $"SELECT Source_File, IsDevice, count(*) FROM {PProp.Default.T_TempRoms} GROUP BY Source_File;";
+            sqlCommand.CommandText = $"SELECT Source_File, IsDevice, count(*) FROM {PProp.Default.T_TempRoms} GROUP BY Source_File ORDER BY Source_File ASC; ";
 
             Trace.WriteLine($"Requete SQL: {sqlCommand.CommandText}");
 
@@ -1093,9 +1087,9 @@ namespace MyMameHelper.SQLite
             //string constructeurs = PProp.Default.T_Constructeurs;
 
             Dictionary<string, short> dicCol;
-            string sql = $"SELECT [{tRom}].*, [{tManufacturer}].Nom AS Aff_Manufacturer " +
+            string sql = $"SELECT [{tRom}].*, [{tMameManufacturer}].Nom AS Aff_Manufacturer " +
                             $"FROM [{tRom}] " +
-                            $"LEFT JOIN [{tManufacturer}] ON Manufacturer = [{tManufacturer}].ID " +
+                            $"LEFT JOIN [{tMameManufacturer}] ON [{tRom}].Manufacturer_Id = [{tMameManufacturer}].ID " +
 
                            "";
 
@@ -1356,9 +1350,9 @@ namespace MyMameHelper.SQLite
 
             Dictionary<string, short> dicCol;
             //string sql = $"SELECT [{tRoms}]*, [{tMachine}].Nom AS Aff_Machine, [{tGenre}].Nom AS Aff_Genre " +
-            string sql = $"SELECT [{tRom}].*,[{tGame}].Game_Name,  [{tManufacturer}].Nom AS Aff_Machine" +
+            string sql = $"SELECT [{tRom}].*,[{tGame}].Game_Name,  [{tMameManufacturer}].Nom AS Aff_Machine" +
                             $" FROM [{tRom}]" +
-                            $" LEFT JOIN [{tManufacturer}] ON [{tRom}].Manufacturer = [{tManufacturer}].ID" +
+                            $" LEFT JOIN [{tMameManufacturer}] ON [{tRom}].Manufacturer = [{tMameManufacturer}].ID" +
                             $" LEFT  JOIN [{tGame}] ON [{tGame}].ID = [{tRom}].Game_Id";
             /*$"LEFT JOIN [{tMachine}] ON Machine = [{tMachine}].ID " +
             $"LEFT JOIN [{tGenre}] ON Genre = [{tGenre}].ID " +*/
@@ -1418,6 +1412,8 @@ namespace MyMameHelper.SQLite
 
             return lGames;
         }
+
+
 
         /* collection
         /// <summary>

@@ -20,31 +20,109 @@ using PProp = MyMameHelper.Properties.Settings;
 
 namespace MyMameHelper.SQLite
 {
-    public sealed partial class SQLite_Op
+
+
+    public sealed partial class SQLite_OP
     {
 
+        #region générique
+        /// <summary>
+        /// Ajoute une donnée générique à la base (basé sur un couple classique donnée valeur)
+        /// </summary>
+        /// <param name="cGen"></param>
+        /// <param name="table"></param>
+        /// <returns>ID de l'insertion</returns>
+        public int Insert_Gen(CT_Gen cGen, string table, string colonne)
+        {
+            Debug.WriteLine($"Insertion de la donnée Générique: {cGen.Valeur}");
+
+            string sql = $"INSERT INTO [{table}] ([{colonne}]) VALUES (@Valeur)";
+
+            SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
+
+            sqlCmd.Parameters.Add("@Valeur", DbType.String).Value = cGen.Valeur;
+
+            ExecNQ(sqlCmd);
+
+            sqlCmd.CommandText = "SELECT last_insert_rowid()";
+
+            var id = sqlCmd.ExecuteScalar();
+            return Convert.ToInt32(id);
+        }
+
+
+        /// <summary>
+        /// Insert générique
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="colonne"></param>
+        /// <param name="value"></param>
+        public void Insert_Gen(string table, Dictionary<string, string> colVals)
+        {
+
+            //Debug.WriteLine($"Insertion de: {value} dans la colonne {colonne} de {table}");
+            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+
+            string colonnes = "";
+            string values = "";
+
+            foreach (KeyValuePair<string, string> kvp in colVals)
+            {
+                colonnes += kvp.Key;
+                values += $"@{kvp.Key}";
+
+                sqlCmd.Parameters.AddWithValue($"@{kvp.Key}", kvp.Value);
+
+                if (kvp.Key == colVals.Keys.Last())
+                {
+                    break;
+                }
+                colonnes += ", ";
+                values += ", ";
+            }
+
+            string sql = $"INSERT INTO [{table}] ([{colonnes}])VALUES({values})";
+            sqlCmd.CommandText = sql;
+
+            //sqlCmd.Parameters.AddWithValue("@value", value);
+
+            ExecNQ(sqlCmd);
+
+        }
+
+        #endregion
+
+
         #region insertion unique
-        public bool Insert_Companie(CT_Constructeur ctC)
+
+        /// <summary>
+        /// Constructeur
+        /// </summary>
+        /// <param name="ctC"></param>
+        /// <returns></returns>
+        public bool Insert_Constructor(CT_MameManufacturer ctC)
         {
             Debug.WriteLine($"Insertion de la companie: {ctC.Nom}");
 
-            string sql = $"INSERT INTO [{PProp.Default.T_Constructors}] ([Nom]) VALUES (@Nom)";
+            string sql = $"INSERT INTO [{tConstructor}] ([Nom]) VALUES (@Nom)";
             SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
             sqlCmd.Parameters.Add("@Nom", DbType.String).Value = ctC.Nom;
 
             return ExecNQ(sqlCmd);
         }
 
+
         /// <summary>
-        /// Ajoute un constructeur à la base
-        /// </summary>
-        /// <param name="compagnie"></param>
-        public bool Insert_Constructeur(CT_Constructeur ctC)
+        /// Ajoute un MameManufacturer à la base
+        /// </summary>        
+        public bool Insert_MameManufacturer(CT_MameManufacturer ctC)
         {
             Debug.WriteLine($"Insertion du constructeur: {ctC.Nom}");
 
-            string sql = $"INSERT INTO [{PProp.Default.T_MameManufacturers}] ([Nom]) VALUES (@Nom)";
+            string sql = $"INSERT INTO [{tMameManufacturer}] ([Nom]) VALUES (@Nom)";
             SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
+
             sqlCmd.Parameters.Add("@Nom", DbType.String).Value = ctC.Nom;
 
             return ExecNQ(sqlCmd);
@@ -65,7 +143,10 @@ namespace MyMameHelper.SQLite
 
         }*/
 
-
+        /// <summary>
+        /// Insertion d'un genre
+        /// </summary>
+        /// <param name="cT_Genre"></param>
         internal void Insert_Genre(CT_Genre cT_Genre)
         {
             Debug.WriteLine($"Insertion du genre: {cT_Genre.Nom}");
@@ -77,6 +158,11 @@ namespace MyMameHelper.SQLite
             ExecNQ(sqlCmd);
         }
 
+
+        /// <summary>
+        /// Insère une machine dans la BDD
+        /// </summary>
+        /// <param name="ctM"></param>
         public void Insert_Machine(CT_Machine ctM)
         {
             Debug.WriteLine($"Insertion de la machine: {ctM.Nom}");
@@ -95,6 +181,7 @@ namespace MyMameHelper.SQLite
             ExecNQ(sqlCmd);
         }
 
+
         /// <summary>
         /// 13/11/2025
         /// </summary>
@@ -110,7 +197,7 @@ namespace MyMameHelper.SQLite
 
             SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
             sqlCmd.Parameters.Add("@Nom", DbType.String).Value = ctG.Game_Name;
-            
+
 
             ExecNQ(sqlCmd);
         }
@@ -131,7 +218,7 @@ namespace MyMameHelper.SQLite
             {
                 T game = Games[i];
 
-                sqlCmd.CommandText = $"Insert INTO [{PProp.Default.T_Games}] " +
+                sqlCmd.CommandText = $"Insert INTO [{tGame}] " +
                                         $"([Game_Name], [Description], [Unwanted], [Machine_Id], [Genre_Id], [IsMahjong], [IsQuizz], [Rate]) " + // J'ai levé Roms, ça n'en fait plus partie
                                         $"VALUES ";
 
@@ -173,6 +260,79 @@ namespace MyMameHelper.SQLite
                 ExecNQ(sqlCmd);
                 UpdateProgress?.Invoke(this, i * 100 / Games.Count);
             }
+
+        }
+
+
+        public void Insert_Constructors(IList<CT_Constructor> constructors, bool ignore, bool preservePK)
+        {
+            uint max = 10;
+            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            // Add ignore if asked
+            string sqlIgnore = "";
+            if (ignore)
+                sqlIgnore = "OR IGNORE";
+
+            // Add Key if asked
+            if (preservePK)
+            {
+                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tConstructor}] (" +
+                        "[ID], [Nom] " +
+                        ") VALUES ";
+            }
+            else
+            {
+                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tConstructor}] (" +
+                        "[Nom] " +
+                        ") VALUES ";
+            }
+
+
+
+
+            for (int i = 0; i < constructors.Count; i++)
+            {
+                CT_Constructor dev = constructors[i];
+                //  string vals = null;
+
+
+                for (int j = 0; j < max; j++)
+                {
+                    if (i == constructors.Count)
+                        break;
+                    if (j != 0)
+                        sqlCmd.CommandText += ", (";
+
+                    // Si l'on préserve les PK
+                    if (preservePK)
+                        sqlCmd.CommandText += "@ID{j}, ";
+
+                    sqlCmd.CommandText += $"@Nom{j} ";
+                    sqlCmd.CommandText += $")";
+
+                    // Si l'on préserve les PK
+                    if (preservePK)
+                        sqlCmd.Parameters.Add($"@ID{j}", DbType.UInt64).Value = constructors[i].ID;
+
+                    sqlCmd.Parameters.Add($"@Nom{j}", DbType.String).Value = constructors[i].Nom;
+
+                    // a surveiller si bug
+                    if (j < max - 1)
+                        i++;
+                }
+
+                //Trace.WriteLine($"Requete: {sqlCmd.CommandText}");
+
+                ExecNQ(sqlCmd);
+                UpdateProgress?.Invoke(this, i * 100 / constructors.Count);
+                Debug.WriteLine($"{i} - {sw.ElapsedMilliseconds}");
+            }
+            Debug.WriteLine($"{sw.ElapsedMilliseconds}");
+
 
         }
 
@@ -228,16 +388,12 @@ namespace MyMameHelper.SQLite
             sqlCmd.Parameters.Add("@Game_Name", DbType.String).Value = game.Game_Name;*/
 
 
-        //    
-
-        /*
-        }
-        */
+        /* Developers
         /// <summary>
-        /// Insère une collection de devs
+        /// Insère une collection de Developers
         /// </summary>
         /// <param name="developers"></param>
-        public void Insert_Devs(ObservableCollection<CT_Constructeur> developers, bool ignore)
+        public void Insert_MameManufacturers(IList<CT_Developer> developers, bool ignore)
         {
             uint max = 50;
             Debug.WriteLine($"Insertion de la collection de developpeurs");
@@ -253,7 +409,7 @@ namespace MyMameHelper.SQLite
 
             for (int i = 0; i < developers.Count; i++)
             {
-                CT_Constructeur dev = developers[i];
+                CT_MameManufacturer dev = developers[i];
                 //  string vals = null;
 
 
@@ -292,13 +448,14 @@ namespace MyMameHelper.SQLite
 
 
         }
+  */
 
 
         /// <summary>
         /// Insère une collection de manufacturers
         /// </summary>
         /// <param name=""></param>
-        public void Insert_Manus(IList<CT_Constructeur> manufacturers, bool ignore)
+        public void Insert_Manus(IList<CT_MameManufacturer> manufacturers, bool ignore)
         {
             uint max = 50;
             Debug.WriteLine($"Insertion de la collection de manufactureurs");
@@ -313,13 +470,15 @@ namespace MyMameHelper.SQLite
                 sqlIgnore = "OR IGNORE";
 
 
+            sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tMameManufacturer}] (" +
+                          "[Nom] " +
+                          ") VALUES ";
+
             for (int i = 0; i < manufacturers.Count; i++)
             {
-                CT_Constructeur dev = manufacturers[i];
+                CT_MameManufacturer dev = manufacturers[i];
                 //  string vals = null;
-                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tManufacturer}] (" +
-                                        "[Nom] " +
-                                        ") VALUES ";
+
 
                 for (int j = 0; j < max; j++)
                 {
@@ -360,7 +519,7 @@ namespace MyMameHelper.SQLite
             uint max = 50;
             Debug.WriteLine($"Insertion de la collection de roms brutes");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-            
+
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -369,7 +528,7 @@ namespace MyMameHelper.SQLite
             {
                 RawMameRom rom = Roms[i];
                 //  string vals = null;
-                sqlCmd.CommandText = $"Insert INTO [{PProp.Default.T_TempRoms}] (" +
+                sqlCmd.CommandText = $"Insert INTO [{tTempRom}] (" +
                                         "[Name], " +
                                         "[Source_File], " +
                                         "[Rom_Of], " +
@@ -435,14 +594,14 @@ namespace MyMameHelper.SQLite
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="Roms"></param>
-        public void Insert_Roms<T>(List<T> Roms, bool ignore ) where T : iCT_Rom
+        public void Insert_Roms<T>(IList<T> Roms, bool ignore) where T : iCT_Rom
         {
             ushort max = 50;
 
             Debug.WriteLine($"Insertion de la collection de roms brutes");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
-            string strIgnore="";
+            string strIgnore = "";
             if (ignore)
                 strIgnore = "OR IGNORE";
 
@@ -450,7 +609,7 @@ namespace MyMameHelper.SQLite
             {
                 T rom = Roms[i];
                 //  string vals = null;
-                sqlCmd.CommandText = $"Insert {strIgnore} INTO [{PProp.Default.T_Roms}] (" +
+                sqlCmd.CommandText = $"Insert {strIgnore} INTO [{tRom}] (" +
                                         "[Archive_Name], " +
                                         "[Description], " +
                                         "[Game_Id]," +
@@ -489,7 +648,7 @@ namespace MyMameHelper.SQLite
                     // Game
                     sqlCmd.Parameters.Add($"@Game_Id{j}", DbType.UInt32).Value = Roms[i].Game_Id;
 
-                    sqlCmd.Parameters.Add($"@Year{j}", DbType.String).Value = Roms[i].Year;                    
+                    sqlCmd.Parameters.Add($"@Year{j}", DbType.String).Value = Roms[i].Year;
                     sqlCmd.Parameters.Add($"@Unwanted{j}", DbType.Boolean).Value = Roms[i].Unwanted;
                     //sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.String).Value = Roms[i].Manufacturer;
                     sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.UInt32).Value = Roms[i].Manufacturer.ID;
@@ -515,7 +674,7 @@ namespace MyMameHelper.SQLite
         /// 
         /// </summary>
         /// <param name="biosCollec"></param>
-        internal void Insert_BiosInTemp(MyObservableCollection<CT_Bios> biosCollec)
+        internal void Insert_BiosInTemp(IList<CT_Bios> biosCollec)
         {
             uint max = 50;
             Debug.WriteLine($"Insertion de la collection de Bios");
@@ -525,268 +684,6 @@ namespace MyMameHelper.SQLite
 
 
 
-        #region Update
-        
-        /// <summary>
-        /// Update sans limitation selon des conditions
-        /// </summary>
-        internal void Update_MassiveRoms(IList<SQL_Element> sqlElems,SqlCond[] conditions)
-        {
-            string sql = $"UPDATE [{tRom}] SET";
-
-            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-
-            foreach (var elem in sqlElems)
-            {
-                sql += $" [{elem.column}]=@{elem.column},";
-                
-                Type t = elem.type;
-                
-
-                if (t == typeof(string))
-                    sqlCmd.Parameters.Add($"@{elem.column}", DbType.String).Value = elem.value;
-                else if (t==typeof(uint))
-                    sqlCmd.Parameters.Add($"@{elem.column}", DbType.UInt16).Value = elem.value;
-            }
-
-            sql = sql.Substring(0, sql.Length -1 );
-
- 
-            sqlCmd.CommandText = sql;
-
-            Condition_TreatMt(sqlCmd, conditions);
-
-            ExecNQ(sqlCmd);
-        }
-        
-        
-        /// <summary>
-        /// Update par l'ID
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="Games"></param>
-        public void Update_Games<T>(IList<T> Games) where T : iCT_Games
-        {
-            Debug.WriteLine($"Update de la collection");
-            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-
-
-
-            for (int i = 0; i < Games.Count; i++)
-            {
-                T game = Games[i];
-                //  string vals = null;
-
-                sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Games}]" +
-                                        $" SET" +
-                                        $" [Game_Name]=@Game_Name" +
-                                        $" ,[Description]=@Description" +
-                                        $" ,[Machine_Id]=@Machine_Id" +
-                                        $" ,[Genre_Id]=@Genre_Id" +
-                                        $" ,[Rate]=@Rate" +
-                                        $" ,[Unwanted]=@Unwanted" +
-                                        $" ,[IsMahjong]=@IsMahjong" +
-                                        $" ,[IsQuizz]=@IsQuizz" +
-                                        $" ,[Developer_Id]=@Developer_Id" +
-                                        $" WHERE ID=@ID";
-
-                sqlCmd.Parameters.Add($"@Game_Name", DbType.String).Value = Games[i].Game_Name;
-                sqlCmd.Parameters.Add($"@Description", DbType.String).Value = Games[i].Description;
-                sqlCmd.Parameters.Add($"@Machine_Id", DbType.UInt32).Value = Games[i].Machine_Id;
-                sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = Games[i].Unwanted;
-                sqlCmd.Parameters.Add($"@Genre_Id", DbType.UInt32).Value = Games[i].Genre_Id;
-                sqlCmd.Parameters.Add($"@Rate", DbType.UInt32).Value = Games[i].Rate;
-                sqlCmd.Parameters.Add($"@IsMahjong", DbType.Boolean).Value = Games[i].IsMahjong;
-                sqlCmd.Parameters.Add($"@IsQuizz", DbType.Boolean).Value = Games[i].IsQuizz;
-                //sqlCmd.Parameters.Add($"@Developer_Id", DbType.UInt32).Value = Games[i].Developer_Id; Levé pour le moment
-
-                // condition
-                sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = Games[i].ID;
-
-                Debug.WriteLine($"Update_Games: {sqlCmd.CommandText}");
-
-                ExecNQ(sqlCmd);
-                UpdateProgress?.Invoke(this, i * 100 / Games.Count);
-
-
-               
-            }
-            
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="gameCont"></param>
-        internal void Update_Game(CT_Game gameCont)
-        {
-            Debug.WriteLine($"Update de la collection");
-            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-
-            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Games}]" +
-                                    $"SET " +
-                                    $"[Game_Name]=@Game_Name, " +
-                                    $"[Description]=@Description, " +
-                                    $"[Machine_Id]=@Machine, " +
-                                    $"[Genre_Id]=@Genre, " +
-                                    $"[Rate]=@Rate, " +
-                                    $"[Unwanted]=@Unwanted, " +
-                                    $"[IsMahjong]=@IsMahjong, " +
-                                    $"[IsQuizz]=@IsQuizz " +
-                                    $"[Developer_Id]=@Developer " +
-                                    $"WHERE ID=@ID";
-
-            sqlCmd.Parameters.Add($"@Game_Name", DbType.String).Value = gameCont.Game_Name;
-            sqlCmd.Parameters.Add($"@Description", DbType.String).Value = gameCont.Description;
-            sqlCmd.Parameters.Add($"@Machine_Id", DbType.UInt32).Value = gameCont.Machine_Id;
-            sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = gameCont.Unwanted;
-            sqlCmd.Parameters.Add($"@Genre_Id", DbType.UInt32).Value = gameCont.Genre_Id;
-            sqlCmd.Parameters.Add($"@Rate", DbType.UInt32).Value = gameCont.Rate;
-            sqlCmd.Parameters.Add($"@IsMahjong", DbType.Boolean).Value = gameCont.IsMahjong;
-            sqlCmd.Parameters.Add($"@IsQuizz", DbType.Boolean).Value = gameCont.IsQuizz;
-            //sqlCmd.Parameters.Add($"@Developer_Id", DbType.UInt32).Value = gameCont.Developer_Id; Levé pour le moment
-
-            // condition
-            sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = gameCont.ID;
-
-            ExecNQ(sqlCmd);
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks> clone et isparent ont été levés</remarks>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="Roms"></param>
-        public void Update_Roms<T>(IList<T> Roms) where T : iCT_Rom
-        {
-            Debug.WriteLine($"Update de la collection");
-            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-
-            for (int i = 0; i < Roms.Count; i++)
-            {
-                T rom = Roms[i];
-                //  string vals = null;
-
-                sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Roms}]" +
-                                        $"SET " +
-                                        $"[Archive_Name]=@Archive_Name, " +
-                                        $"[Description]=@Description, " +
-                                        $"[Game_Id]=@Game_Id, "+
-                                        $"[Year]=@Year, " +
-                                        $"[Manufacturer]=@Manufacturer, " +
-                                        $"[Unwanted]=@Unwanted " +
-                                        //
-                                        $"WHERE ID=@ID";
-
-                sqlCmd.Parameters.Add($"@Archive_Name", DbType.String).Value = rom.Archive_Name;
-                sqlCmd.Parameters.Add($"@Description", DbType.String).Value = rom.Description;
-                if (rom.Game_Id != null)
-                {
-                    sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt32).Value = rom.Game_Id;
-                }
-                else
-                {
-                    sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt16).Value = null;
-                }
-                    sqlCmd.Parameters.Add($"@Year", DbType.String).Value = rom.Year;
-                sqlCmd.Parameters.Add($"@Manufacturer", DbType.UInt32).Value = rom.Manufacturer;
-                sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = rom.Unwanted;
-
-                // condition
-                sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = rom.ID;
-
-                ExecNQ(sqlCmd);
-                UpdateProgress?.Invoke(this, i * 100 / Roms.Count);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctComp"></param>
-        internal void Update_Company(CT_Constructeur ctComp)
-        {
-            Debug.WriteLine($"Update de {ctComp.Nom}");
-            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-
-            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Constructors}] SET [Nom]=@Nom WHERE ID=@ID";
-
-            sqlCmd.Parameters.Add($"@Nom", DbType.String).Value = ctComp.Nom;
-
-            // condition
-            sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = ctComp.ID;
-
-            ExecNQ(sqlCmd);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctConst"></param>
-        internal void Update_Constructeur(CT_Constructeur ctConst)
-        {
-            Debug.WriteLine($"Update de {ctConst.Nom}");
-            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-
-            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_MameManufacturers}] SET [Nom]=@Nom WHERE ID=@ID";
-
-            sqlCmd.Parameters.Add($"@Nom", DbType.String).Value = ctConst.Nom;
-
-            // condition
-            sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = ctConst.ID;
-
-            ExecNQ(sqlCmd);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctGenre"></param>
-        internal void Update_Genre(CT_Genre ctGenre)
-        {
-            Debug.WriteLine($"Update de {ctGenre.Nom}");
-            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-
-            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Genres}] SET [Nom]=@Nom WHERE ID=@ID";
-
-            sqlCmd.Parameters.Add($"@Nom", DbType.String).Value = ctGenre.Nom;
-
-            // condition
-            sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = ctGenre.ID;
-
-            ExecNQ(sqlCmd);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Machine"></param>
-        public void Update_Machine(CT_Machine Machine)
-        {
-            Debug.WriteLine($"Update de {Machine.Nom}");
-            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-
-            sqlCmd.CommandText = $"UPDATE [{PProp.Default.T_Machines}] " +
-                                    "SET [Nom]=@Nom, " +
-                                    "[Constructeur]=@Constructeur, " +
-                                    "[Year]=@Year, " +
-                                    "[AllowCPath]=@AllowCPath " +
-                                    //
-                                    "WHERE ID=@ID";
-
-            sqlCmd.Parameters.Add($"@Nom", DbType.String).Value = Machine.Nom;
-            sqlCmd.Parameters.Add($"@Constructeur", DbType.String).Value = Machine.IDConstructeur;
-            sqlCmd.Parameters.Add($"@Year", DbType.UInt32).Value = Machine.Year;
-            sqlCmd.Parameters.Add($"@AllowCPath", DbType.Boolean).Value = Machine.AllowCPath;
-
-            // condition
-            sqlCmd.Parameters.Add($"@ID", DbType.UInt32).Value = Machine.ID;
-
-            ExecNQ(sqlCmd);
-        }
-        #endregion
 
 
         /*
@@ -932,90 +829,11 @@ namespace MyMameHelper.SQLite
     }*/
 
 
-        #region générique
-
-        /// <summary>
-        /// Ajoute une donnée générique à la base (basé sur un couple classique donnée valeur)
-        /// </summary>
-        /// <param name="cGen"></param>
-        /// <param name="table"></param>
-        /// <returns>ID de l'insertion</returns>
-        public int Insert_Gen(CT_Gen cGen, string table, string colonne)
-        {
-            Debug.WriteLine($"Insertion de la donnée Générique: {cGen.Valeur}");
-
-            string sql = $"INSERT INTO [{table}] ([{colonne}]) VALUES (@Valeur)";
-
-            SQLiteCommand sqlCmd = new SQLiteCommand(sql, SQLiteConn);
-
-            sqlCmd.Parameters.Add("@Valeur", DbType.String).Value = cGen.Valeur;
-
-            ExecNQ(sqlCmd);
-
-            sqlCmd.CommandText = "SELECT last_insert_rowid()";
-
-            var id = sqlCmd.ExecuteScalar();
-            return Convert.ToInt32(id);
-        }
-
-
-        /// <summary>
-        /// Insert générique
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="colonne"></param>
-        /// <param name="value"></param>
-        public void Insert_Gen(string table, Dictionary<string, string> colVals)
-        {
-
-            //Debug.WriteLine($"Insertion de: {value} dans la colonne {colonne} de {table}");
-            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-
-            string colonnes = "";
-            string values = "";
-
-            foreach (KeyValuePair<string, string> kvp in colVals)
-            {
-                colonnes += kvp.Key;
-                values += $"@{kvp.Key}";
-
-                sqlCmd.Parameters.AddWithValue($"@{kvp.Key}", kvp.Value);
-
-                if (kvp.Key == colVals.Keys.Last())
-                {
-                    break;
-                }
-                colonnes += ", ";
-                values += ", ";
-            }
-
-            string sql = $"INSERT INTO [{table}] ([{colonnes}])VALUES({values})";
-            sqlCmd.CommandText = sql;
-
-            //sqlCmd.Parameters.AddWithValue("@value", value);
-
-            ExecNQ(sqlCmd);
-
-        }
-
-        #endregion
 
 
 
-        #region UNIQUE
-        internal bool Flush_TempRoms()
-        {
-            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-            sqlCmd.CommandText = $"DELETE FROM [{PProp.Default.T_TempRoms}];";
-            sqlCmd.CommandText += $"UPDATE sqlite_sequence SET [seq]=@seq WHERE [name]=@name;";
 
-            sqlCmd.Parameters.AddWithValue("@seq", 0);
-            sqlCmd.Parameters.AddWithValue("@name", PProp.Default.T_TempRoms);
 
-            return ExecNQ(sqlCmd);
 
-        }
-        #endregion
     }
 }

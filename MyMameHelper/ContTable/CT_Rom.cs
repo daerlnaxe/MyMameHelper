@@ -58,8 +58,8 @@ namespace MyMameHelper.ContTable
         /// <remarks>
         /// Ajout le 09/11/2025 pour changement
         /// </remarks>
-        private CT_Constructeur _Manufacturer;
-        public CT_Constructeur Manufacturer
+        private CT_MameManufacturer _Manufacturer;
+        public CT_MameManufacturer Manufacturer
         {
             get => _Manufacturer;
             set

@@ -22,13 +22,13 @@ namespace MyMameHelper.Windows
     /// </summary>
     public partial class wLinkMachine : Window
     {
-        public MyObservableCollection<CT_Constructeur> Constructeurs { get; set; } = new MyObservableCollection<CT_Constructeur>();
+        public MyObservableCollection<CT_MameManufacturer> Constructeurs { get; set; } = new MyObservableCollection<CT_MameManufacturer>();
 
         public MyObservableCollection<CT_Machine> Machines { get; set; } = new MyObservableCollection<CT_Machine>();
 
 
         public CT_Machine Machine { get; set; } = new CT_Machine();
-        public CT_Constructeur Constructeur { get; set; } = new CT_Constructeur();
+        public CT_MameManufacturer Constructeur { get; set; } = new CT_MameManufacturer();
 
 
         public wLinkMachine()
@@ -36,9 +36,9 @@ namespace MyMameHelper.Windows
             InitializeComponent();
             DataContext = this;
 
-            using(SQLite_Op sqlReq = new SQLite_Op())
+            using(SQLite_OP sqlReq = new SQLite_OP())
             {
-                Constructeurs.ChangeContent = sqlReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(PProp.Default.T_MameManufacturers, all:true)); ;
+                Constructeurs.ChangeContent = sqlReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(PProp.Default.T_MameManufacturers, all:true)); ;
                 Machines.ChangeContent = sqlReq.GetListOf<CT_Machine>(CT_Machine.Result2Class, new Obj_Select(PProp.Default.T_Machines, all:true)); ;
 
             }

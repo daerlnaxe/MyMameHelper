@@ -243,7 +243,7 @@ namespace MyMameHelper.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 DbGames.ChangeContent = sqReq.QueryGame4Update(order: new SqlOrder("Game_Name"));
 
@@ -275,7 +275,7 @@ namespace MyMameHelper.Pages
             ComboBox cb = (ComboBox)sender;
             int idConstruct = Convert.ToInt32(cb.SelectedValue);
 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 var osel = new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" });
                 osel.AddConds(new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()));
@@ -391,7 +391,7 @@ namespace MyMameHelper.Pages
             UpdateDbGames<CT_Game_Mapped> sDb = new UpdateDbGames<CT_Game_Mapped>();
             sDb.Update_GamesTable(GamesToUpdate);
 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 DbGames.ChangeContent = sqReq.QueryGame4Update(order: new SqlOrder("Game_Name"));
             }

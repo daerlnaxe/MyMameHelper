@@ -27,7 +27,7 @@ namespace MyMameHelper.Pages
     public partial class pBuildManus : Page
     {
         public MyObservableCollection<RawMameRom> GameManufacturers { get; set; } = new MyObservableCollection<RawMameRom>();
-        public MyObservableCollection<CT_Constructeur> Manufacturers { get; set; } = new MyObservableCollection<CT_Constructeur>();
+        public MyObservableCollection<CT_MameManufacturer> Manufacturers { get; set; } = new MyObservableCollection<CT_MameManufacturer>();
 
 
 
@@ -42,13 +42,13 @@ namespace MyMameHelper.Pages
             if (MessageBox.Show("Begin Build Manufacturers processing ?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 List<RawMameRom> gDev = new List<RawMameRom>();
-                List<CT_Constructeur> companies;
+                List<CT_MameManufacturer> companies;
 
-                using (SQLite_Op sqReq = new SQLite_Op())
+                using (SQLite_OP sqReq = new SQLite_OP())
                 {
                     #region Collection of Devs
                     Obj_Select obsDev = new Obj_Select(PProp.Default.T_MameManufacturers, all: true);
-                    companies = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, obsDev);
+                    companies = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, obsDev);
                     #endregion
 
                     #region Collection of Temporary Roms
@@ -98,8 +98,8 @@ namespace MyMameHelper.Pages
             List<RawMameRom> selectedManus = dgManus.SelectedItems.Cast<RawMameRom>().ToList();
             foreach (RawMameRom rom in selectedManus)
             {
-                CT_Constructeur constructor = new CT_Constructeur(rom.Manufacturer);
-                Manufacturers.Add(constructor);
+                CT_MameManufacturer mameManufacturer = new CT_MameManufacturer(rom.Manufacturer);
+                Manufacturers.Add(mameManufacturer);
             }
 
             GameManufacturers.RemoveSilentRange(selectedManus);
@@ -114,11 +114,11 @@ namespace MyMameHelper.Pages
         }
         private void Ex_SR2L(object sender, ExecutedRoutedEventArgs e)
         {
-            List<CT_Constructeur> selectedDevs = dgDevs.SelectedItems.Cast<CT_Constructeur>().ToList();
-            foreach (CT_Constructeur constructor in selectedDevs)
+            List<CT_MameManufacturer> selectedDevs = dgDevs.SelectedItems.Cast<CT_MameManufacturer>().ToList();
+            foreach (CT_MameManufacturer mameManufacturer in selectedDevs)
             {
                 RawMameRom rom = new RawMameRom();
-                rom.Manufacturer = constructor.Nom;
+                rom.Manufacturer = mameManufacturer.Nom;
                 GameManufacturers.Add(rom);
             }
 
@@ -135,10 +135,10 @@ namespace MyMameHelper.Pages
         
         private void Ex_RR(object sender, ExecutedRoutedEventArgs e)
         {
-            foreach (CT_Constructeur constructor in Manufacturers)
+            foreach (CT_MameManufacturer mameManufacturer in Manufacturers)
             {
                 RawMameRom rom = new RawMameRom();
-                rom.Manufacturer = constructor.Nom;
+                rom.Manufacturer = mameManufacturer.Nom;
                 GameManufacturers.Add(rom);
             }
             Manufacturers.Clear();

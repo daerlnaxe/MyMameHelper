@@ -87,7 +87,7 @@ namespace MyMameHelper.Pages
                 progressW.Total = 100;
                 progressW.ShowDialog();
 
-                using (SQLite_Op sqReq = new SQLite_Op())
+                using (SQLite_OP sqReq = new SQLite_OP())
                 {
                     MainWindow.NumberOf_TempRoms = sqReq.Count(PProp.Default.T_TempRoms);
                 }
@@ -98,7 +98,7 @@ namespace MyMameHelper.Pages
         {
             object myArgument = e.Argument;
 
-            using (SQLite_Op sqReq = new SQLite_Op())
+            using (SQLite_OP sqReq = new SQLite_OP())
             {
                 sqReq.UpdateProgress += ((x, y) => sender.SetProgress(y));
                 // Insertion des rawroms

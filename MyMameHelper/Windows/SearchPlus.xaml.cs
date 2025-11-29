@@ -40,7 +40,7 @@ namespace MyMameHelper.Windows
 
         public string Archive_Param { get; set; }
         public string Game_Param { get; set; }
-        public MyObservableCollection<CT_Constructeur> Constructeurs { get; set; } = new MyObservableCollection<CT_Constructeur>();
+        public MyObservableCollection<CT_MameManufacturer> Constructeurs { get; set; } = new MyObservableCollection<CT_MameManufacturer>();
         public MyObservableCollection<CT_Machine> Machines { get; set; } = new MyObservableCollection<CT_Machine>();
 
 
@@ -53,7 +53,7 @@ namespace MyMameHelper.Windows
 
             using (SQLite_Op sqReq = new SQLite_Op())
             {
-                Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
+                Constructeurs.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
             }
         }
 

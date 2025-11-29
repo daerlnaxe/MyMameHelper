@@ -20,20 +20,16 @@ namespace MyMameHelper.SQLite
     /// </summary>
     class SQLiteNewDb
     {
-        static string tGames = Properties.Settings.Default.T_Games;
-        static string tBios = Properties.Settings.Default.T_Bios;
-        static string tMechanicals = Properties.Settings.Default.T_Mechanics;
-        static string tMameManufacturers = Properties.Settings.Default.T_MameManufacturers;
+
         //static string tDeveloppers = Properties.Settings.Default.T_Developers;
         static string tConstructors = Properties.Settings.Default.T_Constructors;
         static string tGenres = Properties.Settings.Default.T_Genres;
-        static string tMachines = Properties.Settings.Default.T_Machines;
         static string tRoms = Properties.Settings.Default.T_Roms;
-        static string tempRoms = Properties.Settings.Default.T_TempRoms;
-        static string tSQLInfos = Properties.Settings.Default.T_SQLInfo;
 
 
-        static SQLiteConnection _MaConn;
+
+        //static SQLiteConnection _MaConn;
+        static SQLite_OP _SQLite_Op = null;
 
         /// <summary>
         /// Création de la connexion
@@ -60,26 +56,30 @@ namespace MyMameHelper.SQLite
                 return;
             }
 
-            _MaConn = new SQLiteConnection($"Data Source={dbLink};Version=3");
+            /*_MaConn*/
+            //SQLiteConnection conn = new SQLiteConnection($"Data Source={dbLink};Version=3");
 
             string tMachines = Properties.Settings.Default.T_Machines;
 
+            
             try
             {
 
 
                 // Connexion
-                _MaConn.Open();
+                //_MaConn.Open();
+                _SQLite_Op = new SQLite_OP();
 
                 Create_Structure();
-                Alter_Structure();
+                //Alter_Structure();
                 Fill_Basics_Data();
                 MessageBox.Show("Database Created");
             }
             catch (Exception exc)
             {
                 Console.WriteLine(exc);
-                _MaConn.Close();
+                //_MaConn.Close();
+                _SQLite_Op.Dispose();
             }
 
         }
@@ -90,32 +90,39 @@ namespace MyMameHelper.SQLite
         /// </summary>
         private static void Create_Structure()
         {
-
-
             // Création du minimum
             // Table Games (Elle permet des options en plus, personnalisables, pour les roms. Elle est liée à roms, genres)
-            CreateTable($"CREATE Table [{tGames}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Game_Name] VARCHAR UNIQUE);");
+            _SQLite_Op.Create_TGame();
+
             // Bios
-            CreateTable($"CREATE Table [{tBios}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Bios_Name] VARCHAR UNIQUE);");
+            _SQLite_Op.Create_TBios();
+
             // Mechanicals
-            CreateTable($"CREATE Table [{tMechanicals}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Meca_Name] VARCHAR UNIQUE);");
+            _SQLite_Op.Create_TMechanical();
+
             // Constructeurs, va faire le lien 
-            CreateTable($"CREATE TABLE [{tMameManufacturers}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            _SQLite_Op.Create_TMameManufacturer();
+
             // Developers Désactivé pour le moment
             //CreateTable($"CREATE TABLE [{tDeveloppers}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+
             // Constructors
-            CreateTable($"CREATE TABLE [{tConstructors}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            _SQLite_Op.Create_TConstructor();
+
             // Genres (liée à Games)
-            CreateTable($"CREATE TABLE [{tGenres}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
-            // Machines
-            CreateTable($"CREATE TABLE [{tMachines}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
+            _SQLite_Op.Create_TGenre();
+
             // Roms (Contenu réel des roms, feedé par l'utilisateur)
-            CreateTable($"CREATE TABLE [{tRoms}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Archive_Name] VARCHAR UNIQUE);");
+            _SQLite_Op.Create_TRom();
+
             // Table temporaire, feedée depuis un xml de M.A.M.E
-            CreateTable($"CREATE TABLE [{tempRoms}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Name] VARCHAR UNIQUE);");
-            
+            _SQLite_Op.Create_TTempRom();
+
+            // Machine (lié aux roms)
+            _SQLite_Op.Create_TMachine();
+
             // Information pour SQLITE
-            CreateTable($"CREATE TABLE [{tSQLInfos}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Name] VARCHAR UNIQUE, [Valeur] VARCHAR);");
+            _SQLite_Op.Create_TSqlInfo();
 
             
         }
@@ -125,7 +132,7 @@ namespace MyMameHelper.SQLite
         /// </summary>
         /// <param name="fileName"></param>
         internal static void Update_Structure(string fileName)
-        {
+        {/*
             throw new NotImplementedException("A identifier");
 
             using (StreamReader stream = new StreamReader(fileName))
@@ -158,7 +165,7 @@ namespace MyMameHelper.SQLite
                 }
 
                 _MaConn.Close();
-            }
+            }*/
         }
 
 
@@ -167,67 +174,11 @@ namespace MyMameHelper.SQLite
         /// </summary>
         private static void Alter_Structure()
         {
-            // string tGames = Properties.Settings.Default.T_Games;
-            //string tBios = Properties.Settings.Default.T_Bios;
-            //string tMechanicals = Properties.Settings.Default.T_Mechanics;
-            //string tManufacturers = Properties.Settings.Default.T_Manufacturers;
-            //string tMachines = Properties.Settings.Default.T_Machines;
-            //string tRoms = Properties.Settings.Default.T_Roms;
-            //string tempRoms = Properties.Settings.Default.T_TempRoms;
-
-            AlterTable($"ALTER TABLE [{tGames}] ADD [Machine_Id] INTEGER");
-            AlterTable($"ALTER TABLE [{tGames}] ADD [Description] VARCHAR");
-            #region Ancien système, délégué à présent à la table Roms
-            //AlterTable($"ALTER TABLE [{tGames}] ADD [Roms] VARCHAR");
-            #endregion
-            AlterTable($"ALTER TABLE [{tGames}] ADD [Unwanted] BOOLEAN");
-            //AlterTable($"ALTER TABLE [{tGames}] ADD [Developer_Id] INTEGER"); Désactivé pour le moment
-            AlterTable($"ALTER TABLE [{tGames}] ADD [Rate] INTEGER");
-            AlterTable($"ALTER TABLE [{tGames}] ADD [Genre_Id] INTEGER");
-            AlterTable($"ALTER TABLE [{tGames}] ADD [IsMahJong] INTEGER");
-            AlterTable($"ALTER TABLE [{tGames}] ADD [IsQuizz] INTEGER");
-            AlterTable($"ALTER TABLE [{tGames}] ADD [IsPinball] INTEGER");
-            AlterTable($"ALTER TABLE [{tGames}] ADD [IsFruit] INTEGER");
-            // AlterTable($"ALTER TABLE [{tGames}] ADD [Description] VARCHAR");
-            //AlterTable($"ALTER TABLE [{tGames}] ADD [Year] VARCHAR");
-
             // bios
-            AlterTable($"ALTER TABLE [{tBios}] ADD [Description] INTEGER");
-
             // mecanics
-            AlterTable($"ALTER TABLE [{tMechanicals}] ADD [Description] INTEGER");
-
             // machines
-            AlterTable($"ALTER TABLE [{tMachines}] ADD [Revision] VARCHAR;");
-            AlterTable($"ALTER TABLE [{tMachines}] ADD [HardwareName] VARCHAR;"); // CPS1, CPS2....
-            AlterTable($"ALTER TABLE [{tMachines}] ADD [MameCode] VARCHAR;"); // Naomi, Sega16 ... dans sourcefile après /
-            AlterTable($"ALTER TABLE [{tMachines}] ADD [MainCPU] VARCHAR;"); // z80,...
-            AlterTable($"ALTER TABLE [{tMachines}] ADD [Constructeur_Id] INTEGER");
-            AlterTable($"ALTER TABLE [{tMachines}] ADD [Year] INTEGER;");
-            AlterTable($"ALTER TABLE [{tMachines}] ADD [AllowCPath] BOOLEAN;");
-
             // roms
-            AlterTable($"ALTER TABLE [{tRoms}] ADD [Description] VARCHAR;");
-            #region Nouveau système, c'est ici qu'on va lier à games
-            AlterTable($"ALTER TABLE [{tRoms}] ADD [Game_Id] INTEGER;");
-            #endregion
-            AlterTable($"ALTER TABLE [{tRoms}] ADD [Year] VARCHAR;");
-            AlterTable($"ALTER TABLE [{tRoms}] ADD [Manufacturer] INTEGER;");
-            AlterTable($"ALTER TABLE [{tRoms}] ADD [Unwanted] BOOLEAN;");
-            AlterTable($"ALTER TABLE [{tRoms}] ADD [IsParent] BOOLEAN;");
-            AlterTable($"ALTER TABLE [{tRoms}] ADD [Clone_Of] INTEGER;");
-
             // Temproms
-            AlterTable($"ALTER TABLE [{tempRoms}] ADD [Source_File] VARCHAR");
-            AlterTable($"ALTER TABLE [{tempRoms}] ADD [Rom_Of] VARCHAR");
-            AlterTable($"ALTER TABLE [{tempRoms}] ADD [Clone_Of] VARCHAR");
-            AlterTable($"ALTER TABLE [{tempRoms}] ADD [Sample_Of] VARCHAR");
-            AlterTable($"ALTER TABLE [{tempRoms}] ADD [Is_Bios] BOOLEAN");
-            AlterTable($"ALTER TABLE [{tempRoms}] ADD [Is_Mechanical] BOOLEAN");
-            AlterTable($"ALTER TABLE [{tempRoms}] ADD [Description] VARCHAR");
-            AlterTable($"ALTER TABLE [{tempRoms}] ADD [Year] VARCHAR");
-            AlterTable($"ALTER TABLE [{tempRoms}] ADD [Manufacturer] VARCHAR");     // Correspond au champ xml manufacturer
-
             //
         }
 
@@ -257,6 +208,8 @@ namespace MyMameHelper.SQLite
                 );
 
 
+
+
             RequeteNonQuery($"INSERT INTO [{tGenres}] ([Nom])" +
                 $"VALUES" +
                 $"('Beat 'em up')" +
@@ -269,14 +222,14 @@ namespace MyMameHelper.SQLite
 
             // Table Machines
             // Capcom
-            CT_Constructeur ct = Query_One<CT_Constructeur>(CT_Constructeur.Result2Class, $"SELECT [ID] FROM [{tConstructors}] WHERE [Nom]='Capcom'");
+            CT_MameManufacturer ct = Query_One<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, $"SELECT [ID] FROM [{tConstructors}] WHERE [Nom]='Capcom'");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [MameCode], [MainCPU], [Constructeur], [Year]) VALUES (1, 'Capcom Play System 1', 'CPS1',,'CPS-1', {ct.ID}, 1988)");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [Constructeur], [Year]) VALUES (2, 'Capcom Play System 2', 'CPS-2', {ct.ID}, 1993)");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [HardwareName], [Constructeur], [Year]) VALUES (3, 'Capcom Play System 3', 'CPS-3', {ct.ID}, 1996)");
 
 
             // Sega
-            ct = Query_One<CT_Constructeur>(CT_Constructeur.Result2Class, $"SELECT [ID] FROM [{tConstructors}] WHERE [Nom]='Sega'");
+            ct = Query_One<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, $"SELECT [ID] FROM [{tConstructors}] WHERE [Nom]='Sega'");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [Constructeur], [Year]) VALUES ('System 2'      , {ct.ID}, 1980)");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [Constructeur], [Year]) VALUES ('System 3'      , {ct.ID}, 1982)");
             RequeteNonQuery($"INSERT INTO [{tMachines}] ([ID], [Nom], [Constructeur], [Year]) VALUES ('System 1'      , {ct.ID}, 1983)");
@@ -337,35 +290,10 @@ namespace MyMameHelper.SQLite
             return default(T);
         }
 
-        static internal short CreateTable(string reqSql)
-        {
-            try
-            {
-                SQLiteCommand creatTables = new SQLiteCommand(reqSql, _MaConn);
-                creatTables.ExecuteNonQuery();
-                return 0;
-            }
-            catch (SQLiteException exc)
-            {
-                Debug.WriteLine($"Erreur SQliteDb CreateTable: {reqSql} \n {exc.Message} \n");
-                return -1;
-            }
-        }
 
-        static internal short AlterTable(string reqSql)
-        {
-            try
-            {
-                SQLiteCommand creatTables = new SQLiteCommand(reqSql, _MaConn);
-                creatTables.ExecuteNonQuery();
-                return 0;
-            }
-            catch (SQLiteException exc)
-            {
-                Debug.WriteLine($"Erreur SQliteDb AlterTable: {reqSql} \n {exc.Message} \n");
-                return -1;
-            }
-        }
+
+
+
 
 
         static internal short RequeteNonQuery(string reqSql)

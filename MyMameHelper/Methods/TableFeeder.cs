@@ -19,6 +19,7 @@ namespace MyMameHelper.Methods
         {
             //var machine = new List<CT_Machine>();
             List<CT_Machine> machines = new List<CT_Machine>();
+            List<string> notAccepted = new List<string>();
 
             foreach (var kvp in sourceFiles)
             {
@@ -39,18 +40,15 @@ namespace MyMameHelper.Methods
 
                 // Machine
                 string strMachine = srcFile.Substring(srcFile.IndexOf('/') + 1);
-                strMachine = strMachine.Substring(0, strMachine.Length - extension.Length);
-
+                strMachine = strMachine.Substring(0, strMachine.Length - extension.Length - 1);
 
 
                 string strConstruct = srcFile.Substring(0, srcFile.IndexOf("/"));
 
 
-
                 CT_Machine machine = new CT_Machine()
                 {
                     Nom = strMachine
-
                 };
 
                 // Atari: 1
@@ -131,6 +129,8 @@ namespace MyMameHelper.Methods
                 }
                 else
                 {
+
+                    notAccepted.Add(srcFile);
                     Debug.WriteLine($"Pass {srcFile}");
                     if (occur > 10)
                         Debug.WriteLine($"Occurences: {srcFile}: {occur}");
@@ -141,7 +141,7 @@ namespace MyMameHelper.Methods
 
 
             //Ajout à la base
-            using (SQLite_Op sqOP = new SQLite_Op())
+            using ( SQLite_OP sqOP = new SQLite_OP())
             {
                 for (int i = 0; i < machines.Count; i++)
                 {
@@ -152,10 +152,19 @@ namespace MyMameHelper.Methods
                 }
             }
 
+
+
+
             //return machine;
+
+
+            using (System.IO.StreamWriter f = new  System.IO.StreamWriter("passed.log"))
+            {
+                for (int i=0; i < notAccepted.Count; i++)
+                    f.Write(notAccepted[i]);
+
+            }
         }
-
-
 
     }
 }

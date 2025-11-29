@@ -14,62 +14,10 @@ using System.Windows;
 
 namespace MyMameHelper.SQLite
 {
-    public sealed partial class SQLite_Op : IDisposable
+    public sealed partial class SQLite_OP : IDisposable
     {
-        internal const string MOT_DE_PASSE = @"jw9s4X#7~S4#4P-y65_Sk-k@GmWG}y3r~V7e476-:DC-4VxgpB";
-        public delegate void SendIntValue(object sender, int value);
-        public event SendIntValue UpdateProgress;
-
-        public SQLiteConnection SQLiteConn { get; set; }
-        public ConnectionState state
-        {
-            get { return SQLiteConn.State; }
-        }
 
 
-        /// <summary>
-        /// Connexion
-        /// </summary>
-        /// <param name="mot_de_passe"></param>
-        /// <returns></returns>
-        // todo: voir pour un nombre de tentatives
-        public SQLite_Op()
-        {
-            // Vérification de l'existance du fichier
-            if (!File.Exists(Settings.Default.DataBase_Path))
-            {
-                this.Dispose();
-                throw new IOException("Base de donnée inaccessible");
-            }
-
-            // Connexion
-            try
-            {
-                SQLiteConn = new SQLiteConnection($"Data Source={Settings.Default.DataBase_Path};Version=3");
-                string path = Directory.GetCurrentDirectory();
-                Trace.WriteLine($"Current directory: '{path}'");
-                
-
-                SQLiteConn.Open();
-
-                while (SQLiteConn.State == ConnectionState.Closed)
-                {
-                    Debug.WriteLine("waiting");
-                }
-
-                Debug.WriteLine($"SQlite_Test, connexion à '{SQLiteConn.DataSource}': {SQLiteConn.State}");
-                Trace.WriteLine($"Connect to {SQLiteConn.FileName}");
-            }
-            catch (SQLiteException sqlEXC)
-            {
-                Debug.WriteLine(sqlEXC.Message);
-                this.Dispose();
-                throw new Exception("Erreur SQlite");
-            }
-            
-
-
-        }
 
 
 
