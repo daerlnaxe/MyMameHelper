@@ -542,8 +542,12 @@ namespace MyMameHelper.Windows
             bool res = false;
             if (System.Windows.MessageBox.Show("Reset The Table Containing Temporary Roms ?", "Reset", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                using (SQLite_OP sqReq = new SQLite_OP())
-                    res = sqReq.Flush_TempRoms();
+                using (SQLite_OP sqOp = new SQLite_OP())
+                {
+                    sqOp.Drop_TTempRom();
+                    sqOp.Create_TTempRom();
+                }
+                    //res = sqReq.Flush_TempRoms();
             }
 
             if (res)

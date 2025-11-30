@@ -92,7 +92,11 @@ namespace MyMameHelper.Methods
 
         }
 
-
+        /// <summary>
+        /// Permet de récupérer des informations contenues dans la machine
+        /// </summary>
+        /// <param name="textReader"></param>
+        /// <param name="mRaw"></param>
         private void GetRomsInfos(XmlReader textReader, RawMameRom mRaw)
         {
             XmlReader subReader = textReader.ReadSubtree();
@@ -107,6 +111,9 @@ namespace MyMameHelper.Methods
 
                 if (subReader.NodeType == XmlNodeType.Element && subReader.Name == "manufacturer")
                     mRaw.Manufacturer = GetLeafContent(subReader);
+
+                if (subReader.NodeType == XmlNodeType.Element && subReader.Name == "softwarelist")
+                    mRaw.HasSoftwares = true;
 
                 //  Informer l'utilisateur
                 _Line++;

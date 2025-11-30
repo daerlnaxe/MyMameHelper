@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,11 +19,16 @@ namespace MyMameHelper.ContTable
 
         #region type
         public bool Is_Bios { get; set; }
+        /// <summary>
+        /// Flippers, Tap taupe
+        /// </summary>
         public bool Is_Mechanical { get; set; }
         /// <summary>
         /// Matériel, normalement pas un jeu
         /// </summary>
         public bool Is_Device { get; internal set; }
+
+        public bool HasSoftwares { get; internal set; }
         #endregion
 
         public string Description { get; set; }

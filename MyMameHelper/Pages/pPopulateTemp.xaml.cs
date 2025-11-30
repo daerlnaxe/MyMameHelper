@@ -53,12 +53,21 @@ namespace MyMameHelper.Pages
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
         public pPopulateTemp()
         {
             InitializeComponent();
             DataContext = this;
         }
 
+
+        /// <summary>
+        /// Chargement d'un fichier M.A.M.E xml
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ex_LoadXML(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog fod = new OpenFileDialog();
@@ -73,10 +82,22 @@ namespace MyMameHelper.Pages
         }
 
         #region SaveToDb
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Can_Save(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = RomsCollec.Count > 0;
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ex_SaveDb(object sender, ExecutedRoutedEventArgs e)
         {
             if(System.Windows.MessageBox.Show("Save everything to Temp Db ?","Save to Db", MessageBoxButton.YesNo, MessageBoxImage.Question )  == MessageBoxResult.Yes)
@@ -94,6 +115,12 @@ namespace MyMameHelper.Pages
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SaveAllTemp_DoWork(ProgressWindow sender, DoWorkEventArgs e)
         {
             object myArgument = e.Argument;

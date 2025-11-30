@@ -1051,8 +1051,8 @@ namespace MyMameHelper.SQLite
         internal Dictionary<string, object[]> Get_RRGroupedSFile()
         {
             SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
-            sqlCommand.CommandText = $"SELECT Source_File, IsDevice, count(*) FROM {PProp.Default.T_TempRoms} GROUP BY Source_File ORDER BY Source_File ASC; ";
-
+            sqlCommand.CommandText = $"SELECT Source_File, IsDevice, count(*) FROM {PProp.Default.T_TempRoms} where IsDevice = \"False\" and HasSoftwares = \"False\" AND is_bios = \"False\" GROUP BY Source_File ORDER BY Source_File ASC; ";
+            //select Source_File from TempRoms where IsDevice = "False" and HasSoftwares = "False" AND is_bios = "False" GROUP BY Source_File ORDER BY Source_File;
             Trace.WriteLine($"Requete SQL: {sqlCommand.CommandText}");
 
             var reader = sqlCommand.ExecuteReader();

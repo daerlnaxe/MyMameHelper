@@ -133,7 +133,7 @@ namespace MyMameHelper.SQLite
         /// </summary>
         public void Drop_TMachine()
         {
-            string sql = $"DROP TABLE {PProp.Default.T_Machines}";
+            string sql = $"DROP TABLE {tMachine}";
             SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
 
             Trace.WriteLine($"Exec: {command.CommandText}");
@@ -141,6 +141,19 @@ namespace MyMameHelper.SQLite
             if (!ExecNQ(command))
             {
                 throw new Exception("Drop Machine failed");
+            }
+        }
+
+        internal void Drop_TTempRom()
+        {
+            string sql = $"DROP TABLE {tTempRom}";
+            SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
+
+            Trace.WriteLine($"Exec: {command.CommandText}");
+
+            if (!ExecNQ(command))
+            {
+                throw new Exception("Drop TempRoms failed");
             }
         }
     }

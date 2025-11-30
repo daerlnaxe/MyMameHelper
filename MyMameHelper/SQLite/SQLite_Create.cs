@@ -184,6 +184,8 @@ namespace MyMameHelper.SQLite
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Description] VARCHAR");
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Year] VARCHAR");
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Manufacturer] VARCHAR");     // Correspond au champ xml manufacturer
+                AlterTable($"ALTER TABLE [{tTempRom}] ADD [HasSoftwares] BOOLEAN");     // S'il y a des software ce n'est pas un pcb = jeu, mais un hardware comme saturn, ...
+                AlterTable($"ALTER TABLE [{tTempRom}] ADD [IsDevice] BOOLEAN");     // S'il y a des software ce n'est pas un pcb = jeu, mais un hardware comme saturn, ...
             }
 
             return status;
@@ -199,7 +201,6 @@ namespace MyMameHelper.SQLite
         {
             short status = 0;
             status = CreateTable($"CREATE TABLE [{tMachine}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
-
 
             if (status > 0)
             {

@@ -64,6 +64,7 @@
                     <DataGridTextColumn Header="Year" Binding="{Binding Year}"/>
                     <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}"/>
                     <DataGridTextColumn Header="Device" Binding="{Binding Is_Device}"/>                    
+                    <DataGridTextColumn Header="HasSoftwares" Binding="{Binding HasSoftwares}"/>                    
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

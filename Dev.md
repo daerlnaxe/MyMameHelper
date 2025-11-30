@@ -66,6 +66,12 @@
 
 ----
 
+
+# conts
+rawroms:
+- IsDevice: Certaines roms sont des périphériques matériels utilisés par d'autres machines
+- HasSoftwares: Les roms qui ont des softwares sont des systèmes, pas des jeux.
+
 # Functions
 ## DB Tools
 ### Création de Table

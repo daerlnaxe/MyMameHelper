@@ -312,21 +312,6 @@ namespace MyMameHelper.SQLite
             if (ignore)
                 sqlIgnore = "OR IGNORE";
 
-            // Add Key if asked
-            if (preservePK)
-            {
-                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tConstructor}] (" +
-                        "[ID], [Nom] " +
-                        ") VALUES ";
-            }
-            else
-            {
-                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tConstructor}] (" +
-                        "[Nom] " +
-                        ") VALUES ";
-            }
-
-
 
 
             for (int i = 0; i < constructors.Count; i++)
@@ -334,19 +319,34 @@ namespace MyMameHelper.SQLite
                 CT_Constructor dev = constructors[i];
                 //  string vals = null;
 
+                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tConstructor}]";
+                // Add Key if asked
+                if (preservePK)
+                {
+                    sqlCmd.CommandText += $" ([ID], [Nom])" +
+                        " VALUES ";
+                }
+                else
+                {
+                    sqlCmd.CommandText += $" ([Nom])" +
+                        " VALUES";
+                }
+                sqlCmd.CommandText += " (";
 
+                // Cette boucle permet de pusher par lots.
                 for (int j = 0; j < max; j++)
                 {
                     if (i == constructors.Count)
                         break;
+
                     if (j != 0)
-                        sqlCmd.CommandText += ", (";
+                        sqlCmd.CommandText += ",(";
 
                     // Si l'on préserve les PK
                     if (preservePK)
-                        sqlCmd.CommandText += "@ID{j}, ";
+                        sqlCmd.CommandText += $"@ID{j},";
 
-                    sqlCmd.CommandText += $"@Nom{j} ";
+                    sqlCmd.CommandText += $"@Nom{j}";
                     sqlCmd.CommandText += $")";
 
                     // Si l'on préserve les PK
@@ -392,18 +392,19 @@ namespace MyMameHelper.SQLite
             if (ignore)
                 sqlIgnore = "OR IGNORE";
 
+
+            sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tGenre}]";
+
             // Add Key if asked
             if (preservePK)
             {
-                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tGenre}] (" +
-                        "[ID], [Nom] " +
-                        ") VALUES ";
+                sqlCmd.CommandText += $" ([ID], [Nom])" +
+                    " VALUES";
             }
             else
             {
-                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tGenre}] (" +
-                        "[Nom] " +
-                        ") VALUES ";
+                sqlCmd.CommandText = " ([Nom])" +
+                    " VALUES ";
             }
 
 
@@ -417,12 +418,15 @@ namespace MyMameHelper.SQLite
                 {
                     if (i == genres.Count)
                         break;
-                    if (j != 0)
+
+                    if (j == 0)
+                        sqlCmd.CommandText += " (";
+                    else
                         sqlCmd.CommandText += ", (";
 
                     // Si l'on préserve les PK
                     if (preservePK)
-                        sqlCmd.CommandText += "@ID{j}, ";
+                        sqlCmd.CommandText += $"@ID{j}, ";
 
                     sqlCmd.CommandText += $"@Nom{j} ";
                     sqlCmd.CommandText += $")";
@@ -652,6 +656,7 @@ namespace MyMameHelper.SQLite
                                         "[Description], " +
                                         "[Year], " +
                                         "[Manufacturer], " +
+                                        "[HasSoftwares], " +
                                         "[IsDevice] " +
                                         ") VALUES ";
 
@@ -673,6 +678,7 @@ namespace MyMameHelper.SQLite
                                           $"@Description{j}, " +
                                           $"@Year{j}, " +
                                           $"@Manufacturer{j}," +
+                                          $"@HasSoftwares{j}," +
                                           $"@IsDevice{j}" +
                                           $")";
 
@@ -686,6 +692,7 @@ namespace MyMameHelper.SQLite
                     sqlCmd.Parameters.Add($"@Description{j}", DbType.String).Value = Roms[i].Description;
                     sqlCmd.Parameters.Add($"@Year{j}", DbType.String).Value = Roms[i].Year;
                     sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.String).Value = Roms[i].Manufacturer;
+                    sqlCmd.Parameters.Add($"@HasSoftwares{j}", DbType.String).Value = Roms[i].HasSoftwares;
                     sqlCmd.Parameters.Add($"@IsDevice{j}", DbType.String).Value = Roms[i].Is_Device;
 
                     if (j < max - 1)
