@@ -107,7 +107,9 @@ namespace MyMameHelper.Windows
         {
             InitializeComponent();
             DataContext = this;
+
         }
+
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {

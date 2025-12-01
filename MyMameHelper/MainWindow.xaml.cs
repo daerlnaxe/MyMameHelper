@@ -268,7 +268,7 @@ namespace MyMameHelper
 
         private void Ex_AddByXML(object sender, ExecutedRoutedEventArgs e)
         {
-            Active_Page = new pPopulateTemp();
+            Active_Page = new pPopulateDatabase();
         }
         #endregion
 

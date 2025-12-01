@@ -547,7 +547,7 @@ namespace MyMameHelper.Windows
                     sqOp.Drop_TTempRom();
                     sqOp.Create_TTempRom();
                 }
-                    //res = sqReq.Flush_TempRoms();
+                //res = sqReq.Flush_TempRoms();
             }
 
             if (res)
@@ -585,16 +585,35 @@ namespace MyMameHelper.Windows
                     sqOP.Drop_TMachine();
                     sqOP.Create_TMachine();
 
-                    var srcFiles = sqOP.Get_RRGroupedSFile();
+                    var srcFiles = sqOP.Get_RRomGroupedSFile();
 
-                    TableFeeder.Machine(srcFiles);
+                    Dictionary<string, List<CT_Machine>> machines = TableFeeder.Machine(srcFiles);
+                    sqOP.Insert_Machines(machines["identified"], false, false);
+
                 }
             }
-            catch (Exception ex) 
-            { 
-                Trace.WriteLine($"Erreur à la construction des machines: {ex}"); 
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"Erreur à la construction des machines: {ex}");
             }
 
+        }
+
+        private void Remap_RomMachine(object sender, RoutedEventArgs e)
+        {
+            using (SQLite_OP sqOP = new SQLite_OP())
+            {
+                Dictionary<string, object[]> srcFiles = sqOP.Get_RomGroupedSFile();
+
+                // Machines
+                var objSel = new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" });
+                //objSel.AddConds(new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()));
+                objSel.AddOrders(new SqlOrder("Nom"));
+                var machines = sqOP.GetListOf(CT_Machine.Result2Class, objSel);
+
+
+                sqOP.Map_RomMachine(machines, srcFiles.Keys.ToList());
+            }
         }
     }
 }

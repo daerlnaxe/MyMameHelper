@@ -1,4 +1,4 @@
-﻿<Page x:Class="MyMameHelper.Pages.pPopulateTemp"
+﻿<Page x:Class="MyMameHelper.Pages.pPopulateDatabase"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -10,7 +10,7 @@
       Title="pAddByXML">
     <Page.CommandBindings>
         <CommandBinding Command="commands:FileCommands.Load_File" Executed="Ex_LoadXML"/>
-        <CommandBinding Command="commands:UICommands.SaveTemp" Executed="Ex_SaveDb" CanExecute="Can_Save"/>
+        <CommandBinding Command="commands:UICommands.SaveTemp" Executed="Ex_Populate" CanExecute="Can_Populate"/>
         <CommandBinding Command="commands:UICommands.RemoveRom" CanExecute="Can_Remove" Executed="Ex_Remove"/>
     </Page.CommandBindings>
     <Page.Resources>
@@ -29,7 +29,8 @@
         </Grid.RowDefinitions>
         <StackPanel Margin="10">
             <Button Content="Load Mame XML" Command="commands:FileCommands.Load_File" VerticalAlignment="Top"/>
-            <Button Content="SaveToTemp" Command="commands:UICommands.SaveTemp"/>
+            <Separator/>
+            <Button Content="Populate" Command="commands:UICommands.SaveTemp"/>
 
         </StackPanel>
         <!-- Bios Roms -->
@@ -44,9 +45,9 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Label Content="Number of Roms"/>
-            <Label Content="{Binding RomsCollec.Count}" Grid.Column="1"/>
+            <Label Content="{Binding RawRomsCollec.Count}" Grid.Column="1"/>
             <!-- Roms List -->
-            <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding RomsCollec}" SelectedValue="{Binding IndexRom}" IsReadOnly="True" AutoGenerateColumns="False">
+            <DataGrid Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding RawRomsCollec}" SelectedValue="{Binding IndexRom}" IsReadOnly="True" AutoGenerateColumns="False">
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <!--MenuItem Command="commands:UICommands.RemoveRom" /-->

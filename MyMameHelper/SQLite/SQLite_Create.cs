@@ -156,11 +156,13 @@ namespace MyMameHelper.SQLite
             if (status > 0)
             {
                 AlterTable($"ALTER TABLE [{tRom}] ADD [Description] VARCHAR;");
+                AlterTable($"ALTER TABLE [{tRom}] ADD [Source_File] VARCHAR;");
                 #region Nouveau système, c'est ici qu'on va lier à games
                 AlterTable($"ALTER TABLE [{tRom}] ADD [Game_Id] INTEGER;");
                 #endregion
                 AlterTable($"ALTER TABLE [{tRom}] ADD [Year] VARCHAR;");
-                AlterTable($"ALTER TABLE [{tRom}] ADD [Manufacturer] INTEGER;");
+                AlterTable($"ALTER TABLE [{tRom}] ADD [Manufacturer_Id] INTEGER;");
+                AlterTable($"ALTER TABLE [{tRom}] ADD [Machine_Id] INTEGER;");
                 AlterTable($"ALTER TABLE [{tRom}] ADD [Unwanted] BOOLEAN;");
                 AlterTable($"ALTER TABLE [{tRom}] ADD [IsParent] BOOLEAN;");
                 AlterTable($"ALTER TABLE [{tRom}] ADD [Clone_Of] INTEGER;");
@@ -175,7 +177,7 @@ namespace MyMameHelper.SQLite
             status = CreateTable($"CREATE TABLE [{tTempRom}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Name] VARCHAR UNIQUE);");
             if (status > 0)
             {
-                AlterTable($"ALTER TABLE [{tTempRom}] ADD [Source_File] VARCHAR");
+                
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Rom_Of] VARCHAR");
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Clone_Of] VARCHAR");
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Sample_Of] VARCHAR");

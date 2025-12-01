@@ -114,6 +114,7 @@
     <None Include="ContTable\CT_Developer.cs" />
     <Compile Include="ContTable\CT_Game_Mapped.cs" />
     <Compile Include="ContTable\CT_Constructor.cs" />
+    <Compile Include="ContTable\CT_Occurence.cs" />
     <Compile Include="ContTable\CT_Rom_Mapped.cs" />
     <Compile Include="ContTable\Map_RomGame.cs" />
     <Compile Include="ContTable\CT_Bios.cs" />
@@ -134,20 +135,23 @@
     <Compile Include="Methods\MameXMLRaw.cs" />
     <Compile Include="Methods\SaveInDB.cs" />
     <Compile Include="Methods\UpdateDbRoms.cs" />
+    <Compile Include="Models\AsyncWorkList.cs" />
     <Compile Include="Models\AsyncWorkBool.cs" />
     <Compile Include="Models\IAsyncProgressWork.cs" />
+    <Compile Include="Models\MBuildRoms.cs" />
     <Compile Include="Pages\pBuildManus.xaml.cs">
       <DependentUpon>pBuildManus.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\pMapGames.xaml.cs">
       <DependentUpon>pMapGames.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\pPopulateTemp.xaml.cs">
-      <DependentUpon>pPopulateTemp.xaml</DependentUpon>
+    <Compile Include="Pages\pPopulateDatabase.xaml.cs">
+      <DependentUpon>pPopulateDatabase.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\pBuildRoms.xaml.cs">
       <DependentUpon>pBuildRoms.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SQLite\SQlite_UMapper.cs" />
     <Compile Include="SQLite\SQLite_Create.cs" />
     <Compile Include="SQLite\SQLite_Update.cs" />
     <Compile Include="SQLite\SQLite__Common.cs" />
@@ -249,7 +253,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\pPopulateTemp.xaml">
+    <Page Include="Pages\pPopulateDatabase.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

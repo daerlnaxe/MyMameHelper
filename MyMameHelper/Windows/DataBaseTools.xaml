@@ -159,6 +159,9 @@
                     <Button x:Name="button" Content="Update" Command="commands:UICommands.UpdateDb" Grid.Column="3" HorizontalAlignment="Left" Height="25" Grid.Row="2" VerticalAlignment="Top" Width="51"/>
                 </Grid>
             </TabItem>
+            <TabItem Header="Remap">
+                <Button Content="Remap Rom and Machine" Click="Remap_RomMachine"/>
+            </TabItem>
         </TabControl>
 
     </Grid>

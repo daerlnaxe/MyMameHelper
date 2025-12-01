@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MyMameHelper.ContTable
 {
-    public class CT_Rom: INotifyPropertyChanged, iCT_Rom
+    public class CT_Rom : INotifyPropertyChanged, iCT_Rom
     {
         public event PropertyChangedEventHandler PropertyChanged;
         protected void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -28,7 +28,15 @@ namespace MyMameHelper.ContTable
         /// </summary>
         public string Description { get; set; }
 
+        /// <summary>
+        /// Fichier source pour l'émulation (en général similaire à la carte mère)
+        /// </summary>
+        public string SourceFile { get; set; }
+
+
         public uint? Game_Id { get; set; }
+        public uint? Machine_Id { get; set; }
+
 
         public string Year { get; set; }
 
@@ -82,7 +90,7 @@ namespace MyMameHelper.ContTable
             get { return _Unwanted; }
             set
             {
-                if(value != _Unwanted)
+                if (value != _Unwanted)
                 {
                     _Unwanted = value;
                     NotifyPropertyChanged();
@@ -92,8 +100,6 @@ namespace MyMameHelper.ContTable
 
         public uint Clone_Of { get; set; }
 
-        // Fichier source pour l'émulation (en général similaire à la carte mère)
-        public string SourceFile { get; set; }
 
         /// <summary>
         /// Clones
@@ -105,6 +111,10 @@ namespace MyMameHelper.ContTable
 
         public string Aff_Clone_Of { get; set; }
 
+        /// <summary>
+        /// Produit par pinball en nom + ismechanical
+        /// </summary>
+        public bool IsPinball { get; set; }
 
 
 
@@ -122,17 +132,19 @@ namespace MyMameHelper.ContTable
         {
             this.ID = another.ID;
             this.Archive_Name = another.Archive_Name;
-            this.Description = another.Description;
+            this.SourceFile = another.SourceFile;
+            this.SourceFile = another.SourceFile;
             this.Aff_Clone_Of = another.Aff_Clone_Of;
             this.Clone_Of = another.Clone_Of;
 
+            this.Machine_Id = another.Machine_Id;
             //this.Aff_Manufacturer = another.Aff_Manufacturer;
-            
+
             this.Manufacturer = another.Manufacturer;
             this.Unwanted = another.Unwanted;
             this.Year = another.Year;
             this.IsParent = another.IsParent;
-           
+
         }
 
         internal static CT_Rom Result2Class(Dictionary<string, object> dico)
@@ -140,7 +152,9 @@ namespace MyMameHelper.ContTable
             CT_Rom rom = new CT_Rom();
             rom.ID = Trans.GetUInt("ID", dico);
             rom.Archive_Name = Trans.GetString("Archive_Name", dico);
-            rom.Description = Trans.GetString("Description", dico);
+            rom.SourceFile = Trans.GetString("Description", dico);
+            rom.SourceFile = Trans.GetString("Source_File", dico);
+            rom.Machine_Id = Trans.GetUInt("Machine_Id", dico);
             rom.IsParent = Trans.GetBool("IsParent", dico);
             rom.Clone_Of = Trans.GetUInt("Clone_Of", dico);
             rom.Unwanted = Trans.GetBool("Unwanted", dico);
@@ -157,7 +171,7 @@ namespace MyMameHelper.ContTable
                 Description = rawRom.Description,
                 Aff_Clone_Of = rawRom.Clone_Of,
                 SourceFile = rawRom.Source_File,
-                
+
             };
         }
     }

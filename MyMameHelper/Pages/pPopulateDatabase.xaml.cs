@@ -26,11 +26,11 @@ namespace MyMameHelper.Pages
     /// <summary>
     /// Logique d'interaction pour pPopulateTemp.xaml
     /// </summary>
-    public partial class pPopulateTemp : Page, INotifyPropertyChanged
+    public partial class pPopulateDatabase : Page, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public MyObservableCollection<RawMameRom> RomsCollec { get; set; } = new MyObservableCollection<RawMameRom>();
+        public MyObservableCollection<RawMameRom> RawRomsCollec { get; set; } = new MyObservableCollection<RawMameRom>();
 
         public void NotifyPropertyChanged([CallerMemberName] string PropertyName = "")
         {
@@ -44,7 +44,7 @@ namespace MyMameHelper.Pages
             get { return _IndexRom; }
             set
             {
-                if(value != _IndexRom)
+                if (value != _IndexRom)
                 {
                     _IndexRom = value;
                     NotifyPropertyChanged();
@@ -56,7 +56,7 @@ namespace MyMameHelper.Pages
         /// <summary>
         /// 
         /// </summary>
-        public pPopulateTemp()
+        public pPopulateDatabase()
         {
             InitializeComponent();
             DataContext = this;
@@ -77,19 +77,19 @@ namespace MyMameHelper.Pages
             {
                 MameXMLRaw mRaw = new MameXMLRaw();
 
-                RomsCollec.ChangeContent =  mRaw.TryToParse(fod.FileName);                
+                RawRomsCollec.ChangeContent = mRaw.TryToParse(fod.FileName);
             }
         }
 
-        #region SaveToDb
+        #region Populate DB
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Can_Save(object sender, CanExecuteRoutedEventArgs e)
+        private void Can_Populate(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = RomsCollec.Count > 0;
+            e.CanExecute = RawRomsCollec.Count > 0;
         }
 
 
@@ -98,9 +98,10 @@ namespace MyMameHelper.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Ex_SaveDb(object sender, ExecutedRoutedEventArgs e)
+        private void Ex_Populate(object sender, ExecutedRoutedEventArgs e)
         {
-            if(System.Windows.MessageBox.Show("Save everything to Temp Db ?","Save to Db", MessageBoxButton.YesNo, MessageBoxImage.Question )  == MessageBoxResult.Yes)
+            // bool poursuivre = false;
+            if (System.Windows.MessageBox.Show("Save everything to Temp Db ?", "Save to Db", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 ProgressWindow progressW = new ProgressWindow();
                 progressW.DoWork += new ProgressWindow.DoWorkEventHandler(SaveAllTemp_DoWork);
@@ -112,12 +113,27 @@ namespace MyMameHelper.Pages
                 {
                     MainWindow.NumberOf_TempRoms = sqReq.Count(PProp.Default.T_TempRoms);
                 }
+
+
+            }
+
+            if (MainWindow.NumberOf_TempRoms != RawRomsCollec.Count)
+                return;
+
+            if (System.Windows.MessageBox.Show("Populate Machines in DB ?\nUse machine mapper to rebuild links with roms", "Populate Machines", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                ProgressWindow progressW = new ProgressWindow();
+                progressW.DoWork += new ProgressWindow.DoWorkEventHandler(PopulateMachine_DoWork);
+
+                progressW.Total = 100;
+                progressW.ShowDialog();
+
             }
         }
 
 
         /// <summary>
-        /// 
+        /// Populate Temp Roms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -125,27 +141,56 @@ namespace MyMameHelper.Pages
         {
             object myArgument = e.Argument;
 
-            using (SQLite_OP sqReq = new SQLite_OP())
+            using (SQLite_OP sqOP = new SQLite_OP())
             {
-                sqReq.UpdateProgress += ((x, y) => sender.SetProgress(y));
+                //sqOP.Stopit=sender.Stopit;
+                sqOP.UpdateProgress += ((x, y) => sender.SetProgress(y));
+                sender.Closing += sqOP.Sender_Closing;
                 // Insertion des rawroms
-                sqReq.Insert_RawRomsInTemp(RomsCollec);
-                
+                sqOP.Insert_RawRomsInTemp(RawRomsCollec);
+
             }
         }
 
 
+
+        /// <summary>
+        /// Populate Machines
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PopulateMachine_DoWork(ProgressWindow sender, DoWorkEventArgs e)
+        {
+            object myArgument = e.Argument;
+
+            using (SQLite_OP sqOP = new SQLite_OP())
+            {
+                sqOP.Drop_TMachine();
+                sqOP.Create_TMachine();
+
+                List<CT_Occurence<RawMameRom>> rawroms = sqOP.Get_RRomGroupedSFile();
+
+                sqOP.UpdateProgress += ((x, y) => sender.SetProgress(y));
+                // Insertion des rawroms
+                Dictionary<string, List<CT_Machine>> machines = TableFeeder.Machine(rawroms);
+
+                sqOP.Insert_Machines(machines[""], false, false);
+
+
+            }
+
+        }
         #endregion
 
         #region remove rom
 
         private void Can_Remove(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = RomsCollec.Count > 0;
+            e.CanExecute = RawRomsCollec.Count > 0;
         }
         private void Ex_Remove(object sender, ExecutedRoutedEventArgs e)
         {
-            RomsCollec.RemoveAt(IndexRom);
+            RawRomsCollec.RemoveAt(IndexRom);
         }
 
         #endregion

@@ -34,10 +34,13 @@ namespace MyMameHelper.Windows
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+
 
 
         public int Total { get; set; }
@@ -57,6 +60,7 @@ namespace MyMameHelper.Windows
             }
         }
 
+
         BackgroundWorker worker;
 
         public ProgressWindow()
@@ -71,7 +75,12 @@ namespace MyMameHelper.Windows
             worker.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
 
+        
+
         }
+
+        
+        
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {

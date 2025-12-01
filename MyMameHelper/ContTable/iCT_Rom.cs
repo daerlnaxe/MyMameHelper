@@ -16,10 +16,12 @@ namespace MyMameHelper.ContTable
         /// Description
         /// </summary>
         string Description { get; set; }
+        string SourceFile { get; set; }
 
         string Year { get; set; }
 
         uint? Game_Id { get; set; }
+        uint? Machine_Id { get; set; }
 
         //uint Manufacturer { get; set; }
         CT_MameManufacturer Manufacturer { get; set; }
@@ -30,5 +32,7 @@ namespace MyMameHelper.ContTable
         bool? Unwanted { get; set; }
 
         uint Clone_Of { get; set; }
+
+        bool IsPinball { get; set; }  
     }
 }

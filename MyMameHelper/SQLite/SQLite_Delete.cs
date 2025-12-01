@@ -2,6 +2,7 @@
 using MyMameHelper.ContTable;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
@@ -156,5 +157,6 @@ namespace MyMameHelper.SQLite
                 throw new Exception("Drop TempRoms failed");
             }
         }
+
     }
 }

@@ -26,6 +26,7 @@ namespace MyMameHelper.SQLite
     public sealed partial class SQLite_OP
     {
 
+
         #region générique
         /// <summary>
         /// Ajoute une donnée générique à la base (basé sur un couple classique donnée valeur)
@@ -323,15 +324,15 @@ namespace MyMameHelper.SQLite
                 // Add Key if asked
                 if (preservePK)
                 {
-                    sqlCmd.CommandText += $" ([ID], [Nom])" +
+                    sqlCmd.CommandText += $"([ID],[Nom])" +
                         " VALUES ";
                 }
                 else
                 {
-                    sqlCmd.CommandText += $" ([Nom])" +
+                    sqlCmd.CommandText += $"([Nom])" +
                         " VALUES";
                 }
-                sqlCmd.CommandText += " (";
+                sqlCmd.CommandText += "(";
 
                 // Cette boucle permet de pusher par lots.
                 for (int j = 0; j < max; j++)
@@ -360,7 +361,7 @@ namespace MyMameHelper.SQLite
                         i++;
                 }
 
-                //Trace.WriteLine($"Requete: {sqlCmd.CommandText}");
+                Trace.WriteLine($"Exec: {sqlCmd.CommandText}");
 
                 ExecNQ(sqlCmd);
                 UpdateProgress?.Invoke(this, i * 100 / constructors.Count);
@@ -566,6 +567,97 @@ namespace MyMameHelper.SQLite
 
         }
   */
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collec"></param>
+        /// <param name="ignore"></param>
+        /// <param name="preservePK"></param>
+        private void Insert_GenericList<T>(IList<T> collec, bool ignore, bool preservePK)
+        {
+
+        }
+
+
+        internal void Insert_Machines(IList<CT_Machine> machines, bool ignore, bool preservePK)
+        {
+            Debug.WriteLine($"Insertion de la collection de machines");
+
+            uint max = 20;
+            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            // Add ignore if asked
+            string sqlIgnore = "";
+            if (ignore)
+                sqlIgnore = "OR IGNORE";
+
+
+
+            for (int i = 0; i < machines.Count; i++)
+            {
+                CT_Machine dev = machines[i];
+                //  string vals = null;
+
+                sqlCmd.CommandText = $"INSERT {sqlIgnore} INTO [{tMachine}]";
+
+                // Add Key if asked
+                if (preservePK)
+                {
+                    sqlCmd.CommandText += $" ([ID], [Nom])" +
+                        " VALUES";
+                }
+                else
+                {
+                    sqlCmd.CommandText += " ([Nom])" +
+                        " VALUES";
+                }
+
+                for (int j = 0; j < max; j++)
+                {
+                    if (i == machines.Count)
+                        break;
+
+                    if (j == 0)
+                        sqlCmd.CommandText += "(";
+                    else
+                        sqlCmd.CommandText += ",(";
+
+                    // Si l'on préserve les PK
+                    if (preservePK)
+                        sqlCmd.CommandText += $"@ID{j},";
+
+                    sqlCmd.CommandText += $"@Nom{j}";
+                    sqlCmd.CommandText += $")";
+
+                    // Si l'on préserve les PK
+                    if (preservePK)
+                        sqlCmd.Parameters.Add($"@ID{j}", DbType.UInt64).Value = machines[i].ID;
+
+                    sqlCmd.Parameters.Add($"@Nom{j}", DbType.String).Value = machines[i].Nom;
+
+                    // a surveiller si bug
+                    if (j < max - 1)
+                        i++;
+                }
+
+                Trace.WriteLine($"Exec: {sqlCmd.CommandText}");
+                foreach (SQLiteParameter parameter in sqlCmd.Parameters)
+                {
+                    Debug.WriteLine($"{parameter.ParameterName} | {parameter.Value}");
+
+                }
+
+                ExecNQ(sqlCmd);
+                UpdateProgress?.Invoke(this, i * 100 / machines.Count);
+                Debug.WriteLine($"{i}/{machines.Count} ({sw.ElapsedMilliseconds})");
+            }
+            Trace.WriteLine($"{sw.ElapsedMilliseconds}");
+
+        }
 
 
         /// <summary>
@@ -618,6 +710,9 @@ namespace MyMameHelper.SQLite
                 //Trace.WriteLine($"Requete: {sqlCmd.CommandText}");
 
                 ExecNQ(sqlCmd);
+
+
+
                 UpdateProgress?.Invoke(this, i * 100 / manufacturers.Count);
                 Debug.WriteLine($"{i} - {sw.ElapsedMilliseconds}");
             }
@@ -633,7 +728,8 @@ namespace MyMameHelper.SQLite
         /// <param name="Roms"></param>
         public void Insert_RawRomsInTemp(IList<RawMameRom> Roms)
         {
-            uint max = 50;
+            uint max = 75;
+            long elapsed = 0;
             Debug.WriteLine($"Insertion de la collection de roms brutes");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
@@ -643,6 +739,9 @@ namespace MyMameHelper.SQLite
 
             for (int i = 0; i < Roms.Count; i++)
             {
+                if (Stopit)
+                    break;
+
                 RawMameRom rom = Roms[i];
                 //  string vals = null;
                 sqlCmd.CommandText = $"Insert INTO [{tTempRom}] (" +
@@ -697,13 +796,21 @@ namespace MyMameHelper.SQLite
 
                     if (j < max - 1)
                         i++;
+
+                    long nowElapsed = sw.ElapsedMilliseconds;
+                    if ((nowElapsed - elapsed) > 1000)
+                    {
+                        UpdateProgress?.Invoke(this, i * 100 / Roms.Count);
+                        Debug.WriteLine($"{i}/{Roms.Count} ({nowElapsed} ms)");
+                        elapsed= nowElapsed;
+                    }
                 }
 
                 //Trace.WriteLine($"Requete: {sqlCmd.CommandText}");
 
                 ExecNQ(sqlCmd);
-                UpdateProgress?.Invoke(this, i * 100 / Roms.Count);
-                Debug.WriteLine($"{i} - {sw.ElapsedMilliseconds}");
+
+
             }
             Debug.WriteLine($"{sw.ElapsedMilliseconds}");
         }
@@ -732,12 +839,15 @@ namespace MyMameHelper.SQLite
                 sqlCmd.CommandText = $"Insert {strIgnore} INTO [{tRom}] (" +
                                         "[Archive_Name], " +
                                         "[Description], " +
+                                        "[Source_File], " +
                                         "[Game_Id]," +
                                         "[Unwanted]," +
                                         "[Year], " +
-                                        "[Manufacturer], " +
+                                        "[Manufacturer_Id], " +
+                                        "[Machine_Id], " +
                                         "[IsParent], " +
-                                        "[Clone_Of]" +
+                                        "[Clone_Of]," +
+                                        "[IsPinball]" +
                                         ") VALUES ";
 
                 for (int j = 0; j < max; j++)
@@ -755,25 +865,31 @@ namespace MyMameHelper.SQLite
                     sqlCmd.CommandText += $"(" +
                                           $"@Archive_Name{j}, " +
                                           $"@Description{j}, " +
+                                          $"@Source_File{j}, " +
                                           $"@Game_Id{j}, " +
                                           $"@Unwanted{j}, " +
                                           $"@Year{j}, " +
-                                          $"@Manufacturer{j}, " +
+                                          $"@Manufacturer_Id{j}, " +
+                                          $"@Machine_Id{j}, " +
                                           $"@IsParent{j}, " +
-                                          $"@Clone_Of{j} " +
+                                          $"@Clone_Of{j}, " +
+                                          $"@IsPinball{j} " +
                                           $")";
 
                     sqlCmd.Parameters.Add($"@Archive_Name{j}", DbType.String).Value = Roms[i].Archive_Name;
                     sqlCmd.Parameters.Add($"@Description{j}", DbType.String).Value = Roms[i].Description;
+                    sqlCmd.Parameters.Add($"@Source_File{j}", DbType.String).Value = Roms[i].SourceFile;
                     // Game
                     sqlCmd.Parameters.Add($"@Game_Id{j}", DbType.UInt32).Value = Roms[i].Game_Id;
 
                     sqlCmd.Parameters.Add($"@Year{j}", DbType.String).Value = Roms[i].Year;
                     sqlCmd.Parameters.Add($"@Unwanted{j}", DbType.Boolean).Value = Roms[i].Unwanted;
                     //sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.String).Value = Roms[i].Manufacturer;
-                    sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.UInt32).Value = Roms[i].Manufacturer.ID;
+                    sqlCmd.Parameters.Add($"@Manufacturer_Id{j}", DbType.UInt32).Value = Roms[i].Manufacturer.ID;
+                    sqlCmd.Parameters.Add($"@Machine_Id{j}", DbType.UInt32).Value = Roms[i].Machine_Id;
                     sqlCmd.Parameters.Add($"@IsParent{j}", DbType.Boolean).Value = Roms[i].IsParent;
                     sqlCmd.Parameters.Add($"@Clone_Of{j}", DbType.UInt32).Value = Roms[i].Clone_Of;
+                    sqlCmd.Parameters.Add($"@IsPinball{j}", DbType.Boolean).Value = Roms[i].IsPinball;
                     Trace.WriteLine(Roms[i].Archive_Name);
 
                     // a surveiller si bug

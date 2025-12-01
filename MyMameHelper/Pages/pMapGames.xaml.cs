@@ -86,7 +86,7 @@ namespace MyMameHelper.Pages
 
                 foreach (CT_Rom rom in _OrpheanRoms)
                 {
-                    if (rom.Description.Contains(OrpheanRomsFilter))
+                    if (rom.SourceFile.Contains(OrpheanRomsFilter))
                     {
                         filteredOrpheanRoms.Add(rom);
                     }

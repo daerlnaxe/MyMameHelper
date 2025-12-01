@@ -740,7 +740,7 @@ namespace MyMameHelper.SQLite
                         {
                             ID = uint.Parse(curr[0]),
                             Archive_Name = curr[1],
-                            Description = curr[2]
+                            SourceFile = curr[2]
                         }
                     );
                 }
@@ -1025,7 +1025,7 @@ namespace MyMameHelper.SQLite
         internal void GetList_RawRoms(Obj_Select objSel)
         {
             SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
-            sqlCommand.CommandText = $"SELECT * FROM {PProp.Default.T_TempRoms} WHERE [Is_Bios]='True'";
+            sqlCommand.CommandText = $"SELECT * FROM {tTempRom} WHERE [Is_Bios]='True'";
 
             Trace.WriteLine($"Requete SQL: {sqlCommand.CommandText}");
 
@@ -1048,10 +1048,50 @@ namespace MyMameHelper.SQLite
         /// <summary>
         /// Renvoie des raw roms groupés selon le source file.
         /// </summary>
-        internal Dictionary<string, object[]> Get_RRGroupedSFile()
+        //internal Dictionary<string, object[]> Get_RRomGroupedSFile()
+        internal List<CT_Occurence<RawMameRom>> Get_RRomGroupedSFile()
         {
             SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
-            sqlCommand.CommandText = $"SELECT Source_File, IsDevice, count(*) FROM {PProp.Default.T_TempRoms} where IsDevice = \"False\" and HasSoftwares = \"False\" AND is_bios = \"False\" GROUP BY Source_File ORDER BY Source_File ASC; ";
+            sqlCommand.CommandText = $"SELECT Source_File, IsDevice, Is_Mechanical, count(*) AS  \"Nombre\" FROM {tTempRom} where IsDevice = \"False\" and HasSoftwares = \"False\" AND is_bios = \"False\" GROUP BY Source_File ORDER BY Source_File ASC; ";
+            //select Source_File from TempRoms where IsDevice = "False" and HasSoftwares = "False" AND is_bios = "False" GROUP BY Source_File ORDER BY Source_File;
+            Trace.WriteLine($"Requete SQL: {sqlCommand.CommandText}");
+
+            var reader = sqlCommand.ExecuteReader();
+
+            //Dictionary<string, object[]> resultat = new Dictionary<string, object[]>();
+            var resultats = new List<CT_Occurence<RawMameRom>>();
+
+            if (reader.HasRows)
+            {
+                
+
+                while (reader.Read())
+                {
+                    RawMameRom rawMameRom = new RawMameRom();
+
+                    rawMameRom.Source_File = Trans.GetString("Source_File", reader);
+                    rawMameRom.Is_Mechanical = Trans.GetBool("Is_Mechanical", reader);
+                    rawMameRom.Is_Device = Trans.GetBool("IsDevice", reader);
+                    uint nombre = Trans.GetUInt("Nombre", reader);
+                    
+                    resultats.Add(new CT_Occurence<RawMameRom>( rawMameRom, nombre));
+                }
+            }
+
+            return resultats;
+        }
+
+        #endregion RawRoms
+
+
+        #region Roms
+        /// <summary>
+        /// Renvoie des raw roms groupés selon le source file.
+        /// </summary>
+        internal Dictionary<string, object[]> Get_RomGroupedSFile()
+        {
+            SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
+            sqlCommand.CommandText = $"SELECT Source_File, count(*) FROM {tRom}  GROUP BY Source_File ORDER BY Source_File ASC; ";
             //select Source_File from TempRoms where IsDevice = "False" and HasSoftwares = "False" AND is_bios = "False" GROUP BY Source_File ORDER BY Source_File;
             Trace.WriteLine($"Requete SQL: {sqlCommand.CommandText}");
 
@@ -1061,19 +1101,18 @@ namespace MyMameHelper.SQLite
 
             if (reader.HasRows)
             {
-                
+
 
                 while (reader.Read())
                 {
-                    resultat.Add((string)reader[0], new object[] { reader[1], reader[2] });
+                    resultat.Add((string)reader[0], new object[] { reader[1] });
                 }
             }
 
             return resultat;
         }
 
-        #endregion roms
-
+        #endregion Roms
 
         #region Aff Roms
         /// <summary>
@@ -1121,7 +1160,7 @@ namespace MyMameHelper.SQLite
 
             Ag.ID = Trans.GetUInt("ID", reader);
             Ag.Archive_Name = Trans.GetString("Archive_Name", reader);
-            Ag.Description = Trans.GetString("Description", reader);
+            Ag.SourceFile = Trans.GetString("Description", reader);
             Ag.Game_Id = Trans.GetUInt("Game_Id", reader);
             Ag.Year = Trans.GetString("Year", reader);
 

@@ -9,6 +9,7 @@ using MyMameHelper.Properties;
 using System.Diagnostics;
 using System.IO;
 using PProp = MyMameHelper.Properties.Settings;
+using System.ComponentModel;
 
 namespace MyMameHelper.SQLite
 {
@@ -18,7 +19,12 @@ namespace MyMameHelper.SQLite
         public delegate void SendIntValue(object sender, int value);
         public event SendIntValue UpdateProgress;
 
+        public bool Stopit { get; set; }
 
+        internal void Sender_Closing(object sender, CancelEventArgs e)
+        {
+            this.Stopit = true;
+        }
 
 
         string tRom = PProp.Default.T_Roms;

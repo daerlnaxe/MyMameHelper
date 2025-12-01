@@ -12,6 +12,7 @@ using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,76 +25,40 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using PProp = MyMameHelper.Properties.Settings;
+
 
 namespace MyMameHelper.Pages
 {
     /// <summary>
     /// Logique d'interaction pour pWorkPage.xaml
     /// </summary>
-    public partial class pBuildRoms : Page, INotifyPropertyChanged
+    public partial class pBuildRoms : Page
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         public static readonly RoutedCommand Select_AllCmd = new RoutedCommand("Select All", typeof(pBuildRoms));
 
         //  public MyObservableCollection<Aff_Game> DbGames { get; set; } = new MyObservableCollection<Aff_Game>();
 
-        #region pas en fonction pour le moment
-        /// <summary>
-        /// Active la recherche de parent quand on ajoute aux roms à sauvegarder
-        /// </summary>
-        public Boolean ParentChecked { get; set; } = true;
 
-        /// <summary>
-        /// Active la recherche de frêres quand on ajoute aux roms à sauvegarder
-        /// </summary>
-        public Boolean BrothersChecked { get; set; } = true;
-        #endregion
+        private MBuildRoms _MContext;
 
-        /// <summary>
-        /// Manufacturers
-        /// </summary>
-        public MyObservableCollection<CT_MameManufacturer> Constructeurs { get; set; } = new MyObservableCollection<CT_MameManufacturer>();
 
-        // A Lever ? 2025
-        public MyObservableCollection<CT_Machine> Machines { get; set; } = new MyObservableCollection<CT_Machine>();
+
 
         // A lever ? 2025
         public MyObservableCollection<CT_MameManufacturer> Developers { get; set; } = new MyObservableCollection<CT_MameManufacturer>();
 
-        public MyObservableCollection<CT_Rom> RomsToSave { get; set; } = new MyObservableCollection<CT_Rom>();
 
-        public MyObservableCollection<RawMameRom> RawRomsCollec { get; set; } = new MyObservableCollection<RawMameRom>();
 
         public CT_MameManufacturer CbDeveloper_Selected { get; set; }
 
 
-        /// <summary>
-        /// Liste des roms en base
-        /// </summary>
-        /// <remarks>
-        /// Utilisé pour faire le différentiel avec les rawroms.
-        /// </remarks>
-        private List<CT_Rom> _RomsInDb;
-
-        /// <summary>
-        /// 2025, utilisé à la sauvegarde
-        /// </summary>
-        private List<CT_Game> _GamesInDB;
-
-        private List<RawMameRom> rawRomsDeleted = new List<RawMameRom>();
 
         //private List<RawMameRom> rawRomsSelected;
         //      private List<Aff_Rom> romsList;
         private List<CT_Rom> romsSelected;
 
-        private List<RawMameRom> ListRoms { get; set; }
+
 
 
 
@@ -101,61 +66,16 @@ namespace MyMameHelper.Pages
         {
             InitializeComponent();
 
-            DataContext = this;
+            //DataContext = this;
+            DataContext = _MContext = new MBuildRoms();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Load Roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                // Chargement de la table des développeurs
-                using (SQLite_OP sqReq = new SQLite_OP())
-                {
-                    //2025 levé Developers.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Developers, all: true));
-                    Constructeurs.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
-                    _RomsInDb = sqReq.AffRoms_List();
-                    _GamesInDB = sqReq.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, colonnes: new[] { "ID", "Game_Name" }, all: true));
-                }
-
-                // Chargement asynchrone des roms
-                AsyncWindowProgress aLoad = new AsyncWindowProgress();
-                aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoadTempRoms);
-                aLoad.ShowDialog();
-                RawRomsCollec.ChangeContent = ListRoms;
+                _MContext.LoadCollecs();
             }
-        }
-
-        /// <summary>
-        /// Chargement des roms temporaires
-        /// </summary>
-        /// <param name="aLoad"></param>
-        private void AsyncLoadTempRoms(AsyncWindowProgress aLoad)
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
-            aLoad.AsyncMessage("Loading Roms...");
-            using (SQLite_OP sqReq = new SQLite_OP())
-            {
-                Obj_Select objSel = new Obj_Select(table: PProp.Default.T_TempRoms, all: true);
-
-                /* SqlCond[] condBios = new SqlCond[] { new SqlCond("Is_Bios", eWhere.Equal, "True") };
-                 objSel.Conditions = condBios;*/
-                ListRoms = sqReq.GetListOf<RawMameRom>(RawMameRom.Result2Class, objSel);
-            }
-
-            for (int i = 0; i < ListRoms.Count; i++)
-            {
-                RawMameRom rawRom = ListRoms[i];
-
-                if (_RomsInDb.FirstOrDefault<CT_Rom>(x => x.Archive_Name.Equals(rawRom.Name)) != null)
-                {
-                    ListRoms.Remove(rawRom);
-                    i--;
-                }
-            }
-
-            Console.WriteLine(sw.ElapsedMilliseconds);
         }
 
 
@@ -312,19 +232,24 @@ namespace MyMameHelper.Pages
         #region Datagrid Gauche
         private void Can_Left2Right(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = RawRomsCollec.Count > 0;
+            e.CanExecute = _MContext.RawRomsCollec.Count > 0;
         }
 
+        /// <summary>
+        /// Ajoutes les roms sélectionnées
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ex_Left2Right(object sender, ExecutedRoutedEventArgs e)
         {
             List<RawMameRom> rawRomsSelected = dg2Organize.SelectedItems.Cast<RawMameRom>().ToList();
-            TransRaw2Rom(rawRomsSelected);
+            _MContext.TransRaw2Rom(rawRomsSelected);
         }
         #endregion
 
 
         /// <summary>
-        /// 
+        /// Ajoute toutes les rawroms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -333,385 +258,100 @@ namespace MyMameHelper.Pages
         /// </remarks>
         private void Add_All(object sender, ExecutedRoutedEventArgs e)
         {
-            List<RawMameRom> rawRomsSelected = dg2Organize.SelectedItems.Cast<RawMameRom>().ToList();
-            TransRaw2Rom(RawRomsCollec.ToList());
+            // List<RawMameRom> rawRomsSelected = dg2Organize.SelectedItems.Cast<RawMameRom>().ToList();
+            _MContext.TransRaw2Rom(_MContext.RawRomsCollec);
         }
 
-        /// <summary>
-        /// Transforme une rom temporaire en rom (avec les jonctions)
-        /// </summary>
-        /// <param name="rawRomsSelected"></param>
-        private void TransRaw2Rom(List<RawMameRom> rawRomsSelected)
-        {
+        /*
+         /// <summary>
+         /// 
+         /// </summary>
+         /// <param name="window"></param>
+         /// <remarks>
+         /// ~ 5 minutes
+         /// </remarks>
+         private void LinkRoms(AsyncWindowProgress window)
+         {
+             List<RawMameRom> rawRomsSelected = (List<RawMameRom>)window.Arguments[0]; // ajouté en splittant vers de l'async
 
-            //Contenu de LinkRoms
+             Stopwatch swTotal = new Stopwatch();
+             swTotal.Start();
+             //rah
+             List<RawMameRom> tmp = new List<RawMameRom>();
+             tmp.AddRange(rawRomsSelected);
 
-            /*
+             int i = 0;
+             foreach (RawMameRom selRom in rawRomsSelected)
+             {
+                 Stopwatch sw1 = new Stopwatch();
+                 sw1.Start();
 
-                // Recherche des roms en relation
-                foreach (RawMameRom rom in RawRomsCollec)
-            {
-                foreach (RawMameRom selRom in rawRomsSelected)
-                {
-                    /*
-                    if (selRom == rom)
-                        continue;
-                        */
-            /*
-        if (rawRomsSelected.FirstOrDefault(x => x.ID == rom.ID) != null)
-            continue;
+                 if (string.IsNullOrEmpty(selRom.Clone_Of))
+                 {
+                     // on récupère tous les enfants
+                     IEnumerable<RawMameRom> children = RawRomsCollec.Where(x => x.Clone_Of.Equals(selRom.Name));
 
-        if (selRom.Clone_Of.Equals(rom.Name))
-            tmp.Add(rom);
 
+                     // Ajoute ceux qui ne sont pas présents
+                     foreach (var child in children)
+                     {
+                         if (tmp.FirstOrDefault(x => x.ID == child.ID) == null)
+                             tmp.Add(child);
+                     }
+                     Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (if),  temps: {sw1.ElapsedMilliseconds} ms");
+                 }
+                 else
+                 {
 
-        if (string.IsNullOrEmpty(rom.Clone_Of))
-            continue;
+                     // on récupère tous les parents
+                     RawMameRom parent = RawRomsCollec.FirstOrDefault(x => x.Name.Equals(selRom.Clone_Of));
 
 
-        /*  if (rom.Clone_Of.Equals(selRom.Name))
-              tmp.Add(rom);
+                     if (parent == null)
+                     {
+                         Console.WriteLine("la");
+                         continue;
+                     }
 
 
-          if (!string.IsNullOrEmpty(selRom.Clone_Of) && selRom.Clone_Of.Equals(rom.Clone_Of))
-              tmp.Add(rom);*/
+                     if (tmp.FirstOrDefault(x => x.ID == parent.ID) == null)
+                         tmp.Add(parent);
 
-            /*
-                    if (selRom.Clone_Of.Equals(rom.Name))
-                        tmp.Add(rom);
+                     //  Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des parents (else),  temps: {sw1.ElapsedMilliseconds} ms");
 
-                    if (rom.Clone_Of.Equals(selRom.Clone_Of))
-                        tmp.Add(rom);
-                }
-            }*/
-            //rawRomsSelected.AddRange(tmp);
+                     // on récupère tous les enfants
+                     IEnumerable<RawMameRom> children = RawRomsCollec.Where(x => x.Clone_Of.Equals(selRom.Clone_Of));
 
-            /* foreach (var rom in tmp)
-                 Console.WriteLine($"{rom.ID} | {rom.Name}");
+                     // Ajoute ceux qqui ne sont pas présents
+                     foreach (var child in children)
+                     {
+                         if (tmp.FirstOrDefault(x => x.ID == child.ID) == null)
+                             tmp.Add(child);
+                     }
+                     //  Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (else),  temps: {sw1.ElapsedMilliseconds} ms");
+                 }
+                 Debug.WriteLine($"Fin pour {selRom.Name},  temps: {sw1.ElapsedMilliseconds} ms");
+                 sw1.Stop();
 
-             rawRomsSelected = tmp;*/
+                 // lié au passage asynchrone
+                 window.AsyncUpProgressPercent(i);
+                 i++;
+             }
 
+             window.Arguments[0] = tmp;
 
+             Debug.WriteLine($"Fin Total,  temps: {swTotal.ElapsedMilliseconds} ms");
+             swTotal.Stop();
+         }
 
+        */
 
 
-            #region 2025/11/06 split pour async
-            AsyncWindowProgressG windowG = new AsyncWindowProgressG();
-            windowG.Total = rawRomsSelected.Count;
-            windowG.Message_Value = "Linking Roms";
 
 
-            bool test = false;
-            AsyncWorkBool mProgress = new AsyncWorkBool();
-            mProgress.Arguments = new List<object>() { rawRomsSelected };
-            mProgress.go += new AsyncWorkBool.AsyncBoolAction( Link2Roms);
 
-            windowG.ProgressContext = mProgress;
-            windowG.ShowDialog();
 
-            test= (bool)windowG.Resultat;
-
-            /*
-            window = new AsyncWindowProgress();
-
-            window.Total = rawRomsSelected.Count;
-            window.Arguments = new List<object>() { rawRomsSelected };
-            window.Message_Value = "Linking Roms";
-
-
-
-            window.go += new AsyncWindowProgress.AsyncAction(Link2Roms);
-            window.ShowDialog();
-
-            rawRomsSelected = (List<RawMameRom>)window.Arguments[0];*/
-
-
-            #endregion
-
-            /*
-            #region Ajout des manufacturers non présents
-            //IEnumerable<string> manus = rawRomsSelected.Select(x => x.Manufacturer);
-            MyObservableCollection<CT_Constructeur> manuToAdd = new MyObservableCollection<CT_Constructeur>();
-            foreach(var rawrom in rawRomsSelected)
-            {
-                if (Constructeurs.FirstOrDefault(x => x.Nom == rawrom.Manufacturer) == null && manuToAdd.FirstOrDefault(x=> x.Nom == rawrom.Manufacturer)== null)
-                    // Ajout à la liste des constructeurs à sauvegarder
-                    manuToAdd.Add(new CT_Constructeur()
-                    {
-                        Nom = rawrom.Manufacturer,
-                    });                    
-            }
-
-            SaveInDB.Insert_Manus(manuToAdd);
-
-            // Mise à jour de la liste des constructeurs
-            using (SQLite_Req sqReq = new SQLite_Req())
-            {                            
-                Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
-            
-            #endregion
-            }*/
-            AsyncWindowProgress window;
-
-            window = new AsyncWindowProgress();
-            window.Arguments = new List<object>() { rawRomsSelected };
-            window.Message_Value = "Moving Left to Right";
-            window.go += new AsyncWindowProgress.AsyncAction(AsyncLeft2Right);
-            //          
-            window.ShowDialog();
-
-            RomsToSave.SignalChange();
-            RawRomsCollec.SignalChange();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="window"></param>
-        /// <remarks>
-        /// ~ 5 minutes
-        /// </remarks>
-        private void LinkRoms(AsyncWindowProgress window)
-        {
-            List<RawMameRom> rawRomsSelected = (List<RawMameRom>)window.Arguments[0]; // ajouté en splittant vers de l'async
-
-            Stopwatch swTotal = new Stopwatch();
-            swTotal.Start();
-            //rah
-            List<RawMameRom> tmp = new List<RawMameRom>();
-            tmp.AddRange(rawRomsSelected);
-
-            int i = 0;
-            foreach (RawMameRom selRom in rawRomsSelected)
-            {
-                Stopwatch sw1 = new Stopwatch();
-                sw1.Start();
-
-                if (string.IsNullOrEmpty(selRom.Clone_Of))
-                {
-                    // on récupère tous les enfants
-                    IEnumerable<RawMameRom> children = RawRomsCollec.Where(x => x.Clone_Of.Equals(selRom.Name));
-
-
-                    // Ajoute ceux qui ne sont pas présents
-                    foreach (var child in children)
-                    {
-                        if (tmp.FirstOrDefault(x => x.ID == child.ID) == null)
-                            tmp.Add(child);
-                    }
-                    Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (if),  temps: {sw1.ElapsedMilliseconds} ms");
-                }
-                else
-                {
-
-                    // on récupère tous les parents
-                    RawMameRom parent = RawRomsCollec.FirstOrDefault(x => x.Name.Equals(selRom.Clone_Of));
-
-
-                    if (parent == null)
-                    {
-                        Console.WriteLine("la");
-                        continue;
-                    }
-
-
-                    if (tmp.FirstOrDefault(x => x.ID == parent.ID) == null)
-                        tmp.Add(parent);
-
-                    //  Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des parents (else),  temps: {sw1.ElapsedMilliseconds} ms");
-
-                    // on récupère tous les enfants
-                    IEnumerable<RawMameRom> children = RawRomsCollec.Where(x => x.Clone_Of.Equals(selRom.Clone_Of));
-
-                    // Ajoute ceux qqui ne sont pas présents
-                    foreach (var child in children)
-                    {
-                        if (tmp.FirstOrDefault(x => x.ID == child.ID) == null)
-                            tmp.Add(child);
-                    }
-                    //  Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (else),  temps: {sw1.ElapsedMilliseconds} ms");
-                }
-                Debug.WriteLine($"Fin pour {selRom.Name},  temps: {sw1.ElapsedMilliseconds} ms");
-                sw1.Stop();
-
-                // lié au passage asynchrone
-                window.AsyncUpProgressPercent(i);
-                i++;
-            }
-
-            window.Arguments[0] = tmp;
-
-            Debug.WriteLine($"Fin Total,  temps: {swTotal.ElapsedMilliseconds} ms");
-            swTotal.Stop();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="window"></param>
-        private bool Link2Roms(AsyncWindowProgressG window)
-        {
-            List<RawMameRom> rawRomsSelected = (List<RawMameRom>)window.ProgressContext.Arguments[0]; // ajouté en splittant vers de l'async
-
-            // Make a list with only the clone of
-            List<RawMameRom> cloneof_list = new List<RawMameRom>(RawRomsCollec.Where(x => !string.IsNullOrEmpty(x.Clone_Of)));
-            List<RawMameRom> parent_list = new List<RawMameRom>(RawRomsCollec.Where(x => string.IsNullOrEmpty(x.Clone_Of)));
-
-            Stopwatch swTotal = new Stopwatch();
-            swTotal.Start();
-            //rah
-            List<RawMameRom> tmp = new List<RawMameRom>();
-            tmp.AddRange(rawRomsSelected);
-
-            int i = 0;
-            foreach (RawMameRom selRom in rawRomsSelected)
-            {
-                Stopwatch sw1 = new Stopwatch();
-                sw1.Start();
-
-
-                // Cas d'un parent
-                if (string.IsNullOrEmpty(selRom.Clone_Of))
-                {
-                    if (ParentChecked)
-                    {
-                        // on récupère tous les enfants
-                        for (int k = 0; k < cloneof_list.Count; k++)
-                        {
-                            if (cloneof_list[k].Clone_Of == selRom.Name)
-                            {
-                                tmp.Add(cloneof_list[k]);
-                                cloneof_list.RemoveAt(k);
-                                k--;
-                            }
-                        }
-                    }
-                    Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (if),  temps: {sw1.ElapsedMilliseconds} ms");
-                }
-                else
-                {
-                    if (ParentChecked)
-                    {
-                        RawMameRom parent = null;
-                        // on récupère tous les parents
-                        for (int k = 0; k < parent_list.Count; k++)
-                        {
-                            if (parent_list[k].Name == selRom.Clone_Of)
-                            {
-                                parent = parent_list[k];
-
-                                tmp.Add(parent_list[k]);
-
-                                // si on lève, les autres roms enfants n'auront plus la possibilité de se lier. Mais nous n'avons pas de liaison ici à faire.
-                                parent_list.RemoveAt(k);
-                                //k--;
-                                // normalement un seul parent.
-                                break;
-                            }
-                        }
-
-                        if (parent == null)
-                        {
-                            Console.WriteLine("la rom parent a probablement déjà été levée");
-                        }
-                    }
-
-
-                    Debug.WriteLine($"Ajouts pour {selRom.Name} après récupérations des enfants (else),  temps: {sw1.ElapsedMilliseconds} ms");
-                }
-                Debug.WriteLine($"Fin pour {selRom.Name},  temps: {sw1.ElapsedMilliseconds} ms");
-                sw1.Stop();
-
-                // lié au passage asynchrone
-                window.AsyncUpProgressPercent(i);
-                i++;
-            }
-
-            window.ProgressContext.Arguments[0] = tmp;
-
-            Debug.WriteLine($"Fin Total,  temps: {swTotal.ElapsedMilliseconds} ms");
-            swTotal.Stop();
-
-            // 28//11/2025
-            return true;
-        }
-
-
-        /// <summary>
-        /// Transformation Raw en CT
-        /// </summary>
-        /// <param name="window"></param>
-        private void AsyncLeft2Right(AsyncWindowProgress window)
-        {
-            List<RawMameRom> rawRomsSelected = (List<RawMameRom>)window.Arguments[0];
-
-            for (int i = 0; i < rawRomsSelected.Count; i++)
-            {
-                RawMameRom rawRom = rawRomsSelected[i];
-
-                CT_Rom aRom = rawRom;
-                /*new CT_Rom();
-                    aRom.Archive_Name = rawRom.Name;
-                    aRom.Description = rawRom.Description;
-                    aRom.Aff_Clone_Of = rawRom.Clone_Of;
-                    aRom.SourceFile = rawRom.Source_File;
-                */
-                aRom.Unwanted = false;
-                if (string.IsNullOrEmpty(rawRom.Clone_Of))
-                    aRom.IsParent = true;
-
-
-
-                #region 
-                // Transformation du Constructeur
-                CT_MameManufacturer dev = Constructeurs.FirstOrDefault(x => x.Nom.Equals(rawRom.Manufacturer));
-
-                // Le constructeur existe dans la table et correspond à celui affiché par la rawrom
-                if (dev != null)
-                {
-                    //aRom.Manufacturer = dev.ID;
-                    //aRom.Aff_Manufacturer = dev.Nom;
-                    aRom.Manufacturer = dev;
-                }
-                // Le constructeur n'a jamais été entré
-                else
-                {
-                    // rawRom.Manufacturer;
-                    aRom.Manufacturer = new CT_MameManufacturer()
-                    {
-                        Nom = rawRom.Manufacturer,
-                    };
-                }
-                #endregion
-
-
-                RomsToSave.AddSilent(aRom);
-                rawRomsDeleted.Add(rawRom);
-                RawRomsCollec.RemoveSilent(rawRom);
-
-                window.AsyncUpProgressPercent(i);
-            }
-        }
-
-
-        #region Filtre de gauche
-
-        private string LeftRomMode;
-
-        private string _LeftFilter;
-        public string LeftFilter
-        {
-            get { return _LeftFilter; }
-            set
-            {
-                if (!value.Equals(_LeftFilter))
-                {
-                    _LeftFilter = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
+        /*
         private RawMameRom _S4L;
         public RawMameRom LeftSelected
         {
@@ -724,29 +364,30 @@ namespace MyMameHelper.Pages
                     NotifyPropertyChanged();
                 }
             }
-        }
+        }*/
 
-
+        /*
         private void LeftMode_Changed(object sender, RoutedEventArgs e)
         {
-            LeftRomMode = ((RadioButton)sender).Content.ToString();
-            if (LeftFilter != null)
+            _MContext.LeftRomMode = ((RadioButton)sender).Content.ToString();
+            if (_MContext.LeftFilter != null)
                 Select_Left();
         }
 
         private void Select_Left()
         {
-            if (LeftRomMode == "Mode Game")
-                LeftSelected = RawRomsCollec.FirstOrDefault(x => x.Description.StartsWith(LeftFilter, StringComparison.OrdinalIgnoreCase));
-            else if (LeftRomMode == "Mode Archive")
-                LeftSelected = RawRomsCollec.FirstOrDefault(x => x.Name.StartsWith(LeftFilter, StringComparison.OrdinalIgnoreCase));
+            if (_MContext.LeftRomMode == "Mode Game")
+                _MContext.LeftSelected = _MContext.RawRomsCollec.FirstOrDefault(x => x.Description.StartsWith(_MContext.LeftFilter, StringComparison.OrdinalIgnoreCase));
+            else if (_MContext.LeftRomMode == "Mode Archive")
+                _MContext.LeftSelected = _MContext.RawRomsCollec.FirstOrDefault(x => x.Name.StartsWith(_MContext.LeftFilter, StringComparison.OrdinalIgnoreCase));
 
-            if (LeftSelected != null)
+            if (_MContext.LeftSelected != null)
             {
                 dg2Organize.ScrollIntoView(dg2Organize.SelectedItem);
             }
-        }
+        }*/
 
+        /*
         private void LListView_KeyUp(object sender, KeyEventArgs e)
         {
             if (!((e.Key >= Key.A && e.Key <= Key.Z)
@@ -781,9 +422,11 @@ namespace MyMameHelper.Pages
             Select_Left();
         }
         #endregion
+        */
+
 
         #region Datagrid Droite
-
+        /*
         private void Can_Right2Left(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = RomsToSave.Count > 0;
@@ -805,7 +448,7 @@ namespace MyMameHelper.Pages
                     /*
                     if (selRom == rom)
                         continue;
-                        */
+                        *//*
                     if (romsSelected.Contains(rom))
                         continue;
 
@@ -832,6 +475,7 @@ namespace MyMameHelper.Pages
             RomsToSave.SignalChange();
             RawRomsCollec.SignalChange();
         }
+        */
 
         /// <summary>
         /// 
@@ -862,43 +506,19 @@ namespace MyMameHelper.Pages
 
         private void Can_ResetRight(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = RomsToSave.Count > 0;
+            e.CanExecute = _MContext.RomsToSave.Count > 0;
         }
 
         private void Ex_ResetRight(object sender, ExecutedRoutedEventArgs e)
         {
-            romsSelected = dgRight.SelectedItems.Cast<CT_Rom>().ToList();
-            AsyncWindowProgress window = new AsyncWindowProgress();
-            window.go += new AsyncWindowProgress.AsyncAction(AsyncResetRight);
-            window.ShowDialog();
-
-            RawRomsCollec.SignalChange();
-            rawRomsDeleted.Clear();
-            RomsToSave.Clear();
+            //romsSelected = dgRight.SelectedItems.Cast<CT_Rom>().ToList();
+            _MContext.ResetAll();
         }
 
-        private void AsyncResetRight(AsyncWindowProgress window)
-        {
-            for (int i = 0; i < RomsToSave.Count; i++)
-            {
-                CT_Rom sel = RomsToSave[i];
-                for (int j = 0; j < rawRomsDeleted.Count; j++)
-                {
-                    RawMameRom deleted = rawRomsDeleted[j];
-                    if (deleted.Name.Equals(sel.Archive_Name))
-                    {
-                        RawRomsCollec.AddSilent(deleted);
-
-                        break;
-                    }
-                }
-
-                window.AsyncUpProgressPercent(i);
-            }
-        }
         #endregion
 
         #region Filtre de Droite
+        /*
         private string RightRomMode;
         private string _RightFilter;
         public string RightFilter
@@ -927,20 +547,22 @@ namespace MyMameHelper.Pages
                 }
             }
         }
+        */
 
-
+        /*
         private void RightMode_Changed(object sender, RoutedEventArgs e)
         {
             LeftRomMode = ((RadioButton)sender).Content.ToString();
             if (LeftFilter != null)
                 Select_Right();
         }
+        */
 
-
+        /*
         private void Select_Right()
         {
             if (RightRomMode == "Mode Game")
-                RightSelected = RomsToSave.FirstOrDefault(x => x.Description.StartsWith(RightFilter, StringComparison.OrdinalIgnoreCase));
+                RightSelected = RomsToSave.FirstOrDefault(x => x.SourceFile.StartsWith(RightFilter, StringComparison.OrdinalIgnoreCase));
             else if (LeftRomMode == "Mode Archive")
                 RightSelected = RomsToSave.FirstOrDefault(x => x.Archive_Name.StartsWith(RightFilter, StringComparison.OrdinalIgnoreCase));
 
@@ -948,8 +570,9 @@ namespace MyMameHelper.Pages
             {
                 dgRight.ScrollIntoView(dgRight.SelectedItem);
             }
-        }
+        }*/
 
+        /*
         private void RListView_KeyUp(object sender, KeyEventArgs e)
         {
             if (!((e.Key >= Key.A && e.Key <= Key.Z)
@@ -983,9 +606,10 @@ namespace MyMameHelper.Pages
 
             //Select_Right();
         }
+        */
         #endregion
 
-
+        /*
         private void Ex_Search(object sender, ExecutedRoutedEventArgs e)
         {
             throw new NotImplementedException("Vérifier la compatibilité après le spit de transraw2rom");
@@ -1009,12 +633,17 @@ namespace MyMameHelper.Pages
                 // RomsToSave.ChangeContent = sp.RomsFound.ToList();
             }
         }
+        */
+
 
         #region Change
+        /*
         private void Can_Change(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = RomsToSave.Count > 0;
-        }
+        }*/
+
+
 
         /*
         private void Ex_Change(object sender, ExecutedRoutedEventArgs e)
@@ -1097,6 +726,7 @@ namespace MyMameHelper.Pages
         */
         #endregion
 
+        /*
         private void CbConstructeur_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox cb = (ComboBox)sender;
@@ -1111,14 +741,14 @@ namespace MyMameHelper.Pages
                 Machines.ChangeContent = sqReq.GetListOf(CT_Machine.Result2Class, objSel);
             }
         }
+        */
 
 
 
-
-        #region Sauver/Updater dans la table Games
+        #region Sauver/Updater dans les tables
         private void Can_Save(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = RomsToSave.Count > 0;
+            e.CanExecute = _MContext.RomsToSave.Count > 0;
         }
 
         /// <summary>
@@ -1132,131 +762,21 @@ namespace MyMameHelper.Pages
         ///     Le manufacturer existe en liaison avec la rawrom, on s'appuie dessus
         ///     Le Jeu existe peut être en base mais directement avec la rawrom, par contre une fois la rom entrée on ne la verra plus par rapport au différentiel au chargement.
         /// </remarks>
-        private void SaveRoms(object sender, ExecutedRoutedEventArgs e)
+        private void EX_SaveDB(object sender, ExecutedRoutedEventArgs e)
         {
-            #region Etat des lieux
+            
 
-            // Sauvegarde des manufactureurs manquant
-            List<CT_MameManufacturer> manuToAdd = new List<CT_MameManufacturer>();
-
-            // Sauvegarde des jeux manquants
-            List<CT_Game> gameToAdd = new List<CT_Game>();
-
-            //
-            for (int i = 0; i < RomsToSave.Count; i++)
+            if (MessageBox.Show("Would you want to save missing manufacturers. Refusing it, will stop all the process.", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                var rom = RomsToSave[i];
-
-                // Constructeurs
-                //if (Constructeurs.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer) == null)
-                if (Constructeurs.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null)
-                    // Ajout à la liste des constructeurs à sauvegarder
-                    manuToAdd.Add(new CT_MameManufacturer()
-                    {
-                        //Nom = rom.Aff_Manufacturer,
-                        Nom = rom.Manufacturer.Nom,
-                    });
-
-                // Games
-                var posPar = rom.Description.IndexOf('(');
-                var gameName = posPar > 0 ? rom.Description.Substring(0, posPar).Trim() : rom.Description;
-                Debug.WriteLine(gameName);
-
-                // Vérification pour éviter les doublons dans les gamesToAdd  + jeux en base (_GamesInDB). 
-                if (gameToAdd.FirstOrDefault(x => x.Game_Name.Equals(gameName)) == null && _GamesInDB.FirstOrDefault(x => x.Game_Name.Equals(gameName)) == null)
-                {
-                    gameToAdd.Add(
-                        new CT_Game
-                        {
-                            Game_Name = gameName,
-                        });
-                }
+                _MContext.SaveManufacturers();
             }
-            #endregion Etat des lieux
-
-
-
-            #region Sauvegarde des constructeurs
-            Debug.WriteLine("Ajout des constructeurs");
-            if (manuToAdd.Count > 0)
+            else
             {
-                if (MessageBox.Show("Would you want to save missing manufacturers. Refusing it, will stop all the process.", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    // Sauvegarde dans la base
-                    SaveInDB.Insert_Manus(manuToAdd);
-
-
-                    // Mise à jour de la liste des constructeurs
-                    using (SQLite_OP sqReq = new SQLite_OP())
-                    {
-                        Constructeurs.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
-                    }
-                }
-                else
-                {
-                    return;
-                }
-
-            }
-            #endregion Sauvegarde des constructeurs
-
-
-
-
-            #region Games
-            // Ajout de la collection.
-            using (SQLite_OP sqOp = new SQLite_OP())
-            {
-                sqOp.Insert_CollecInGames(gameToAdd);
-                _GamesInDB = sqOp.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, colonnes: new[] { "ID", "Game_Name" }, all: true));
-            }
-            #endregion
-
-
-
-            Debug.WriteLine("Construction des liaisons");
-            /* Construction des liaisons 
-             *      On le fait aussi pour les games, puisqu'une fois sauvé on ne verra plus dans la liste ensuite */
-            for (int i = 0; i < RomsToSave.Count; i++)
-            {
-                // Liaison manufacturers
-                CT_Rom rom = RomsToSave[i];
-                if (rom.Manufacturer.ID == 0)
-                {
-                    /*
-                    var tmp = Constructeurs.FirstOrDefault(x => x.Nom == rom.Aff_Manufacturer);
-                    rom.Manufacturer = tmp.ID;
-                    rom.Aff_Manufacturer = tmp.Nom;
-                    */
-                    var tmp = Constructeurs.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom);
-                    rom.Manufacturer = tmp;
-
-                }
-
-                // Liaison des games                
-                if (rom.Game_Id == 0 || rom.Game_Id == null)
-                {
-                    var posPar = rom.Description.IndexOf('(');
-                    var gameName = posPar > 0 ? rom.Description.Substring(0, posPar).Trim() : rom.Description;
-
-                    var tmp = _GamesInDB.FirstOrDefault(x => x.Game_Name.Equals(gameName));
-                    rom.Game_Id = tmp.ID;
-                }
-
-
+                return;
             }
 
 
-            // Sauvegarde des roms
-            if (MessageBox.Show("Would you want to save this roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                // Sauvegarde des roms
-                AsyncWindowProgress window = new AsyncWindowProgress();
-                window.Arguments.Add(RomsToSave.ToList());
-                window.go += new AsyncWindowProgress.AsyncAction(AsyncSaveRoms);
-                window.ShowDialog();
-            }
-            RomsToSave.Clear();
+
         }
 
 
@@ -1264,75 +784,8 @@ namespace MyMameHelper.Pages
 
 
 
-
-        /// <summary>
-        /// Sauvegarde des roms dans la base de données
-        /// </summary>
-        /// <param name="window"></param>
-        private void AsyncSaveRoms(AsyncWindowProgress window)
-        {
-            List<CT_Rom> parentsToSave = new List<CT_Rom>();
-            List<CT_Rom> childrenToSave = new List<CT_Rom>();
-            List<CT_Rom> romsTS = (List<CT_Rom>)window.Arguments[0];
-
-            #region Ajout des manufacturers non présents
-            //IEnumerable<string> manus = rawRomsSelected.Select(x => x.Manufacturer);
-            // MyObservableCollection<CT_Constructeur> manuToAdd = new MyObservableCollection<CT_Constructeur>();
-
-            /*foreach (var rom in romsTS)
-            {
-                if (Constructeurs.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null)
-                    // Ajout à la liste des constructeurs à sauvegarder
-                    manuToAdd.Add(new CT_Constructeur()
-                    {
-                        Nom = rom.Manufacturer.Nom,
-                    });
-            }*/
-
-            #endregion
-
-
-            foreach (CT_Rom rom in romsTS)
-            {
-                var id = Constructeurs.FirstOrDefault(x => x.Nom.Equals(rom.Manufacturer));
-
-                // HAndler pour spliter les roms parents et les roms enfants
-                if (rom.IsParent == true)
-                    parentsToSave.Add(rom);
-                else
-                    childrenToSave.Add(rom);
-            }
-
-            // Sauvegarde des roms parents
-            List<CT_Rom> sParentsRoms = null;
-            using (SQLite_OP sqReq = new SQLite_OP())
-            {
-                sqReq.UpdateProgress += ((x, y) => window.AsyncUpProgressPercent(y));
-
-                window.AsyncMessage("Insertion of Parent Roms");
-                sqReq.Insert_Roms(parentsToSave, true);
-
-                Obj_Select oSel = new Obj_Select(PProp.Default.T_Roms, all: true);
-                oSel.AddConds(new SqlCond("IsParent", eWhere.Is, 1));
-
-                sParentsRoms = sqReq.GetListOf<CT_Rom>(CT_Rom.Result2Class, oSel);
-            }
-
-            // Assignation de la rom parent
-            foreach (CT_Rom child in childrenToSave)
-            {
-                CT_Rom parRom = sParentsRoms.First(x => x.Archive_Name.Equals(child.Aff_Clone_Of));
-                child.Clone_Of = parRom.ID;
-            }
-
-            // Sauvegarde des roms enfants
-            using (SQLite_OP sqReq = new SQLite_OP())
-            {
-                sqReq.UpdateProgress += ((x, y) => window.AsyncUpProgressPercent(y));
-                window.AsyncMessage("Insertion of Children Roms");
-                sqReq.Insert_Roms(childrenToSave, true);
-            }
-        }
         #endregion
+
+
     }
 }
