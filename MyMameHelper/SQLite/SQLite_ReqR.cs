@@ -43,21 +43,21 @@ namespace MyMameHelper.SQLite
 
             T objet = default(T);
 
-            SQLiteDataReader reader = this.ResultSelect(objSelect);
-
-            if (reader.HasRows)
+            using (SQLiteDataReader reader = this.ResultSelect(objSelect))
             {
-                reader.Read();
-
-                Dictionary<string, object> dico = new Dictionary<string, object>();
-                for (short i = 0; i < reader.FieldCount; i++)
+                if (reader.HasRows)
                 {
-                    dico.Add(reader.GetName(i), reader[i]);
+                    reader.Read();
+
+                    Dictionary<string, object> dico = new Dictionary<string, object>();
+                    for (short i = 0; i < reader.FieldCount; i++)
+                    {
+                        dico.Add(reader.GetName(i), reader[i]);
+                    }
+
+                    objet = method(dico);
                 }
-
-                objet = method(dico);
             }
-
             return objet;
         }
         #endregion
@@ -149,15 +149,18 @@ namespace MyMameHelper.SQLite
 
             try
             {
-                var reader = ResultSelect(objSelect);
-
-                // Récupération des colonnes
-                reader.Read();
-                //
                 Dictionary<string, object> dico = new Dictionary<string, object>();
-                for (short i = 0; i < reader.FieldCount; i++)
+
+                using (var reader = ResultSelect(objSelect))
                 {
-                    dico.Add(reader.GetName(i), reader[i]);
+                    // Récupération des colonnes
+                    reader.Read();
+                    //
+
+                    for (short i = 0; i < reader.FieldCount; i++)
+                    {
+                        dico.Add(reader.GetName(i), reader[i]);
+                    }
                 }
 
                 //
@@ -190,26 +193,26 @@ namespace MyMameHelper.SQLite
             List<T> obsCollec = new List<T>();
 
 
-            SQLiteDataReader reader = this.ResultSelect(objSelect);
-
-            if (reader.HasRows)
+            using (SQLiteDataReader reader = this.ResultSelect(objSelect))
             {
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    Dictionary<string, object> dico = new Dictionary<string, object>();
-                    for (short i = 0; i < reader.FieldCount; i++)
+                    while (reader.Read())
                     {
-                        dico.Add(reader.GetName(i), reader[i]);
+                        Dictionary<string, object> dico = new Dictionary<string, object>();
+                        for (short i = 0; i < reader.FieldCount; i++)
+                        {
+                            dico.Add(reader.GetName(i), reader[i]);
+                        }
+
+                        T data = method(dico);
+                        if (data == null)
+                            continue;
+
+                        obsCollec.Add(data);
                     }
-
-                    T data = method(dico);
-                    if (data == null)
-                        continue;
-
-                    obsCollec.Add(data);
                 }
             }
-
             return obsCollec;
         }
 
@@ -230,24 +233,26 @@ namespace MyMameHelper.SQLite
 
             try
             {
-                SQLiteDataReader reader = ResultSelect(objSelect);
-
-                // Récupération des colonnes
-                while (reader.Read())
+                using (SQLiteDataReader reader = ResultSelect(objSelect))
                 {
-                    //
-                    Dictionary<string, object> dico = new Dictionary<string, object>();
-                    for (short i = 0; i < reader.FieldCount; i++)
+
+                    // Récupération des colonnes
+                    while (reader.Read())
                     {
-                        dico.Add(reader.GetName(i), reader[i]);
+                        //
+                        Dictionary<string, object> dico = new Dictionary<string, object>();
+                        for (short i = 0; i < reader.FieldCount; i++)
+                        {
+                            dico.Add(reader.GetName(i), reader[i]);
+                        }
+
+                        //
+                        T data = method(dico);
+                        if (data == null)
+                            continue;
+
+                        lCollec.Add(data);
                     }
-
-                    //
-                    T data = method(dico);
-                    if (data == null)
-                        continue;
-
-                    lCollec.Add(data);
                 }
             }
             catch (Exception exc)
@@ -285,19 +290,21 @@ namespace MyMameHelper.SQLite
                     command.CommandText += $" LIMIT {objSelect.Limit}";
 
                 Trace.WriteLine($"Lancement de la commande {command.CommandText}");
-                SQLiteDataReader reader = command.ExecuteReader();
-
-                Trace.WriteLine($"Nombre de résultats, {reader.RecordsAffected}");
-
-                if (reader.HasRows)
+                using (SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    while (reader.Read())
+
+                    Trace.WriteLine($"Nombre de résultats, {reader.RecordsAffected}");
+
+                    if (reader.HasRows)
                     {
-                        Console.WriteLine(reader[0].ToString());
+                        while (reader.Read())
+                        {
+                            Console.WriteLine(reader[0].ToString());
 
-                        lCollec.Add(reader[0].ToString());
+                            lCollec.Add(reader[0].ToString());
+                        }
+
                     }
-
                 }
 
             }
@@ -319,22 +326,24 @@ namespace MyMameHelper.SQLite
 
             try
             {
-                var reader = ResultSelect(objSelect);
-
-                // Récupération des colonnes
-                while (reader.Read())
+                using (var reader = ResultSelect(objSelect))
                 {
-                    //
-                    Dictionary<string, object> dico = new Dictionary<string, object>();
-                    for (short i = 0; i < reader.FieldCount; i++)
-                    {
-                        dico.Add(reader.GetName(i), reader[i]);
-                    }
 
-                    //
-                    T data = method(dico);
-                    if (data == null) continue;
-                    lCollec.Add(dico[key].ToString(), data);
+                    // Récupération des colonnes
+                    while (reader.Read())
+                    {
+                        //
+                        Dictionary<string, object> dico = new Dictionary<string, object>();
+                        for (short i = 0; i < reader.FieldCount; i++)
+                        {
+                            dico.Add(reader.GetName(i), reader[i]);
+                        }
+
+                        //
+                        T data = method(dico);
+                        if (data == null) continue;
+                        lCollec.Add(dico[key].ToString(), data);
+                    }
                 }
             }
             catch (Exception exc)
@@ -370,40 +379,43 @@ namespace MyMameHelper.SQLite
                 Debug.WriteLine("GetCollectionOf: RAZ de la collection");
                 obsCollec.Clear();
             }
-            var reader = ResultSelect(objSelect);
-            while (reader.Read())
+            using (var reader = ResultSelect(objSelect))
             {
-                Dictionary<string, object> dico = new Dictionary<string, object>();
-                for (short i = 0; i < reader.FieldCount; i++)
+                while (reader.Read())
                 {
-                    dico.Add(reader.GetName(i), reader[i]);
+                    Dictionary<string, object> dico = new Dictionary<string, object>();
+                    for (short i = 0; i < reader.FieldCount; i++)
+                    {
+                        dico.Add(reader.GetName(i), reader[i]);
+                    }
+
+                    T data = method(dico);
+                    if (data == null)
+                        continue;
+
+                    obsCollec.Add(new KeyValuePair<string, object>(key: dico[col].ToString(), value: data));
                 }
-
-                T data = method(dico);
-                if (data == null)
-                    continue;
-
-                obsCollec.Add(new KeyValuePair<string, object>(key: dico[col].ToString(), value: data));
             }
-
             return obsCollec;
         }
 
 
         public void RefreshKVPOf<T>(ObservableCollection<KeyValuePair<string, object>> obsResult, Func<Dictionary<string, object>, T> method, string col, Obj_Select objSelect)
         {
-            var reader = ResultSelect(objSelect);
-            while (reader.Read())
+            using (var reader = ResultSelect(objSelect))
             {
-                Dictionary<string, object> dico = new Dictionary<string, object>();
-                for (short i = 0; i < reader.FieldCount; i++)
+                while (reader.Read())
                 {
-                    dico.Add(reader.GetName(i), reader[i]);
-                }
+                    Dictionary<string, object> dico = new Dictionary<string, object>();
+                    for (short i = 0; i < reader.FieldCount; i++)
+                    {
+                        dico.Add(reader.GetName(i), reader[i]);
+                    }
 
-                T data = method(dico);
-                if (data == null) continue;
-                obsResult.Add(new KeyValuePair<string, object>(key: dico[col].ToString(), value: data));
+                    T data = method(dico);
+                    if (data == null) continue;
+                    obsResult.Add(new KeyValuePair<string, object>(key: dico[col].ToString(), value: data));
+                }
             }
         }
         #endregion
@@ -469,17 +481,18 @@ namespace MyMameHelper.SQLite
             string sql = "SELECT [name] FROM sqlite_master WHERE type = 'table'";
 
             SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
-            SQLiteDataReader reader = command.ExecuteReader();
-
-            while (reader.Read())
+            using (SQLiteDataReader reader = command.ExecuteReader())
             {
-                switch (reader["Name"])
+                while (reader.Read())
                 {
-                    case "sqlite_sequence":
-                        break;
-                    default:
-                        listTable.Add(reader["Name"].ToString());
-                        break;
+                    switch (reader["Name"])
+                    {
+                        case "sqlite_sequence":
+                            break;
+                        default:
+                            listTable.Add(reader["Name"].ToString());
+                            break;
+                    }
                 }
             }
 
@@ -553,19 +566,21 @@ namespace MyMameHelper.SQLite
                 Order_TreatMt(command, objSelect.Orders);
                 command.CommandText += " LIMIT 1";
 
-                SQLiteDataReader reader = command.ExecuteReader();
-                Console.WriteLine($"{command.CommandText} exécutée, {reader.RecordsAffected}");
-
-                while (reader.Read())
+                using (SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    Dictionary<string, object> dico = new Dictionary<string, object>();
-                    for (short i = 0; i < reader.FieldCount; i++)
+                    Console.WriteLine($"{command.CommandText} exécutée, {reader.RecordsAffected}");
+
+                    while (reader.Read())
                     {
-                        dico.Add(reader.GetName(i), reader[i]);
+                        Dictionary<string, object> dico = new Dictionary<string, object>();
+                        for (short i = 0; i < reader.FieldCount; i++)
+                        {
+                            dico.Add(reader.GetName(i), reader[i]);
+                        }
+
+                        data = method(dico);
+
                     }
-
-                    data = method(dico);
-
                 }
             }
             catch (Exception exc)
@@ -586,8 +601,8 @@ namespace MyMameHelper.SQLite
             //string machines = PProp.Default.T_Machines;
 
             Dictionary<string, short> dicCol;
-            string sql = $"SELECT *, [{constructeurs}].[Nom] AS [Aff_Constructeur] FROM [{tMachine}] " +
-                            $"LEFT JOIN [{constructeurs}] ON [{tMachine}].[Constructeur] = [{constructeurs}].[ID] ";
+            string sql = $"SELECT *, [{constructeurs}].[Nom] AS \"Aff_Constructeur\" FROM [{tMachine}] " +
+                            $"LEFT JOIN [{constructeurs}] ON [{tMachine}].[Constructeur_Id] = [{constructeurs}].[ID] ";
 
 
             SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
@@ -631,15 +646,17 @@ namespace MyMameHelper.SQLite
         {
             List<Aff_Machine> lMachines = new List<Aff_Machine>();
 
-            SQLiteDataReader reader = AffMachine_SQL(conds, order);
-
-            if (reader.HasRows)
+            using (SQLiteDataReader reader = AffMachine_SQL(conds, order))
             {
-                //dicCol = Get_Poss(reader);
 
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    lMachines.Add(AffMachine_Maker(reader));
+                    //dicCol = Get_Poss(reader);
+
+                    while (reader.Read())
+                    {
+                        lMachines.Add(AffMachine_Maker(reader));
+                    }
                 }
             }
 
@@ -650,16 +667,18 @@ namespace MyMameHelper.SQLite
         {
             Dictionary<string, Aff_Machine> lMachines = new Dictionary<string, Aff_Machine>();
 
-            SQLiteDataReader reader = AffMachine_SQL(conds, order);
-
-            if (reader.HasRows)
+            using (SQLiteDataReader reader = AffMachine_SQL(conds, order))
             {
-                //dicCol = Get_Poss(reader);
 
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    Aff_Machine machine = AffMachine_Maker(reader);
-                    lMachines.Add(machine.ID.ToString(), machine);
+                    //dicCol = Get_Poss(reader);
+
+                    while (reader.Read())
+                    {
+                        Aff_Machine machine = AffMachine_Maker(reader);
+                        lMachines.Add(machine.ID.ToString(), machine);
+                    }
                 }
             }
 
@@ -842,20 +861,20 @@ namespace MyMameHelper.SQLite
         internal List<CT_Game_Mapped> QueryGameWithRoms()
         {
             List<CT_Game_Mapped> lGames = new List<CT_Game_Mapped>();
-            SQLiteDataReader reader = Select_GameWithRoms(null, null);
-
-            if (reader.HasRows)
+            using (SQLiteDataReader reader = Select_GameWithRoms(null, null))
             {
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    CT_Game_Mapped game = new CT_Game_Mapped(Game_Maker(reader));
+                    while (reader.Read())
+                    {
+                        CT_Game_Mapped game = new CT_Game_Mapped(Game_Maker(reader));
 
-                    game.Roms = RomMapping(reader);
+                        game.Roms = RomMapping(reader);
 
-                    lGames.Add(game);
+                        lGames.Add(game);
+                    }
                 }
             }
-
             return lGames;
         }
 
@@ -872,45 +891,46 @@ namespace MyMameHelper.SQLite
             Debug.WriteLine($"Requête par {nameof(QueryGame4Update)}");
 
             List<CT_Game_Mapped> lGames = new List<CT_Game_Mapped>();
-            SQLiteDataReader reader = Select_GameFullM();
-
-            //List<CT_Rom> romsList = GetListOf(CT_Rom.Result2Class, new Obj_Select(PProp.Default.T_Roms, all: true));
-
-            if (reader.HasRows)
+            using (SQLiteDataReader reader = Select_GameFullM())
             {
-                //dicCol = Get_Poss(reader);
 
-                while (reader.Read())
+                //List<CT_Rom> romsList = GetListOf(CT_Rom.Result2Class, new Obj_Select(PProp.Default.T_Roms, all: true));
+
+                if (reader.HasRows)
                 {
-                    CT_Game_Mapped game = new CT_Game_Mapped(Game_Maker(reader));
-                    game.Genre_Id = Trans.GetNullableUInt("Genre_Id", reader);
-                    //game.Constructeur_ID = Trans.GetNullableUInt("Developer_Id", reader);
+                    //dicCol = Get_Poss(reader);
 
-                    // Genre                                       
-                    game.Genre = new CT_Genre();
-                    game.Genre.ID = Convert.ToUInt16(game.Genre_Id = Trans.GetNullableUInt("Genre_Id", reader));
-                    game.Genre.Nom = Trans.GetString("Genre", reader);
+                    while (reader.Read())
+                    {
+                        CT_Game_Mapped game = new CT_Game_Mapped(Game_Maker(reader));
+                        game.Genre_Id = Trans.GetNullableUInt("Genre_Id", reader);
+                        //game.Constructeur_ID = Trans.GetNullableUInt("Developer_Id", reader);
 
-                    // Machine                    
-                    game.Machine = new CT_Machine();
-                    game.Machine.ID = Convert.ToUInt16(game.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader));
-                    game.Machine.Nom = Trans.GetString("Machine", reader);
+                        // Genre                                       
+                        game.Genre = new CT_Genre();
+                        game.Genre.ID = Convert.ToUInt16(game.Genre_Id = Trans.GetNullableUInt("Genre_Id", reader));
+                        game.Genre.Nom = Trans.GetString("Genre", reader);
 
-                    // Constructeur  désactivé pour le moment                  
-                    /*game.Constructeur = new CT_Constructeur();
-                    game.Constructeur.ID = Convert.ToUInt16(game.Constructeur_ID = Trans.GetNullableUInt("Constructor_Id", reader));
-                    game.Constructeur.Nom = Trans.GetString("Constructor", reader);*/
+                        // Machine                    
+                        game.Machine = new CT_Machine();
+                        game.Machine.ID = Convert.ToUInt16(game.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader));
+                        game.Machine.Nom = Trans.GetString("Machine", reader);
 
-                    game.Roms = RomMapping(reader);
-                    //   game.Machine = CT_Machine.Result2Class(reader);
+                        // Constructeur  désactivé pour le moment                  
+                        /*game.Constructeur = new CT_Constructeur();
+                        game.Constructeur.ID = Convert.ToUInt16(game.Constructeur_ID = Trans.GetNullableUInt("Constructor_Id", reader));
+                        game.Constructeur.Nom = Trans.GetString("Constructor", reader);*/
 
-                    //game.Machine_id
+                        game.Roms = RomMapping(reader);
+                        //   game.Machine = CT_Machine.Result2Class(reader);
+
+                        //game.Machine_id
 
 
-                    lGames.Add(game);
+                        lGames.Add(game);
+                    }
                 }
             }
-
             return lGames;
         }
 
@@ -1063,7 +1083,7 @@ namespace MyMameHelper.SQLite
 
             if (reader.HasRows)
             {
-                
+
 
                 while (reader.Read())
                 {
@@ -1073,8 +1093,8 @@ namespace MyMameHelper.SQLite
                     rawMameRom.Is_Mechanical = Trans.GetBool("Is_Mechanical", reader);
                     rawMameRom.Is_Device = Trans.GetBool("IsDevice", reader);
                     uint nombre = Trans.GetUInt("Nombre", reader);
-                    
-                    resultats.Add(new CT_Occurence<RawMameRom>( rawMameRom, nombre));
+
+                    resultats.Add(new CT_Occurence<RawMameRom>(rawMameRom, nombre));
                 }
             }
 
@@ -1194,20 +1214,21 @@ namespace MyMameHelper.SQLite
         public List<CT_Rom> AffRoms_List(SqlCond[] conds = null, SqlOrder order = null)
         {
             List<CT_Rom> lGames = new List<CT_Rom>();
-            SQLiteDataReader reader = AffRoms_SQL(conds, order);
-
-            if (reader.HasRows)
+            using (SQLiteDataReader reader = AffRoms_SQL(conds, order))
             {
-                //dicCol = Get_Poss(reader);
 
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    CT_Rom aG = AffRom_Maker(reader);
+                    //dicCol = Get_Poss(reader);
 
-                    lGames.Add(aG);
+                    while (reader.Read())
+                    {
+                        CT_Rom aG = AffRom_Maker(reader);
+
+                        lGames.Add(aG);
+                    }
                 }
             }
-
             return lGames;
         }
 
@@ -1295,8 +1316,8 @@ namespace MyMameHelper.SQLite
                             $", [{tGame}].Game_Name" +
                             $", [{tMachine}].ID AS \"Machine_Id\", [{tMachine}].Nom AS \"Machine_Name\"" +
                             $" FROM [{tRom}] " +
-                            $" LEFT JOIN [{tGame}] ON Game_Id = [{tGame}].ID " +
-                            $" LEFT JOIN [{tMachine}] ON Machine_Id = [{tMachine}].ID " +
+                            $" LEFT JOIN [{tGame}] ON [{tGame}].ID= [{tRom}].Game_Id" +
+                            $" LEFT JOIN [{tMachine}] ON [{tMachine}].ID= [{tRom}].Machine_Id " +
                            "";
 
             SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
@@ -1321,6 +1342,44 @@ namespace MyMameHelper.SQLite
         }
 
 
+
+        private SQLiteDataReader Select_Rom2Machine2()
+        {
+
+            //Dictionary<string, short> dicCol;
+            string sql = $"SELECT [{tRom}].ID, [{tRom}].Archive_Name, [{tRom}].Game_Id" +
+                          $", [{tGame}].Game_Name" +
+                          $", [{tMachine}].ID AS \"Machine_Id\", [{tMachine}].Nom AS \"Machine_Name\"" +
+                          $" FROM [{tRom}] " +
+                            $" LEFT JOIN [{tGame}] ON [{tGame}].ID= [{tRom}].Game_Id" +
+                            $" LEFT JOIN [{tMachine}] ON [{tMachine}].ID= [{tRom}].Machine_Id " +
+                         "";
+
+            SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
+
+            SqlCond[] conds = new SqlCond[] { new SqlCond($"Game_Id", eWhere.Is_Not, null) };
+            Condition_TreatMt(sqlCMD, conds);
+
+            SqlOrder[] orders = new SqlOrder[] { new SqlOrder($"Game_Name") };
+            Order_TreatMt(sqlCMD, orders);
+
+            Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");
+
+            try
+            {
+                return sqlCMD.ExecuteReader();
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine(exc.Message);
+                return null;
+            }
+        }
+
+
+
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -1331,37 +1390,66 @@ namespace MyMameHelper.SQLite
         {
 
             List<CT_Rom_Mapped> lGames = new List<CT_Rom_Mapped>();
-            SQLiteDataReader reader = Select_Rom2Machine();
-
-            if (reader.HasRows)
+            using (SQLiteDataReader reader = Select_Rom2Machine())
             {
-                //dicCol = Get_Poss(reader);
 
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    CT_Rom_Mapped aRom = RomMapper(reader);
+                    //dicCol = Get_Poss(reader);
 
-                    lGames.Add(aRom);
+                    while (reader.Read())
+                    {
+                        CT_Rom_Mapped aRom = RomMapper(reader);
+
+                        lGames.Add(aRom);
+                    }
                 }
             }
 
             return lGames;
         }
 
+        public List<CT_Rom_Mapped> List_Rom2Machine2(SqlCond[] conds = null, SqlOrder order = null)
+        {
+
+            List<CT_Rom_Mapped> lGames = new List<CT_Rom_Mapped>();
+            using (SQLiteDataReader reader = Select_Rom2Machine2())
+            {
+
+                if (reader.HasRows)
+                {
+                    //dicCol = Get_Poss(reader);
+
+                    while (reader.Read())
+                    {
+                        CT_Rom_Mapped aRom = RomMapper(reader);
+
+                        lGames.Add(aRom);
+                    }
+                }
+            }
+
+            return lGames;
+        }
+
+
+
         public List<CT_Rom_Mapped> List_Rom2Game(SqlCond[] conds = null, SqlOrder order = null)
         {
             List<CT_Rom_Mapped> lGames = new List<CT_Rom_Mapped>();
-            SQLiteDataReader reader = Select_Rom2Game();
-
-            if (reader.HasRows)
+            using (SQLiteDataReader reader = Select_Rom2Game())
             {
-                //dicCol = Get_Poss(reader);
 
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    CT_Rom_Mapped aRom = RomMapper(reader);
+                    //dicCol = Get_Poss(reader);
 
-                    lGames.Add(aRom);
+                    while (reader.Read())
+                    {
+                        CT_Rom_Mapped aRom = RomMapper(reader);
+
+                        lGames.Add(aRom);
+                    }
                 }
             }
 
@@ -1426,29 +1514,30 @@ namespace MyMameHelper.SQLite
         internal List<Map_RomGame> Build4Game_List()
         {
             List<Map_RomGame> lGames = new List<Map_RomGame>();
-            SQLiteDataReader reader = AffGames_SQL(null, null);
-
-            if (reader.HasRows)
+            using (SQLiteDataReader reader = AffGames_SQL(null, null))
             {
-                //dicCol = Get_Poss(reader);
 
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    Map_RomGame mr = new Map_RomGame()
+                    //dicCol = Get_Poss(reader);
+
+                    while (reader.Read())
                     {
+                        Map_RomGame mr = new Map_RomGame()
+                        {
 
 
-                    };
-                    mr.ID = Trans.GetUInt("ID", reader);
-                    //mr.Archive_Name = Trans.GetString("Archive_Name", reader);
-                    mr.Game_Name = Trans.GetString("Game_Name", reader);
+                        };
+                        mr.ID = Trans.GetUInt("ID", reader);
+                        //mr.Archive_Name = Trans.GetString("Archive_Name", reader);
+                        mr.Game_Name = Trans.GetString("Game_Name", reader);
 
 
-                    //Ag.Game_Name = Trans.GetString("Game_Name", reader);
-                    lGames.Add(mr);
+                        //Ag.Game_Name = Trans.GetString("Game_Name", reader);
+                        lGames.Add(mr);
+                    }
                 }
             }
-
             return lGames;
         }
 

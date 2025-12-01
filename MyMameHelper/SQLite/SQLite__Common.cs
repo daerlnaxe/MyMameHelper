@@ -15,7 +15,9 @@ namespace MyMameHelper.SQLite
 {
     public sealed partial class SQLite_OP
     {
-        internal const string MOT_DE_PASSE = @"jw9s4X#7~S4#4P-y65_Sk-k@GmWG}y3r~V7e476-:DC-4VxgpB";
+        private string DBB_String = $"Data Source={Settings.Default.DataBase_Path};Version=3";
+        private const string MOT_DE_PASSE = @"jw9s4X#7~S4#4P-y65_Sk-k@GmWG}y3r~V7e476-:DC-4VxgpB";
+
         public delegate void SendIntValue(object sender, int value);
         public event SendIntValue UpdateProgress;
 
@@ -55,6 +57,13 @@ namespace MyMameHelper.SQLite
         // todo: voir pour un nombre de tentatives
         public SQLite_OP()
         {
+
+            Connect();
+
+        }
+
+        internal void Connect()
+        {
             // Vérification de l'existance du fichier
             if (!File.Exists(Settings.Default.DataBase_Path))
             {
@@ -86,8 +95,6 @@ namespace MyMameHelper.SQLite
                 this.Dispose();
                 throw new Exception("Erreur SQlite");
             }
-
-
 
         }
     }

@@ -1,4 +1,5 @@
 ﻿
+using DxTBoxWPF.MBox;
 using MyMameHelper.Properties;
 using System;
 using System.Collections.Generic;
@@ -11,14 +12,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Forms;
 
 namespace MyMameHelper.SQLite
 {
     public sealed partial class SQLite_OP : IDisposable
     {
-
-
-
 
 
         #region commun
@@ -104,10 +104,8 @@ namespace MyMameHelper.SQLite
                 }
 
 
+                command.CommandText += $" {cond.Get_Linker()} {String.Join(".", munch)}{cond.Get_Operateur()} {val}";
 
-
-                    command.CommandText += $" {cond.Get_Linker()} {String.Join(".", munch)}{cond.Get_Operateur()} {val}";
-                
             }
         }
 
@@ -134,14 +132,14 @@ namespace MyMameHelper.SQLite
 
 
             if (orderCom.collate != Collate.None) command.CommandText += $" COLLATE {orderCom.collate}";*/
-            bool hasOrders=false;
-            string strOrders="";
+            bool hasOrders = false;
+            string strOrders = "";
             foreach (var order in orders)
             {
                 if (order == null)
                     continue;
 
-                if(i> 0 )
+                if (i > 0)
                     command.CommandText += ", ";
 
                 strOrders += $" [{order.field}] ";
@@ -177,7 +175,7 @@ namespace MyMameHelper.SQLite
             }
             catch (SQLiteException sqlExc)
             {
-                MessageBox.Show($"{sqlExc.Message}\n{sqlCmd.CommandText}", "Sqlite Exception");
+                System.Windows.MessageBox.Show($"{sqlExc.Message}\n{sqlCmd.CommandText}", "Sqlite Exception");
                 Console.WriteLine(sqlExc);
                 return false;
             }
@@ -193,7 +191,7 @@ namespace MyMameHelper.SQLite
         private string FilterParameter(string value)
         {
             string result = string.Empty;
-            result = value.Replace(";", "") ;
+            result = value.Replace(";", "");
 
             return result;
         }
@@ -218,26 +216,93 @@ namespace MyMameHelper.SQLite
         /// <returns></returns>
         internal bool Check_Table(string table_name)
         {
+            bool res;
+
             string sql = $"SELECT name FROM sqlite_master WHERE type = 'table' AND name = '{table_name}'";
             SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
             SQLiteDataReader reader = command.ExecuteReader();
+            res=reader.HasRows;
+            reader.Close();
 
-            return reader.HasRows;
+            return res;
         }
 
-        internal bool Check_Column(string Table_Name, string column)
+        /// <summary>
+        /// On cherche un résultat
+        /// </summary>
+        /// <param name="Table_Name"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        internal bool Check_Column2(string Table_Name, string column)
         {
-            string sql = $"pragma table_info({Table_Name})";
-            SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
+            try
             {
-                var colonne = reader.GetFieldValue<string>(1);
-                if (colonne.Equals(column))
-                    return true;
+             
+
+                //string sql = $"SELECT {cols2Sel} FROM \"{objSelect.Table}\"";
+                
+                string sql= $"SELECT {column} FROM {Table_Name} LIMIT 1;";
+
+
+                SQLiteCommand command = new SQLiteCommand(sql, this.SQLiteConn);
+
+                Trace.WriteLine(this.SQLiteConn.State);
+                object res = command.ExecuteScalar();
+
+
+                return true;
+                /*
+                if (reader.HasRows)
+                {
+                    return reader;
+                }*/
+            }
+            catch (SQLiteException exc)
+            {
+               return false;
+            }
+            catch (Exception exc)
+            {
+                return false;
             }
 
-            return false;
+        }
+
+ 
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Table_Name"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Lock la table ?? J'ai mis en place check_column2 , plus simple
+        /// </remarks>        
+        internal bool Check_Column(string Table_Name, string column)
+        {
+            bool found = false;
+
+            string sql = $"pragma table_info({Table_Name});";
+            SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
+            using (SQLiteDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    var colonne = reader.GetFieldValue<string>(1);
+                    if (colonne.Equals(column))
+                    {
+                        //reader.Close();
+                        found = true;
+                        break;
+                    }
+                }
+
+                reader.Close();
+            }
+
+            return found;
         }
 
 

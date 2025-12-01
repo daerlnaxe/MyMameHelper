@@ -106,7 +106,10 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Button Content="Build Machines"  Click="Build_Machines" ToolTip="Build Machines From Mame's Temp Roms"/> 
+                    <StackPanel>
+                    <Button Content="Update Machines"  Click="Update_Machines" ToolTip="Alter Table Machine to add missing columns"/>
+                    <Button Content="Build Machines"  Click="Build_Machines" ToolTip="Build Machines From Mame's Temp Roms"/>
+                    </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="Manufacturers">

@@ -589,6 +589,7 @@ namespace MyMameHelper.Windows
 
                     Dictionary<string, List<CT_Machine>> machines = TableFeeder.Machine(srcFiles);
                     sqOP.Insert_Machines(machines["identified"], false, false);
+                    sqOP.Insert_Machines(machines["Constructeurs"], true, false);
 
                 }
             }
@@ -599,6 +600,23 @@ namespace MyMameHelper.Windows
 
         }
 
+
+        private void Update_Machines(object sender, RoutedEventArgs e)
+        {
+            using (SQLite_OP sqOP = new SQLite_OP())
+            {
+                sqOP.SafeAlter_TMachine();
+
+            }
+        }
+
+
+
+        /// <summary>
+        /// Map Rom's Machine_ID to Machine table
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Remap_RomMachine(object sender, RoutedEventArgs e)
         {
             using (SQLite_OP sqOP = new SQLite_OP())
@@ -615,5 +633,7 @@ namespace MyMameHelper.Windows
                 sqOP.Map_RomMachine(machines, srcFiles.Keys.ToList());
             }
         }
+
+
     }
 }

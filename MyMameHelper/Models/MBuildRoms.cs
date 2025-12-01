@@ -81,11 +81,27 @@ namespace MyMameHelper.Models
         /// </summary>
         public Boolean BrothersChecked { get; set; } = true;
         #endregion
-
-
+        
+        
         #region Filtre de gauche
 
-        internal string LeftRomMode;
+        private RawMameRom _S4L;
+        public RawMameRom LeftSelected
+        {
+            get { return _S4L; }
+            set
+            {
+                if (value != _S4L)
+                {
+                    _S4L = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        internal string LeftRomMode { get; set; }
+
+
 
         private string _LeftFilter;
         public string LeftFilter

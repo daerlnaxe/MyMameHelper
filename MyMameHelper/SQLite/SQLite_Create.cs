@@ -6,6 +6,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -177,7 +178,7 @@ namespace MyMameHelper.SQLite
             status = CreateTable($"CREATE TABLE [{tTempRom}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Name] VARCHAR UNIQUE);");
             if (status > 0)
             {
-                
+
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Rom_Of] VARCHAR");
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Clone_Of] VARCHAR");
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Sample_Of] VARCHAR");
@@ -194,6 +195,20 @@ namespace MyMameHelper.SQLite
         }
 
 
+        #region Machines
+        List<string> _MachineColumns = new List<string>()
+        {
+            "[Description] VARCHAR",
+            "[Revision] VARCHAR",
+            "[Category] VARCHAR",
+            "[HardwareName] VARCHAR",   // CPS1, CPS2.... (?utile??)
+            "[MameCode] VARCHAR",       // Naomi, Sega16 ... dans sourcefile après /
+            "[MainCPU] VARCHAR",        // z80,...
+            "[Constructeur_Id] INTEGER",
+            "[Year] INTEGER",
+            "[AllowCPath] BOOLEAN"
+        };
+
 
         /// <summary>
         /// Création de la table machine
@@ -204,20 +219,52 @@ namespace MyMameHelper.SQLite
             short status = 0;
             status = CreateTable($"CREATE TABLE [{tMachine}] ([ID] INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, [Nom] VARCHAR UNIQUE);");
 
-            if (status > 0)
+            foreach (string s in _MachineColumns)
             {
-                AlterTable($"ALTER TABLE [{tMachine}] ADD [Revision] VARCHAR;");
-                AlterTable($"ALTER TABLE [{tMachine}] ADD [HardwareName] VARCHAR;");    // CPS1, CPS2....
-                AlterTable($"ALTER TABLE [{tMachine}] ADD [MameCode] VARCHAR;");        // Naomi, Sega16 ... dans sourcefile après /
-                AlterTable($"ALTER TABLE [{tMachine}] ADD [MainCPU] VARCHAR;");         // z80,...
-                AlterTable($"ALTER TABLE [{tMachine}] ADD [Constructeur_Id] INTEGER");
-                AlterTable($"ALTER TABLE [{tMachine}] ADD [Year] INTEGER;");
-                AlterTable($"ALTER TABLE [{tMachine}] ADD [AllowCPath] BOOLEAN;");
+                if (status == 1)
+                {
+                    AlterTable($"ALTER TABLE [{tMachine}] ADD {s}");
+                }
+            }
+            return status;
+        }
+
+
+        /// <summary>
+        /// Mets à jour les colonnes manquantes
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// Vérifie si la colonne existe
+        /// </remarks>
+        internal short SafeAlter_TMachine()
+        {
+            int status = 0;
+
+            foreach (string s in _MachineColumns)
+            {
+                string column = s.Substring(s.IndexOf('[')+1).Substring(0, s.IndexOf(']')-1);
+
+           
+
+                // Si la colonne n'existe pas
+                if (!Check_Column2(tMachine, column))
+                {
+     /*               this.SQLiteConn.Close();
+                   
+
+                    this.Connect();*/
+
+                    AlterTable("ALTER TABLE[Machines] ADD [Category] VARCHAR;");
+                }
             }
 
-            return status;
 
+            return 1;
         }
+
+        #endregion Machines
+
 
         /// <summary>
         /// Information pour SQLITE         

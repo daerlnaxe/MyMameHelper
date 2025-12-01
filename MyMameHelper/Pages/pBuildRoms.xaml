@@ -63,7 +63,7 @@
         <!-- DockPanel Gauche -->
         <DockPanel Grid.Row="1">
             <StackPanel DockPanel.Dock="Left">
-                <!--Button Content="Search" Command="commands:UICommands.SearchCmd"/-->
+                <Button Content="Search" Command="commands:UICommands.SearchCmd"/>
             </StackPanel>
 
             <!-- Grille basse -->
@@ -104,7 +104,7 @@
                 </Grid>
                 <!-- grille gauche (central) -->
                 <DataGrid x:Name="dg2Organize" KeyUp="LListView_KeyUp"  IsReadOnly="True"  AutoGenerateColumns="False"
-                          ItemsSource="{Binding RawRomsCollec}" SelectedItem="{Binding LeftSelected}"  >
+                          ItemsSource="{Binding RawRomsCollec}" SelectedItem="{Binding LeftSelected, Mode=TwoWay}"  ToolTip="Hit a key to filter">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Select All" Command="commands:UICommands.Select_AllCmd"/>

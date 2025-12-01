@@ -9,6 +9,7 @@ using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -579,7 +580,16 @@ namespace MyMameHelper.SQLite
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="machines"></param>
+        /// <param name="ignore"></param>
+        /// <param name="preservePK"></param>
+        /// <exception cref="Exception"></exception>
+        /// <remarks>
+        /// Puissante et générique
+        /// </remarks>
         internal void Insert_Machines(IList<CT_Machine> machines, bool ignore, bool preservePK)
         {
             Debug.WriteLine($"Insertion de la collection de machines");
@@ -605,39 +615,95 @@ namespace MyMameHelper.SQLite
                 sqlCmd.CommandText = $"INSERT {sqlIgnore} INTO [{tMachine}]";
 
                 // Add Key if asked
-                if (preservePK)
+                //sqlCmd.CommandText = preservePK == true ? $" ([ID], [Nom]" : " ([Nom]";
+
+                List<string> fields = new List<string>()
                 {
-                    sqlCmd.CommandText += $" ([ID], [Nom])" +
-                        " VALUES";
-                }
-                else
+                    "ID",
+                    "Nom",
+                    "Description",
+                    "Category"
+                };
+
+
+                // On lèvre ID si on ne veut pas préserver les pk
+                if (!preservePK)
+                    fields.Remove("ID");
+
+
+                // On ajoute les champs
+                for (int k = 0; k < fields.Count; k++)
                 {
-                    sqlCmd.CommandText += " ([Nom])" +
-                        " VALUES";
+                    string field = fields[k];
+
+
+                    if (k == 0)
+                        sqlCmd.CommandText += "(";
+
+                    // Ajout de la virgule entre les champs
+                    if (k != 0)
+                        sqlCmd.CommandText += ",";
+
+                    sqlCmd.CommandText += $"[{field}]";
+
                 }
 
+                sqlCmd.CommandText += ") Values (";
+
+                // limiteur
                 for (int j = 0; j < max; j++)
                 {
                     if (i == machines.Count)
                         break;
 
-                    if (j == 0)
-                        sqlCmd.CommandText += "(";
-                    else
+                    if (j != 0)
                         sqlCmd.CommandText += ",(";
 
-                    // Si l'on préserve les PK
-                    if (preservePK)
-                        sqlCmd.CommandText += $"@ID{j},";
+ 
+                    // ligne
+                    for (int k = 0; k < fields.Count; k++)
+                    {
+                        string field = fields[k];
 
-                    sqlCmd.CommandText += $"@Nom{j}";
-                    sqlCmd.CommandText += $")";
+                        // Récupération de l'accesseur en fonction du champ
+                        PropertyInfo prop = machines[i].GetType().GetProperty(field);
+                        if (prop != null)
+                        {
+                            object valeur = prop.GetValue(machines[i]);
+
+                            // Ajout de la virgule entre les champs
+                            if (k != 0)
+                                sqlCmd.CommandText += ",";
+
+                            // Ajout du champ à remplir
+                            sqlCmd.CommandText += $"@{field}{j}";
+
+                            // Ajout de la valeur au champ à remplir
+                            if (valeur == null)
+                                sqlCmd.Parameters.Add($"@{field}{j}", DbType.String).Value =null;
+                            else if (valeur.GetType() == typeof(string))
+                                sqlCmd.Parameters.Add($"@{field}{j}", DbType.String).Value = valeur;
+                            else if (valeur.GetType() == typeof(uint))
+                                sqlCmd.Parameters.Add($"@{field}{j}", DbType.UInt64).Value = valeur;
+                        }
+                        else
+                        {
+                            throw new Exception($"Unknown accessor: {field}");
+                        }
+
+                        //if (typeof(machines[i].))
+
+                    }
+
+                    //sqlCmd.CommandText += $"@Nom{j}";
+                    // On termine la ligne
+                    sqlCmd.CommandText += ")";
 
                     // Si l'on préserve les PK
-                    if (preservePK)
+                    /*if (preservePK)
                         sqlCmd.Parameters.Add($"@ID{j}", DbType.UInt64).Value = machines[i].ID;
 
-                    sqlCmd.Parameters.Add($"@Nom{j}", DbType.String).Value = machines[i].Nom;
+                    sqlCmd.Parameters.Add($"@Nom{j}", DbType.String).Value = machines[i].Nom;*/
 
                     // a surveiller si bug
                     if (j < max - 1)
@@ -645,6 +711,7 @@ namespace MyMameHelper.SQLite
                 }
 
                 Trace.WriteLine($"Exec: {sqlCmd.CommandText}");
+
                 foreach (SQLiteParameter parameter in sqlCmd.Parameters)
                 {
                     Debug.WriteLine($"{parameter.ParameterName} | {parameter.Value}");
@@ -802,7 +869,7 @@ namespace MyMameHelper.SQLite
                     {
                         UpdateProgress?.Invoke(this, i * 100 / Roms.Count);
                         Debug.WriteLine($"{i}/{Roms.Count} ({nowElapsed} ms)");
-                        elapsed= nowElapsed;
+                        elapsed = nowElapsed;
                     }
                 }
 

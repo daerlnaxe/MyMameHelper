@@ -306,8 +306,8 @@ namespace MyMameHelper.Pages
                     case "Machine":
                         dest = Get_Path4Machine(romMapped);
                         break;
-                    case "Manufacturer/Machine":
-                        //dest = Get
+                    case "Special":
+                        dest = Get_Path4Special(romMapped);
                         break;
                     default:
                         dest = PProp.Default.RomDestination;
@@ -437,6 +437,28 @@ namespace MyMameHelper.Pages
             /*}*/
         }
 
+        private string Get_Path4Special(CT_Rom_Mapped romMapped)
+        {
+            if (romMapped.Machine == null || romMapped.Machine_Id == null)
+                return Path.Combine(PProp.Default.RomDestination, "_No_Special");
+
+            if (romMapped.Machine.Category == null)
+                return Path.Combine(PProp.Default.RomDestination);
+
+            string dest = null;
+
+
+
+            dest = Path.Combine(PProp.Default.RomDestination, romMapped.Machine.Category);
+
+            if (romMapped.Game.Unwanted == true && useUnwanted.IsChecked == true)
+            {
+                dest = Path.Combine(dest, "Unwanted");
+            }
+
+            return dest;
+        }
+
 
 
 
@@ -485,7 +507,7 @@ namespace MyMameHelper.Pages
             //            mProgress.go += new AsyncWindowProgress.AsyncBoolAction(AsyncLoad_RomMapped);
             mProgress.go = new AsyncWorkBool.AsyncBoolAction(AsyncLoad_RomMapped);
 
-            bool test = false;
+            //bool test = false;
             aLoad.ProgressContext = mProgress;
             aLoad.ShowDialog();
 
@@ -508,6 +530,9 @@ namespace MyMameHelper.Pages
                 {
                     case "Machine":
                         _RomsMapped = sqReq.List_Rom2Machine();
+                        break;
+                    case "Special":
+                        _RomsMapped = sqReq.List_Rom2Machine2();
                         break;
                     default:
                         _RomsMapped = sqReq.List_Rom2Game();

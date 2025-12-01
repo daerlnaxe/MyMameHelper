@@ -73,7 +73,7 @@
                     <ComboBox x:Name="cbArboType" HorizontalAlignment="Left" Width="165">
                         <ComboBoxItem Content="Favorites"/>
                         <ComboBoxItem Content="Machine"/>
-                        <ComboBoxItem Content="Manufacturer/Machine"/>
+                        <ComboBoxItem Content="Special"/>
                     </ComboBox>
                 </StackPanel>
             </StackPanel>

@@ -29,27 +29,31 @@ namespace MyMameHelper.SQLite
                 // Machine spécifique
                 var machine = machines.FirstOrDefault((x) => x.Nom.Equals(srcFile));
 
-                
-                // Par constructeur
+                /* // Par constructeur
+                 if (machine == null)
+                 {
+                     string search = srcFile.Substring(0, srcFile.IndexOf('/'));
+                     machine = machines.FirstOrDefault((x) => x.Nom.Equals(search));
+                 }*/
+                sqlCmd.CommandText = $"UPDATE [{tRom}] SET [Machine_Id]=@Machine_Id WHERE source_file='{srcFile}'"; ;
+
+                // Met à null si on ne retrouve pas la correspondance
                 if (machine == null)
                 {
-                    string search = srcFile.Substring(0, srcFile.IndexOf('/'));
-                    machine = machines.FirstOrDefault((x) => x.Nom.Equals(search));
+                    sqlCmd.Parameters.Add($"@Machine_Id", DbType.UInt32).Value = null;
+                }                
+                else
+                {
+                    // Pour gagner du temps
+                    machines.Remove(machine);
+
+                    // Commande SQL
+                    sqlCmd.Parameters.Add($"@Machine_Id", DbType.UInt32).Value = machine.ID;
                 }
-
-                // Pour gagner du temps
-                machines.Remove(machine);
-
-
-                // Commande SQL
-                sqlCmd.CommandText = $"UPDATE [{tRom}] SET [Machine_Id]=@Machine_Id WHERE source_file={srcFile}"; ;
-                sqlCmd.Parameters.Add($"@Machine_Id", DbType.UInt32).Value = machine.ID;
 
                 // Update
                 ExecNQ(sqlCmd);
             }
-
-
 
 
 

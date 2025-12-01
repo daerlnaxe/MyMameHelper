@@ -32,6 +32,9 @@ namespace MyMameHelper.ContTable
             }
         }*/
 
+        public string Description { get; set; }
+
+
         public string Revision { get; set; }
         public uint IDConstructeur
         {
@@ -41,6 +44,11 @@ namespace MyMameHelper.ContTable
         public uint Year { get; set; }
 
         public bool AllowCPath { get; set; }
+
+        /// <summary>
+        /// Indiquera le nom que l'on aimerait avoir dans l'arborescence (Bellfruits, Casino, Poker)
+        /// </summary>
+        public string Category { get; internal set; }
 
         public CT_Machine(Aff_Machine machine)
         {
@@ -64,6 +72,8 @@ namespace MyMameHelper.ContTable
 
             cTC.ID = Trans.GetUInt("ID", dico);
             cTC.Nom = Trans.GetString("Nom", dico);
+            cTC.Category = Trans.GetString("Category", dico);
+            cTC.Description = Trans.GetString("Description", dico);
             cTC.Revision = Trans.GetString("Revision", dico);
             cTC.IDConstructeur = Trans.GetUInt("Constructeur", dico);
             cTC.Year = Trans.GetUInt("Year", dico);
@@ -77,6 +87,8 @@ namespace MyMameHelper.ContTable
 
             cTC.ID = Trans.GetUInt("ID", reader);
             cTC.Nom = Trans.GetString("Nom", reader);
+            cTC.Category = Trans.GetString("Category", reader);
+            cTC.Description = Trans.GetString("Description", reader);
             cTC.Revision = Trans.GetString("Revision", reader);
             cTC.IDConstructeur = Trans.GetUInt("Constructeur", reader);
             cTC.Year = Trans.GetUInt("Year", reader);

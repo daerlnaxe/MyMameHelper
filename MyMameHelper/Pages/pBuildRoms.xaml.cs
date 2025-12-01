@@ -353,20 +353,8 @@ namespace MyMameHelper.Pages
 
 
 
-        /*
-        private RawMameRom _S4L;
-        public RawMameRom LeftSelected
-        {
-            get { return _S4L; }
-            set
-            {
-                if (value != _S4L)
-                {
-                    _S4L = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }*/
+        
+
 
         /*
         private void LeftMode_Changed(object sender, RoutedEventArgs e)
@@ -375,23 +363,26 @@ namespace MyMameHelper.Pages
             if (_MContext.LeftFilter != null)
                 Select_Left();
         }
+        */
+
 
         private void Select_Left()
         {
+            
             if (_MContext.LeftRomMode == "Mode Game")
                 _MContext.LeftSelected = _MContext.RawRomsCollec.FirstOrDefault(x => x.Description.StartsWith(_MContext.LeftFilter, StringComparison.OrdinalIgnoreCase));
-            else if (_MContext.LeftRomMode == "Mode Archive")
+            else if (_MContext.LeftRomMode == "Archive Select")
                 _MContext.LeftSelected = _MContext.RawRomsCollec.FirstOrDefault(x => x.Name.StartsWith(_MContext.LeftFilter, StringComparison.OrdinalIgnoreCase));
 
             if (_MContext.LeftSelected != null)
             {
                 dg2Organize.ScrollIntoView(dg2Organize.SelectedItem);
             }
-        }*/
+        }
 
         #region
         /// <summary>
-        /// Obsolète ?
+        /// Permet de filtrer la datagrid de gauche en pressant une touche du clavier.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -412,21 +403,24 @@ namespace MyMameHelper.Pages
 
             char k = Methods.Keyboard.GetCharFromKey(e.Key);
             //
-            /*if (LeftFilter is null)
+            
+            var LeftFilter = _MContext.LeftFilter;
+
+            if (LeftFilter is null)
                 LeftFilter = string.Empty;
 
             //
             if (e.Key == Key.Back)
-                LeftFilter = LeftFilter.Length > 0 ? LeftFilter.Substring(0, LeftFilter.Length - 1) : string.Empty;
+                _MContext.LeftFilter = LeftFilter.Length > 0 ? LeftFilter.Substring(0, LeftFilter.Length - 1) : string.Empty;
 
             else if (e.Key == Key.Delete)
-                LeftFilter = string.Empty;
+                _MContext.LeftFilter = string.Empty;
 
             else
-                LeftFilter += k;
+                _MContext.LeftFilter += k;
 
 
-            Select_Left();*/
+            Select_Left();
         }
         #endregion
 
@@ -631,7 +625,7 @@ namespace MyMameHelper.Pages
         /*
         private void Ex_Search(object sender, ExecutedRoutedEventArgs e)
         {
-            throw new NotImplementedException("Vérifier la compatibilité après le spit de transraw2rom");
+            //throw new NotImplementedException("Vérifier la compatibilité après le spit de transraw2rom");
             RawRomSearch sp = new RawRomSearch();
             if (sp.ShowDialog() == true)
             {
@@ -651,8 +645,8 @@ namespace MyMameHelper.Pages
                 TransRaw2Rom(foundRRoms);
                 // RomsToSave.ChangeContent = sp.RomsFound.ToList();
             }
-        }
-        */
+        }*/
+        
 
 
         #region Change
@@ -798,18 +792,20 @@ namespace MyMameHelper.Pages
                 return;
             }
 
+            // Sauvegarde des roms
+            if (MessageBox.Show("Would you want to save this roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                _MContext.SaveRoms();
+            }
+
+
 
 
         }
 
 
+            #endregion
 
 
-
-
-
-        #endregion
-
-
-    }
+        }
 }

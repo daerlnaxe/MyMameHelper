@@ -84,62 +84,62 @@ namespace MyMameHelper.Methods
 
         static List<string> _Bellfruits = new List<string>()
         {
-            "barcrest/mpu1",
-"barcrest/mpu4avan",
-"barcrest/mpu4bwb",
-"barcrest/mpu4crystal",
-"barcrest/mpu4empire",
-"barcrest/mpu4mod2sw",
-"barcrest/mpu4mod4oki",
-"barcrest/mpu4union",
-"barcrest/mpu4unsorted",
-"barcrest/mpu4vid",
-"barcrest/mpu5sw",
-            "bfm/bfm_ad5sw",
-            "bfm/bfm_blackbox",
-            "bfm/bfm_sc1",
-            "bfm/bfm_sc2",
-            "bfm/bfm_sc4",
-            "bfm/bfm_sc5sw",
-            "bfm/bfm_swp",
-            "bfm/bfmsys83",
-            "bfm/bfmsys85",
-            "cirsa/missbamby",
-            "funworld/supercrd",
-            "igs/goldstar",
-            "igs/igs_m027",
-            "igs/igs_m027xa",
+            "barcrest/mpu1.cpp",
+            "barcrest/mpu4avan.cpp",
+            "barcrest/mpu4bwb.cpp",
+            "barcrest/mpu4crystal.cpp",
+            "barcrest/mpu4empire.cpp",
+            "barcrest/mpu4mod2sw.cpp",
+            "barcrest/mpu4mod4oki.cpp",
+            "barcrest/mpu4union.cpp",
+            "barcrest/mpu4unsorted.cpp",
+            "barcrest/mpu4vid.cpp",
+            "barcrest/mpu5sw.cpp",
+            "bfm/bfm_ad5sw.cpp",
+            "bfm/bfm_blackbox.cpp",
+            "bfm/bfm_sc1.cpp",
+            "bfm/bfm_sc2.cpp",
+            "bfm/bfm_sc4.cpp",
+            "bfm/bfm_sc5sw.cpp",
+            "bfm/bfm_swp.cpp",
+            "bfm/bfmsys83.cpp",
+            "bfm/bfmsys85.cpp",
+            "cirsa/missbamby.cpp",
+            "funworld/supercrd.cpp",
+            "igs/goldstar.cpp",
+            "igs/igs_m027.cpp",
+            "igs/igs_m027xa.cpp",
             // all
-            "jpm/jpmimpctsw",
-            "jpm/jpmmps",
-            "jpm/jpms80",
-            "jpm/jpmsys5sw",
-            "jpm/pluto5",
-            "konami/konmedal68k",
-            "maygay/maygay1bsw",
-            "maygay/maygayep",
-            "misc/39in1",
-            "misc/amaticmg",
-            "misc/astrafr",
-            "misc/atronic",
-            "misc/blitz68k",
-            "misc/cromptons",
-            "misc/dfruit",
-            "misc/ecoinfr",
-            "misc/fresh",
-            "misc/hazelgr",
-            "misc/jungleyo",
-            "misc/mpu12wbk",
-            "misc/multfish",
-            "misc/multfish_boot",
-            "misc/sfbonus",
-            "nichibutsu/jangou",
-            "pc/fruitpc",
-            "playmark/sderby",
-            "recfranco/rfslotsmcs48",
-            "shared/fruitsamples",
-            "shared/sec",
-            "sigma/sigmab52",
+            "jpm/jpmimpctsw.cpp",
+            "jpm/jpmmps.cpp",
+            "jpm/jpms80.cpp",
+            "jpm/jpmsys5sw.cpp",
+            "jpm/pluto5.cpp",
+            "konami/konmedal68k.cpp",
+            "maygay/maygay1bsw.cpp",
+            "maygay/maygayep.cpp",
+            "misc/39in1.cpp",
+            "misc/amaticmg.cpp",
+            "misc/astrafr.cpp",
+            "misc/atronic.cpp",
+            "misc/blitz68k.cpp",
+            "misc/cromptons.cpp",
+            "misc/dfruit.cpp",
+            "misc/ecoinfr.cpp",
+            "misc/fresh.cpp",
+            "misc/hazelgr.cpp",
+            "misc/jungleyo.cpp",
+            "misc/mpu12wbk.cpp",
+            "misc/multfish.cpp",
+            "misc/multfish_boot.cpp",
+            "misc/sfbonus.cpp",
+            "nichibutsu/jangou.cpp",
+            "pc/fruitpc.cpp",
+            "playmark/sderby.cpp",
+            "recfranco/rfslotsmcs48.cpp",
+            "shared/fruitsamples.cpp",
+            "shared/sec.cpp",
+            "sigma/sigmab52.cpp",
 
         };
 
@@ -149,6 +149,7 @@ namespace MyMameHelper.Methods
         /// <remarks>
         /// Bellfruit, Super Fruit
         /// </remarks>
+        [Obsolete]
         static List<string> _MoneyConst = new List<string>()
             {
                 "adp",
@@ -182,9 +183,10 @@ namespace MyMameHelper.Methods
                 "yeno",
                 "zvt"
             };
+        [Obsolete]
         public static List<string> MoneyConst => _MoneyConst;
 
-
+        [Obsolete]
         private static List<string> _Periphs = new List<string>()
         {
             "brother",
@@ -217,6 +219,36 @@ namespace MyMameHelper.Methods
 
 
 
+        private static string WriteCategory(string category, ref string prevConstructor, ref string strConstruct)
+        {
+            string line = "";
+            if (!prevConstructor.Equals(strConstruct))
+            {
+                line = $"============== {strConstruct} - Squelettes, pas une machine  ==============";
+                prevConstructor = strConstruct;
+            }
+
+
+            return line;
+        }
+
+        /*
+        private static void mee()
+        {
+            CT_Machine machine = new CT_Machine();  
+            // On ajoute le nom du constructeur pour tous les autres cas // (sauf pinball)
+            if (onlyConstructs.FirstOrDefault(x => x.Nom.Equals(strConstruct)) == null)
+            {
+                machine.ID = otherID;
+                machine.Nom = strConstruct;
+
+                //if (!strConstruct.Equals("pinball"))
+                onlyConstructs.Add(machine);
+
+                otherID++;
+            }
+        }*/
+
         /// <summary>
         /// Construit les machines en fonction de source_file des roms temporaires de M.A.M.E
         /// </summary>
@@ -235,13 +267,16 @@ namespace MyMameHelper.Methods
             uint otherID = 1000;
             uint keepID = 1000;
 
+            // Systèmes connus comme CPS1, Naomi
             List<CT_Machine> isKnowedSystem = new List<CT_Machine>();
+            // Les autres on garde juste le constructeur
             List<CT_Machine> onlyConstructs = new List<CT_Machine>();
 
+            // Squelettes - roms non fonctionnelles
             List<string> skelettons = new List<string>();
-            List<string> pinball = new List<string>();
-
             List<string> machinesASous = new List<string>();
+
+            List<string> pinball = new List<string>();
             List<string> materielElectronique = new List<string>();
             List<string> mahjong = new List<string>();
             List<string> pass_notid = new List<string>();
@@ -263,6 +298,10 @@ namespace MyMameHelper.Methods
                 }
 
 
+
+
+
+
                 // Extension du sourceFile
                 string extension = srcFile.Substring(srcFile.LastIndexOf('.') + 1);
 
@@ -277,38 +316,39 @@ namespace MyMameHelper.Methods
 
                 CT_Machine machine = new CT_Machine()
                 {
-                    Nom = $"{strConstruct} - {strMachine}"
+                    //Nom = $"{strConstruct} - {strMachine}"
+                    Nom= srcFile
                 };
 
                 // Subdivision
                 string rLine = $"{strConstruct} - {strMachine} ({occur})";
-                // On ajoute le nom du constructeur pour tous les autres cas // (sauf pinball)
-                if (onlyConstructs.FirstOrDefault(x => x.Nom.Equals(strConstruct)) == null)
-                {
-                    machine.ID = otherID;
-                    machine.Nom = strConstruct;
-
-                    //if (!strConstruct.Equals("pinball"))
-                    onlyConstructs.Add(machine);
-
-                    otherID++;
-                }
 
 
-                // Squelettes, non fonctionnel
+
+                // Squelettes - roms non fonctionnelles
                 if (strConstruct.StartsWith("skeleton"))
                 {
-                    if (!prevConstructor.Equals(strConstruct))
-                    {
-                        skelettons.Add($"============== {strConstruct} - Squelettes, pas une machine  ==============");
-                    }
+                    skelettons.Add(WriteCategory("Skeleton", ref prevConstructor, ref strConstruct));
                     skelettons.Add(rLine);
-
-                    prevConstructor = strConstruct;
 
                     continue;
 
                 }
+
+                // Bellfruits - Machines à sous 
+                if (_Bellfruits.FirstOrDefault(x => x.Equals(srcFile)) != null)
+                {
+                    machinesASous.Add(WriteCategory("Bellfruits", ref prevConstructor, ref strConstruct));
+                    machinesASous.Add(rLine);
+
+                    machine.Category = "Bellfruits";
+                    onlyConstructs.Add(machine);
+
+                    continue;
+                }
+
+                continue;
+
 
                 var res = IsKnowedSystem(strConstruct, ref machine, strMachine);
                 // knowed
@@ -563,7 +603,10 @@ epson/qx10.cpp
             }
 
 
-            return new Dictionary<string, List<CT_Machine>>() { { "identified", isKnowedSystem } };
+            return new Dictionary<string, List<CT_Machine>>() {
+                { "identified", isKnowedSystem } ,
+                { "Constructeurs", onlyConstructs }
+            };
             /*
             //Ajout à la base
             using (SQLite_OP sqOP = new SQLite_OP())
