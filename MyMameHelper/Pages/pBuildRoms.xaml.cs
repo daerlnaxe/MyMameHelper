@@ -71,10 +71,12 @@ namespace MyMameHelper.Pages
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
+        {            
             if (MessageBox.Show("Load Roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
+                this.Cursor = Cursors.Wait;
                 _MContext.LoadCollecs();
+                this.Cursor = Cursors.Arrow;
             }
         }
 
@@ -387,7 +389,12 @@ namespace MyMameHelper.Pages
             }
         }*/
 
-        /*
+        #region
+        /// <summary>
+        /// Obsolète ?
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LListView_KeyUp(object sender, KeyEventArgs e)
         {
             if (!((e.Key >= Key.A && e.Key <= Key.Z)
@@ -405,7 +412,7 @@ namespace MyMameHelper.Pages
 
             char k = Methods.Keyboard.GetCharFromKey(e.Key);
             //
-            if (LeftFilter is null)
+            /*if (LeftFilter is null)
                 LeftFilter = string.Empty;
 
             //
@@ -419,10 +426,10 @@ namespace MyMameHelper.Pages
                 LeftFilter += k;
 
 
-            Select_Left();
+            Select_Left();*/
         }
         #endregion
-        */
+
 
 
         #region Datagrid Droite
@@ -477,6 +484,8 @@ namespace MyMameHelper.Pages
         }
         */
 
+
+        /*
         /// <summary>
         /// 
         /// </summary>
@@ -503,6 +512,8 @@ namespace MyMameHelper.Pages
                 window.AsyncUpProgressPercent(i);
             }
         }
+
+        */
 
         private void Can_ResetRight(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -549,14 +560,16 @@ namespace MyMameHelper.Pages
         }
         */
 
-        /*
+
         private void RightMode_Changed(object sender, RoutedEventArgs e)
         {
-            LeftRomMode = ((RadioButton)sender).Content.ToString();
-            if (LeftFilter != null)
-                Select_Right();
+            if (DataContext != null)
+                _MContext.LeftRomMode = ((RadioButton)sender).Content.ToString();
+
+            /*if (LeftFilter != null)
+                Select_Right();*/
         }
-        */
+
 
         /*
         private void Select_Right()
@@ -572,7 +585,11 @@ namespace MyMameHelper.Pages
             }
         }*/
 
-        /*
+        /// <summary>
+        /// Obsolète
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RListView_KeyUp(object sender, KeyEventArgs e)
         {
             if (!((e.Key >= Key.A && e.Key <= Key.Z)
@@ -590,6 +607,8 @@ namespace MyMameHelper.Pages
 
             char k = Methods.Keyboard.GetCharFromKey(e.Key);
             //
+
+            /*
             if (RightFilter is null)
                 RightFilter = string.Empty;
 
@@ -604,9 +623,9 @@ namespace MyMameHelper.Pages
                 RightFilter += k;
 
 
-            //Select_Right();
+            //Select_Right();*/
         }
-        */
+
         #endregion
 
         /*
@@ -726,9 +745,13 @@ namespace MyMameHelper.Pages
         */
         #endregion
 
-        /*
+        /// <summary>
+        /// Obsolète ?
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CbConstructeur_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+        { /*
             ComboBox cb = (ComboBox)sender;
             int idConstruct = Convert.ToInt32(cb.SelectedValue);
 
@@ -739,16 +762,16 @@ namespace MyMameHelper.Pages
                 objSel.AddOrders(new SqlOrder("Nom"));
 
                 Machines.ChangeContent = sqReq.GetListOf(CT_Machine.Result2Class, objSel);
-            }
+            }*/
         }
-        */
+
 
 
 
         #region Sauver/Updater dans les tables
         private void Can_Save(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = _MContext.RomsToSave.Count > 0;
+            e.CanExecute = _MContext?.RomsToSave.Count > 0;
         }
 
         /// <summary>
@@ -764,7 +787,7 @@ namespace MyMameHelper.Pages
         /// </remarks>
         private void EX_SaveDB(object sender, ExecutedRoutedEventArgs e)
         {
-            
+
 
             if (MessageBox.Show("Would you want to save missing manufacturers. Refusing it, will stop all the process.", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -778,6 +801,7 @@ namespace MyMameHelper.Pages
 
 
         }
+
 
 
 

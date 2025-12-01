@@ -133,10 +133,15 @@ namespace MyMameHelper.Models
             }
 
             // Chargement asynchrone des roms
-            AsyncWindowProgress aLoad = new AsyncWindowProgress();
-            aLoad.go += new AsyncWindowProgress.AsyncAction(AsyncLoadTempRoms);
+            AsyncWorkList<RawMameRom> awl = new Models.AsyncWorkList<RawMameRom>();
+            awl.go += new AsyncWorkList<RawMameRom>.AsyncListAction(AsyncLoadTempRoms);
+
+
+            AsyncWindowProgressG aLoad = new AsyncWindowProgressG();
+            aLoad.ProgressContext = awl;
             aLoad.ShowDialog();
-            RawRomsCollec.ChangeContent = ListRoms;
+
+            RawRomsCollec.ChangeContent = awl.Resultats;
 
 
             return true;
@@ -147,10 +152,12 @@ namespace MyMameHelper.Models
         /// Chargement des roms temporaires
         /// </summary>
         /// <param name="aLoad"></param>
-        private void AsyncLoadTempRoms(AsyncWindowProgress aLoad)
+        private List<RawMameRom> AsyncLoadTempRoms(AsyncWindowProgressG aLoad)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
+
+            List<RawMameRom> listRMR;
 
             aLoad.AsyncMessage("Loading Roms...");
             using (SQLite_OP sqReq = new SQLite_OP())
@@ -159,21 +166,25 @@ namespace MyMameHelper.Models
 
                 /* SqlCond[] condBios = new SqlCond[] { new SqlCond("Is_Bios", eWhere.Equal, "True") };
                  objSel.Conditions = condBios;*/
-                ListRoms = sqReq.GetListOf<RawMameRom>(RawMameRom.Result2Class, objSel);
+
+                // Récupération de la liste des roms
+                listRMR = sqReq.GetListOf<RawMameRom>(RawMameRom.Result2Class, objSel);
             }
 
-            for (int i = 0; i < ListRoms.Count; i++)
+            // On enlève ce qui est déjà présent dans les roms en base
+            for (int i = 0; i < listRMR.Count; i++)
             {
-                RawMameRom rawRom = ListRoms[i];
+                RawMameRom rawRom = listRMR[i];
 
                 if (_RomsInDb.FirstOrDefault<CT_Rom>(x => x.Archive_Name.Equals(rawRom.Name)) != null)
                 {
-                    ListRoms.Remove(rawRom);
+                    listRMR.Remove(rawRom);
                     i--;
                 }
             }
 
             Console.WriteLine(sw.ElapsedMilliseconds);
+            return listRMR;
         }
 
         #endregion Chargement

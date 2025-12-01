@@ -12,6 +12,8 @@ namespace MyMameHelper.Models
         public delegate List<T> AsyncListAction(AsyncWindowProgressG window);
         public AsyncListAction go { get; set; }
 
+        public List<T> Resultats {  get; set; }  
+
 
         public List<object> Arguments { get; set; } = new List<object>();
 
@@ -27,7 +29,8 @@ namespace MyMameHelper.Models
 
         public object EndGo(IAsyncResult ar)
         {
-            return go.EndInvoke(ar);   // <- renvoie bool, mais boxé en object
+            Resultats= go.EndInvoke(ar);   // <- renvoie bool, mais boxé en object
+            return Resultats;
         }
   
 

@@ -32,7 +32,7 @@
         <!--CommandBinding Command="commands:UICommands.ChangeCmd" Executed="Ex_Change" CanExecute="Can_Change"/-->
         <!--CommandBinding Command="commands:UICommands.DeleteFromDb" Executed="DeleteGames" CanExecute="Can_Delete"/-->
         <!-- Panneau de gauche -->
-        <CommandBinding Command="commands:UICommands.SearchCmd" Executed="Ex_Search" />
+        <!--CommandBinding Command="commands:UICommands.SearchCmd" Executed="Ex_Search" /-->
         <CommandBinding Command="commands:UICommands.Select_AllCmd" Executed="Select_All"/>
         <CommandBinding Command="commands:UICommands.Add_AllCmd" Executed="Add_All"/>
         <CommandBinding Command="commands:UICommands.SwapLeft2Right" Executed="Ex_Left2Right" CanExecute="Can_Left2Right"/>
