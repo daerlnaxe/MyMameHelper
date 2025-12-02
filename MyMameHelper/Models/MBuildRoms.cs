@@ -4,6 +4,7 @@ using MyMameHelper.SQLite;
 using MyMameHelper.Windows;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -25,7 +26,9 @@ namespace MyMameHelper.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
+        public string Archive_Mode => "Archive Mode";
+        public string Description_Mode => "Description Mode";
+        public string Source_Mode => "SourceFile Mode";
 
         #region Collections
 
@@ -42,10 +45,78 @@ namespace MyMameHelper.Models
         /// </summary>
         private List<CT_Game> _GamesInDB;
 
+
         /// <summary>
-        /// Collection affichée des RawRoms
+        /// Collection des RawRoms
         /// </summary>
-        public MyObservableCollection<RawMameRom> RawRomsCollec { get; set; } = new MyObservableCollection<RawMameRom>();
+        /// <remarks>
+        /// Quand elle est mise à jour, on indique que le contenu des raw rom filtrées a été modifié
+        /// </remarks>
+        private MyList<RawMameRom> _RawRomsCollec /*{ get; set; }*/ = new MyList<RawMameRom>();
+        private MyList<RawMameRom> RawRomsCollec
+        {
+            get => _RawRomsCollec;
+            set
+            {
+                if (value != _RawRomsCollec)
+                {
+                    _RawRomsCollec = value;
+                    NotifyPropertyChanged();
+                    NotifyPropertyChanged("RawRomsFiltered");
+                }
+            }
+        }
+
+
+
+        /// <summary>
+        /// Roms Filtrées
+        /// </summary>   
+        /// <remarks>
+        /// Utilisé par le data grid de gauche, puise dans la RawRomCollec
+        /// </remarks>
+        public MyObservableCollection<RawMameRom> RawRomsFiltered
+        {
+
+            get
+            {
+                var filteredRomsCollec = new MyObservableCollection<RawMameRom>();
+
+
+                if (string.IsNullOrEmpty(LeftFilter) || string.IsNullOrEmpty(LeftRomMode))
+                {
+                    filteredRomsCollec.AddSilentRange(_RawRomsCollec);
+                    return filteredRomsCollec;
+                }
+
+                string leftFilter= LeftFilter.ToUpper();
+
+
+                if (LeftRomMode.Equals(Archive_Mode))
+                {
+                    foreach (RawMameRom rom in _RawRomsCollec)
+                        if (rom.Description.ToUpper().StartsWith(leftFilter))
+                            filteredRomsCollec.AddSilent(rom);
+                }
+                else if (LeftRomMode.Equals(Description_Mode))
+                {
+                    foreach (RawMameRom rom in _RawRomsCollec)
+                        if (rom.Description.ToUpper().Contains(leftFilter))
+                            filteredRomsCollec.AddSilent(rom);
+                }
+                else if (LeftRomMode.Equals(Source_Mode))
+                {
+                    foreach (RawMameRom rom in _RawRomsCollec)
+                        if (rom.Source_File.ToUpper().Contains(leftFilter))
+                            filteredRomsCollec.AddSilent(rom);
+                }
+
+                return filteredRomsCollec;
+
+            }
+
+        }
+
 
 
         /// <summary>
@@ -54,12 +125,11 @@ namespace MyMameHelper.Models
         public MyObservableCollection<CT_Rom> RomsToSave { get; set; } = new MyObservableCollection<CT_Rom>();
 
 
-
-
         /// <summary>
         /// Machines
         /// </summary>
         public MyObservableCollection<CT_Machine> Machines { get; set; } = new MyObservableCollection<CT_Machine>();
+
 
         /// <summary>
         /// Manufacturers
@@ -81,8 +151,8 @@ namespace MyMameHelper.Models
         /// </summary>
         public Boolean BrothersChecked { get; set; } = true;
         #endregion
-        
-        
+
+
         #region Filtre de gauche
 
         private RawMameRom _S4L;
@@ -99,10 +169,32 @@ namespace MyMameHelper.Models
             }
         }
 
-        internal string LeftRomMode { get; set; }
+        /// <summary>
+        /// Définit quel mode on souhaite parmis ceux spécifiés par les radiobuttons de gauche
+        /// </summary>
+        private string _LeftRomMode;
+        internal string LeftRomMode
+        {
+            get => _LeftRomMode;
+            set
+            {
+                if (_LeftRomMode != value)
+                {
+                    _LeftRomMode = value;
+                    NotifyPropertyChanged();
+                    NotifyPropertyChanged("RawRomsFiltered");
+
+                }
+            }
+        }
 
 
-
+        /// <summary>
+        /// Filtre de gauche
+        /// </summary>
+        /// <remarks>
+        /// Notify en temps réel que les roms filtrées peuvent être mise à jour
+        /// </remarks>
         private string _LeftFilter;
         public string LeftFilter
         {
@@ -113,6 +205,7 @@ namespace MyMameHelper.Models
                 {
                     _LeftFilter = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged("RawRomsFiltered");
                 }
             }
         }
@@ -157,7 +250,7 @@ namespace MyMameHelper.Models
             aLoad.ProgressContext = awl;
             aLoad.ShowDialog();
 
-            RawRomsCollec.ChangeContent = awl.Resultats;
+            RawRomsCollec = /*RawRomsCollec.ChangeContent*/ new MyList<RawMameRom>(awl.Resultats);
 
 
             return true;
@@ -320,7 +413,7 @@ namespace MyMameHelper.Models
             using (SQLite_Req sqReq = new SQLite_Req())
             {                            
                 Constructeurs.ChangeContent = sqReq.GetListOf<CT_Constructeur>(CT_Constructeur.Result2Class, new Obj_Select(table: PProp.Default.T_Manufacturers, all: true));
-            
+
             #endregion
             }*/
             AsyncWindowProgress window;
@@ -333,7 +426,7 @@ namespace MyMameHelper.Models
             window.ShowDialog();
 
             RomsToSave.SignalChange();
-            RawRomsCollec.SignalChange();
+            RawRomsFiltered.SignalChange();
         }
 
 
@@ -434,7 +527,6 @@ namespace MyMameHelper.Models
 
 
 
-
         /// <summary>
         /// Transformation Raw en CT
         /// </summary>
@@ -485,8 +577,8 @@ namespace MyMameHelper.Models
                 // Liaison des Machines
                 if (aRom.Machine_Id == 0 || aRom.Machine_Id == null)
                 {
-                    var search = aRom.SourceFile.Replace("/", " - ");
-                    search = search.Remove(search.IndexOf('.'));
+                    var search = aRom.SourceFile;//.Replace("/", " - ");
+                    //search = search.Remove(search.IndexOf('.'));
                     var tmp = Machines.FirstOrDefault(x => x.Nom.Equals(search));
                     if (tmp != null)
                         aRom.Machine_Id = tmp.ID;
@@ -500,7 +592,9 @@ namespace MyMameHelper.Models
 
                 RomsToSave.AddSilent(aRom);
                 _RawRomsDeleted.Add(rawRom);
-                RawRomsCollec.RemoveSilent(rawRom);
+                RawRomsCollec.RemoveAll(x => x == rawRom);
+
+
 
                 window.AsyncUpProgressPercent(i);
             }
@@ -509,11 +603,15 @@ namespace MyMameHelper.Models
 
         internal bool ResetAll()
         {
-            AsyncWindowProgress window = new AsyncWindowProgress();
-            window.go += new AsyncWindowProgress.AsyncAction(AsyncResetRight);
+            AsyncWorkList<RawMameRom> aWList = new AsyncWorkList<RawMameRom>();
+            aWList.go += new AsyncWorkList<RawMameRom>.AsyncListAction(AsyncResetRight);
+
+            AsyncWindowProgressG window = new AsyncWindowProgressG();
+            window.ProgressContext = aWList;
+
             window.ShowDialog();
 
-            RawRomsCollec.SignalChange();
+            RawRomsCollec.AddRange( aWList.Resultats);
             _RawRomsDeleted.Clear();
             RomsToSave.Clear();
 
@@ -521,8 +619,16 @@ namespace MyMameHelper.Models
         }
 
 
-        private void AsyncResetRight(AsyncWindowProgress window)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="window"></param>
+        /// <returns></returns>
+        private List<RawMameRom> AsyncResetRight(AsyncWindowProgressG window)
         {
+            var romCollec = new List<RawMameRom>();
+            window.Total = RomsToSave.Count;
+
             for (int i = 0; i < RomsToSave.Count; i++)
             {
                 CT_Rom sel = RomsToSave[i];
@@ -531,7 +637,7 @@ namespace MyMameHelper.Models
                     RawMameRom deleted = _RawRomsDeleted[j];
                     if (deleted.Name.Equals(sel.Archive_Name))
                     {
-                        RawRomsCollec.AddSilent(deleted);
+                        romCollec.Add(deleted);
 
                         break;
                     }
@@ -539,6 +645,8 @@ namespace MyMameHelper.Models
 
                 window.AsyncUpProgressPercent(i);
             }
+
+            return romCollec;
         }
 
 
@@ -732,7 +840,7 @@ namespace MyMameHelper.Models
             }
 
         }
-       
+
     }
     #endregion Sauvegarde des constructeurs
     #endregion  Sauvegarde

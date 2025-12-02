@@ -234,7 +234,7 @@ namespace MyMameHelper.Pages
         #region Datagrid Gauche
         private void Can_Left2Right(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = _MContext.RawRomsCollec.Count > 0;
+            e.CanExecute = _MContext.RawRomsFiltered.Count > 0;
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace MyMameHelper.Pages
         private void Add_All(object sender, ExecutedRoutedEventArgs e)
         {
             // List<RawMameRom> rawRomsSelected = dg2Organize.SelectedItems.Cast<RawMameRom>().ToList();
-            _MContext.TransRaw2Rom(_MContext.RawRomsCollec);
+            _MContext.TransRaw2Rom(_MContext.RawRomsFiltered);
         }
 
         /*
@@ -370,9 +370,9 @@ namespace MyMameHelper.Pages
         {
             
             if (_MContext.LeftRomMode == "Mode Game")
-                _MContext.LeftSelected = _MContext.RawRomsCollec.FirstOrDefault(x => x.Description.StartsWith(_MContext.LeftFilter, StringComparison.OrdinalIgnoreCase));
+                _MContext.LeftSelected = _MContext.RawRomsFiltered.FirstOrDefault(x => x.Description.StartsWith(_MContext.LeftFilter, StringComparison.OrdinalIgnoreCase));
             else if (_MContext.LeftRomMode == "Archive Select")
-                _MContext.LeftSelected = _MContext.RawRomsCollec.FirstOrDefault(x => x.Name.StartsWith(_MContext.LeftFilter, StringComparison.OrdinalIgnoreCase));
+                _MContext.LeftSelected = _MContext.RawRomsFiltered.FirstOrDefault(x => x.Name.StartsWith(_MContext.LeftFilter, StringComparison.OrdinalIgnoreCase));
 
             if (_MContext.LeftSelected != null)
             {
