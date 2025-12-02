@@ -77,15 +77,16 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="20"/>
                 </Grid.RowDefinitions>
                 <Label Content="Data:" />
                 <Label Grid.Column="1" Content="{Binding RawRomsCollec.Count}"/>
                 <Label Content="Data Selected:" Grid.Row="1"  />
-                <Label Grid.Row="1" Grid.Column="1" Content="{Binding SelectedItems.Count, ElementName=dg2Organize}"/>
+                <Label Grid.Row="2" Grid.Column="1" Content="{Binding SelectedItems.Count, ElementName=dg2Organize}"/>
             </Grid>
 
             <DockPanel >
-                <Grid DockPanel.Dock="Top">
+                <Grid DockPanel.Dock="Top" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="123*"/>
                         <ColumnDefinition Width="181*"/>
@@ -100,11 +101,12 @@
                     <RadioButton GroupName="Mode" Content="Description Select" Grid.Column="1" Checked="RightMode_Changed" VerticalAlignment="Top" Margin="5" IsChecked="True" ToolTip="Select by Description"/>
                     <!--CheckBox Content="GetChildren" Grid.Row="1" ToolTip="Add Parent of children" IsChecked="{Binding GetChildren}"/-->
                     <!--CheckBox Content="Horizontal link" Grid.Column="1" Grid.Row="1" ToolTip="Add Brothers" IsChecked="{Binding BrothersChecked}"/-->
-                    <Label Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Content="{Binding LeftFilter}" KeyUp="LListView_KeyUp" />
+                    <Label Grid.Column="1" Grid.Row="2" Grid.RowSpan="3" Content="{Binding LeftFilter}" KeyUp="LListView_KeyUp" />
                 </Grid>
                 <!-- grille gauche (central) -->
                 <DataGrid x:Name="dg2Organize" KeyUp="LListView_KeyUp"  IsReadOnly="True"  AutoGenerateColumns="False"
-                          ItemsSource="{Binding RawRomsCollec}" SelectedItem="{Binding LeftSelected, Mode=TwoWay}"  ToolTip="Hit a key to filter">
+                          ItemsSource="{Binding RawRomsCollec}" SelectedItem="{Binding LeftSelected, Mode=TwoWay}"  ToolTip="Hit a key to filter"
+                          >
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Select All" Command="commands:UICommands.Select_AllCmd"/>

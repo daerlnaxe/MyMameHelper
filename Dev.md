@@ -104,8 +104,34 @@ rawroms:
 - La page des Manufacturers prend le contenu de la table au chargement, pas simplement la partie provenant des roms
 - L'ajout de rom de la liste de gauche à droite bénéficie maintenant d'une fenêtre de progression car le temps de traitement peut aller à 5 minutes.
 
-# -
+# Concepts
 ## Concept Archive Mode & 
+Choisir entre une recherche sur l'archive (le nom de la rom) ou la description
+
+## Catégories
+Les catégories ne sont pas du genre, ce sont des groupes comme:
+- Audio
+- Pinball M: Pinball mécanique
+- Jeu Arcade
+- Bellfruits
+- Poker M : Poker avec gains
+- Casino
+- Echec M
+
+<br>
+<br>
+
+# UI
+## Build Roms
+Actuellement en tapant après avoir sélectionné le datagrid de gauche, on peut se déplacer jusqu'à un jeu
+
+En cours, mode de filtrage.
+
+
+<br>
+<br>
+
+# Methodes
 ## Build Roms
 Chargement de la page:
 - Récupération des tables:

@@ -1252,6 +1252,7 @@ namespace MyMameHelper.SQLite
                 game.ID = uint.Parse(aRom.Game_Id.ToString());
                 game.Game_Name = Trans.GetString("Game_Name", reader);
                 //game.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader);
+                
                 aRom.Game = game;
             }
 
@@ -1262,6 +1263,8 @@ namespace MyMameHelper.SQLite
                 CT_Machine machine = new CT_Machine();
                 machine.ID = uint.Parse(aRom.Machine_Id.ToString());
                 machine.Nom = Trans.GetString("Machine_Name", reader);
+                machine.Category = Trans.GetString("Category", reader);
+             
                 aRom.Machine = machine;
             }
 
@@ -1349,7 +1352,7 @@ namespace MyMameHelper.SQLite
             //Dictionary<string, short> dicCol;
             string sql = $"SELECT [{tRom}].ID, [{tRom}].Archive_Name, [{tRom}].Game_Id" +
                           $", [{tGame}].Game_Name" +
-                          $", [{tMachine}].ID AS \"Machine_Id\", [{tMachine}].Nom AS \"Machine_Name\"" +
+                          $", [{tMachine}].ID AS \"Machine_Id\", [{tMachine}].Nom AS \"Machine_Name\", [{tMachine}].Category" +
                           $" FROM [{tRom}] " +
                             $" LEFT JOIN [{tGame}] ON [{tGame}].ID= [{tRom}].Game_Id" +
                             $" LEFT JOIN [{tMachine}] ON [{tMachine}].ID= [{tRom}].Machine_Id " +

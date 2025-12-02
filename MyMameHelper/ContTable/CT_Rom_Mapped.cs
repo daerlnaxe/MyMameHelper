@@ -33,9 +33,17 @@ namespace MyMameHelper.ContTable
         }
 
 
-        
+        #region Machine
         public uint? Machine_Id { get; set; }
+        
         private CT_Machine _Machine;// = new CT_Machine();
+        #endregion Machine
+
+
+
+
+
+
 
         public CT_Rom_Mapped() { }
         public CT_Rom_Mapped(CT_Rom rom) : base(rom)
