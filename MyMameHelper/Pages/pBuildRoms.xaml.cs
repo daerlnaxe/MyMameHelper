@@ -349,11 +349,7 @@ namespace MyMameHelper.Pages
         */
 
 
-
-
-
-
-        
+                
 
 
         /*
@@ -517,7 +513,7 @@ namespace MyMameHelper.Pages
         private void Ex_ResetRight(object sender, ExecutedRoutedEventArgs e)
         {
             //romsSelected = dgRight.SelectedItems.Cast<CT_Rom>().ToList();
-            _MContext.ResetAll();
+            _MContext.ResetR();
         }
 
         #endregion

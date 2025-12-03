@@ -12,6 +12,10 @@ namespace MyMameHelper
 {
     public class MyObservableCollection<T> : ObservableCollection<T>
     {
+        private MyList<RawMameRom> rawRomsCollec;
+
+
+
         public List<T> ChangeContent
         {
             set

@@ -48,6 +48,7 @@ namespace MyMameHelper
         }
 
 
+
         internal void RemoveRange(IList<T> collection)
         {
             if (collection == null) throw new ArgumentNullException("collection");
@@ -59,5 +60,11 @@ namespace MyMameHelper
             
 
         }
+
+      /*  public IOrderedEnumerable<T> CreateOrderedEnumerable<TKey>(Func<T, TKey> keySelector, IComparer<TKey> comparer, bool descending)
+        {
+            this.OrderBy
+        }*/
+
     }
 }

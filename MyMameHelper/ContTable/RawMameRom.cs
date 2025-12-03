@@ -58,5 +58,10 @@ namespace MyMameHelper.ContTable
             return ctR;
         }
 
+        internal static int NameCompare(RawMameRom x, RawMameRom y)
+        {
+            return string.Compare(x.Name, y.Name);
+        }
     }
 }
+

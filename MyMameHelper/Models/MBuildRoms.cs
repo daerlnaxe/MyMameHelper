@@ -89,7 +89,7 @@ namespace MyMameHelper.Models
                     return filteredRomsCollec;
                 }
 
-                string leftFilter= LeftFilter.ToUpper();
+                string leftFilter = LeftFilter.ToUpper();
 
 
                 if (LeftRomMode.Equals(Archive_Mode))
@@ -122,7 +122,19 @@ namespace MyMameHelper.Models
         /// <summary>
         /// Roms à sauvegarder en base
         /// </summary>
-        public MyObservableCollection<CT_Rom> RomsToSave { get; set; } = new MyObservableCollection<CT_Rom>();
+        private MyList<CT_Rom> _RomsToSave = new MyList<CT_Rom>();
+        public MyList<CT_Rom> RomsToSave
+        {
+            get => _RomsToSave;
+            set
+            {
+                if (_RomsToSave != value)
+                {
+                    _RomsToSave = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
 
         /// <summary>
@@ -216,7 +228,7 @@ namespace MyMameHelper.Models
 
         #region Chargement
         //private List<RawMameRom> ListRoms { get; set; }
-        private List<RawMameRom> _RawRomsDeleted = new List<RawMameRom>();
+        private MyList<RawMameRom> _RawRomsDeleted = new MyList<RawMameRom>();
 
         internal bool LoadCollecs()
         {
@@ -299,6 +311,7 @@ namespace MyMameHelper.Models
         #endregion Chargement
 
 
+
         /// <summary>
         /// Transforme une rom temporaire en rom (avec les jonctions)
         /// </summary>
@@ -358,23 +371,27 @@ namespace MyMameHelper.Models
 
 
             #region 2025/11/06 split pour async
-            AsyncWindowProgressG windowG = new AsyncWindowProgressG();
-            windowG.Total = rawRomsSelected.Count;
-            windowG.Message_Value = "Linking Roms";
 
 
-            //test = false;
-            AsyncWorkList<RawMameRom> mProgress = new AsyncWorkList<RawMameRom>();
+            // Link des roms
+            AsyncWorkList<RawMameRom> mProgress;
+
+            mProgress = new AsyncWorkList<RawMameRom>();
             mProgress.Arguments = new List<object>() { rawRomsSelected };
             //mProgress.go += new AsyncWorkBool.AsyncBoolAction(Link2Roms);
             mProgress.go += new AsyncWorkList<RawMameRom>.AsyncListAction(Async_Link2Roms);
 
+            AsyncWindowProgressG windowG = new AsyncWindowProgressG();
+            windowG.Total = rawRomsSelected.Count;
+            windowG.Message_Value = "Linking Roms";
             windowG.ProgressContext = mProgress;
             windowG.ShowDialog();
 
             //test = (bool)windowG.Resultat;
 
             rawRomsSelected = (List<RawMameRom>)windowG.Resultat;
+            mProgress = null;
+            windowG = null;
 
             /*
             window = new AsyncWindowProgress();
@@ -416,17 +433,48 @@ namespace MyMameHelper.Models
 
             #endregion
             }*/
-            AsyncWindowProgress window;
 
-            window = new AsyncWindowProgress();
-            window.Arguments = new List<object>() { rawRomsSelected };
-            window.Message_Value = "Moving Left to Right";
-            window.go += new AsyncWindowProgress.AsyncAction(AsyncLeft2Right);
+            // Déplacement
+            AsyncWorkList<CT_Rom> mProgress2 = new AsyncWorkList<CT_Rom>();
+            mProgress2.Arguments = new List<object>() { rawRomsSelected };
+
+            mProgress2.go += new AsyncWorkList<CT_Rom>.AsyncListAction(AsyncLeft2Right);
             //          
-            window.ShowDialog();
+            windowG = new AsyncWindowProgressG();
+            windowG.ProgressContext = mProgress2;
+            windowG.Message_Value = "Moving Left to Right";
+            windowG.ShowDialog();
 
-            RomsToSave.SignalChange();
-            RawRomsFiltered.SignalChange();
+            List<CT_Rom> aRoms = mProgress2.Resultats;
+
+            // On ajoute dans un stockage temporaire
+            _RawRomsDeleted.AddRange(rawRomsSelected);
+
+            // On enlève des roms de gauche
+            //MyList<RawMameRom> tmp = new MyList<RawMameRom>();
+
+
+            for (int i = 0; i < aRoms.Count; i++)
+                for (int j = 0; j < RawRomsCollec.Count; j++)
+                {
+                    {
+                        if (aRoms[i].Archive_Name == RawRomsCollec[j].Name)
+                        {
+                            RawRomsCollec.RemoveAt(j);
+                            j--;
+                        }
+
+                        // tmp.Add(RawRomsCollec[j]);
+                    }
+                }
+
+            RawRomsCollec = new MyList<RawMameRom>(RawRomsCollec);
+
+            RomsToSave.AddRange(aRoms);
+            RomsToSave = new MyList<CT_Rom>(RomsToSave);
+            //RomsToSave.SignalChange();
+            //RawRomsFiltered.SignalChange();
+
         }
 
 
@@ -531,9 +579,10 @@ namespace MyMameHelper.Models
         /// Transformation Raw en CT
         /// </summary>
         /// <param name="window"></param>
-        private void AsyncLeft2Right(AsyncWindowProgress window)
+        private MyList<CT_Rom> AsyncLeft2Right(AsyncWindowProgressG window)
         {
-            List<RawMameRom> rawRomsSelected = (List<RawMameRom>)window.Arguments[0];
+            List<RawMameRom> rawRomsSelected = (List<RawMameRom>)window.ProgressContext.Arguments[0];
+            MyList<CT_Rom> result = new MyList<CT_Rom>();
 
             for (int i = 0; i < rawRomsSelected.Count; i++)
             {
@@ -590,30 +639,54 @@ namespace MyMameHelper.Models
 
 
 
-                RomsToSave.AddSilent(aRom);
-                _RawRomsDeleted.Add(rawRom);
-                RawRomsCollec.RemoveAll(x => x == rawRom);
+                result.Add(aRom);
 
 
 
                 window.AsyncUpProgressPercent(i);
             }
+
+            return result;
         }
 
 
-        internal bool ResetAll()
+
+        internal bool RemoveAtR()
         {
             AsyncWorkList<RawMameRom> aWList = new AsyncWorkList<RawMameRom>();
-            aWList.go += new AsyncWorkList<RawMameRom>.AsyncListAction(AsyncResetRight);
+            aWList.Arguments = new List<object>() { RomsToSave };
+            aWList.go += new AsyncWorkList<RawMameRom>.AsyncListAction(AsyncRemoveRight);
 
             AsyncWindowProgressG window = new AsyncWindowProgressG();
             window.ProgressContext = aWList;
 
             window.ShowDialog();
 
-            RawRomsCollec.AddRange( aWList.Resultats);
+            RawRomsCollec.AddRange(aWList.Resultats);
+
+
+            //
             _RawRomsDeleted.Clear();
-            RomsToSave.Clear();
+
+            //
+
+
+            return true;
+        }
+
+        /// <summary>
+        /// Enlève tout à droite, et rajoute à gauche
+        /// </summary>
+        /// <returns></returns>
+        internal bool ResetR()
+        {
+            RawRomsCollec.AddRange(_RawRomsDeleted);            
+            RawRomsCollec.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCulture));
+            RawRomsCollec = new MyList<RawMameRom>(RawRomsCollec);
+
+
+            _RawRomsDeleted.Clear();
+            RomsToSave = new MyList<CT_Rom>();
 
             return true;
         }
@@ -624,14 +697,16 @@ namespace MyMameHelper.Models
         /// </summary>
         /// <param name="window"></param>
         /// <returns></returns>
-        private List<RawMameRom> AsyncResetRight(AsyncWindowProgressG window)
+        private List<RawMameRom> AsyncRemoveRight(AsyncWindowProgressG window)
         {
-            var romCollec = new List<RawMameRom>();
-            window.Total = RomsToSave.Count;
+            MyList<CT_Rom> romToSave = (MyList<CT_Rom>)window.ProgressContext.Arguments[0];
 
-            for (int i = 0; i < RomsToSave.Count; i++)
+            var romCollec = new List<RawMameRom>();
+            window.Total = romCollec.Count;
+
+            for (int i = 0; i < romToSave.Count; i++)
             {
-                CT_Rom sel = RomsToSave[i];
+                CT_Rom sel = romCollec[i];
                 for (int j = 0; j < _RawRomsDeleted.Count; j++)
                 {
                     RawMameRom deleted = _RawRomsDeleted[j];
