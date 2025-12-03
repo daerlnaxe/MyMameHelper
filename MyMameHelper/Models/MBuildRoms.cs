@@ -471,6 +471,7 @@ namespace MyMameHelper.Models
             RawRomsCollec = new MyList<RawMameRom>(RawRomsCollec);
 
             RomsToSave.AddRange(aRoms);
+            RomsToSave.Sort((a, b) => string.Compare(a.Archive_Name, b.Archive_Name, StringComparison.CurrentCulture));
             RomsToSave = new MyList<CT_Rom>(RomsToSave);
             //RomsToSave.SignalChange();
             //RawRomsFiltered.SignalChange();
@@ -649,38 +650,14 @@ namespace MyMameHelper.Models
             return result;
         }
 
-
-
-        internal bool RemoveAtR()
-        {
-            AsyncWorkList<RawMameRom> aWList = new AsyncWorkList<RawMameRom>();
-            aWList.Arguments = new List<object>() { RomsToSave };
-            aWList.go += new AsyncWorkList<RawMameRom>.AsyncListAction(AsyncRemoveRight);
-
-            AsyncWindowProgressG window = new AsyncWindowProgressG();
-            window.ProgressContext = aWList;
-
-            window.ShowDialog();
-
-            RawRomsCollec.AddRange(aWList.Resultats);
-
-
-            //
-            _RawRomsDeleted.Clear();
-
-            //
-
-
-            return true;
-        }
-
         /// <summary>
         /// Enlève tout à droite, et rajoute à gauche
         /// </summary>
         /// <returns></returns>
-        internal bool ResetR()
+        internal bool ResetFromRight()
         {
-            RawRomsCollec.AddRange(_RawRomsDeleted);            
+            //
+            RawRomsCollec.AddRange(_RawRomsDeleted);
             RawRomsCollec.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCulture));
             RawRomsCollec = new MyList<RawMameRom>(RawRomsCollec);
 
@@ -695,31 +672,76 @@ namespace MyMameHelper.Models
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        internal bool RemoveFromRight(List<CT_Rom> romsSelected)
+        {
+            AsyncWorkList<RawMameRom> aWList = new AsyncWorkList<RawMameRom>();
+            aWList.Arguments = new List<object>() { romsSelected, _RawRomsDeleted };
+            aWList.go += new AsyncWorkList<RawMameRom>.AsyncListAction(AsyncRemoveRight);
+
+            AsyncWindowProgressG window = new AsyncWindowProgressG();
+            window.ProgressContext = aWList;
+
+            window.ShowDialog();
+
+            // Ajoute les résultats aux RawRoms affichées
+            RawRomsCollec.AddRange(aWList.Resultats);
+            RawRomsCollec.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCulture));
+
+            RawRomsCollec = new MyList<RawMameRom>(RawRomsCollec);
+
+            // On va lever des roms à sauver
+            // On va lever du datagrid de droite
+            RomsToSave.RemoveRange(romsSelected);
+           // RomsToSave.Sort((a, b) => string.Compare(a.Archive_Name, b.Archive_Name, StringComparison.CurrentCulture));
+            RomsToSave = new MyList<CT_Rom>(RomsToSave);
+
+
+
+            return true;
+        }
+
+
+
+        /// <summary>
+        /// Permet de faire repasser les rawromsdeleted de nouveau dans la liste de celles affichées
+        /// </summary>
         /// <param name="window"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Va lever des rawroms deleted pour faire gagner en rapidité.
+        /// </remarks>
+        /// 
         private List<RawMameRom> AsyncRemoveRight(AsyncWindowProgressG window)
         {
-            MyList<CT_Rom> romToSave = (MyList<CT_Rom>)window.ProgressContext.Arguments[0];
+            List<CT_Rom> romsSelected = (List<CT_Rom>)window.ProgressContext.Arguments[0];
+            List<RawMameRom> rawRomsDeleted = (MyList<RawMameRom>)window.ProgressContext.Arguments[1];
 
             var romCollec = new List<RawMameRom>();
             window.Total = romCollec.Count;
 
-            for (int i = 0; i < romToSave.Count; i++)
+            for (int i = 0; i < romsSelected.Count; i++)
             {
-                CT_Rom sel = romCollec[i];
-                for (int j = 0; j < _RawRomsDeleted.Count; j++)
+                CT_Rom sel = romsSelected[i];
+
+
+                for (int j = 0; j < rawRomsDeleted.Count; j++)
                 {
                     RawMameRom deleted = _RawRomsDeleted[j];
                     if (deleted.Name.Equals(sel.Archive_Name))
                     {
                         romCollec.Add(deleted);
+                        rawRomsDeleted.Remove(deleted);
 
                         break;
                     }
                 }
 
+                // on lève pour faire gagner en rapidité
+
                 window.AsyncUpProgressPercent(i);
             }
+
 
             return romCollec;
         }
@@ -729,8 +751,6 @@ namespace MyMameHelper.Models
         internal bool SaveRoms()
         {
             #region Etat des lieux
-
-
 
             // Sauvegarde des jeux manquants
             List<CT_Game> gameToAdd = new List<CT_Game>();
@@ -757,8 +777,6 @@ namespace MyMameHelper.Models
                 }
             }
             #endregion Etat des lieux
-
-
 
 
 

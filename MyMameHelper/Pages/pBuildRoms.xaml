@@ -42,7 +42,7 @@
         <CommandBinding Command="commands:UICommands.SwapLeft2Right" Executed="Ex_Left2Right" CanExecute="Can_Left2Right"/>
 
         <!-- Panneau de droite -->
-        <!--CommandBinding Command="commands:UICommands.SwapRight2Left" CanExecute="Can_Right2Left" Executed="Ex_Right2Left"/-->
+        <CommandBinding Command="commands:UICommands.SwapRight2Left" CanExecute="Can_Right2Left" Executed="Ex_Right2Left"/>
         <CommandBinding Command="commands:UICommands.ResetRight" CanExecute="Can_ResetRight" Executed="Ex_ResetRight"/>
     </Page.CommandBindings>
 

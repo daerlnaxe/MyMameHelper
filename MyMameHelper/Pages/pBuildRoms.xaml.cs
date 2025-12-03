@@ -71,7 +71,7 @@ namespace MyMameHelper.Pages
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
-        {            
+        {
             if (MessageBox.Show("Load Roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 this.Cursor = Cursors.Wait;
@@ -261,7 +261,7 @@ namespace MyMameHelper.Pages
         private void Add_All(object sender, ExecutedRoutedEventArgs e)
         {
             // List<RawMameRom> rawRomsSelected = dg2Organize.SelectedItems.Cast<RawMameRom>().ToList();
-            _MContext.TransRaw2Rom(_MContext.RawRomsFiltered);
+            _MContext.TransRaw2Rom(_MContext.RawRomsFiltered.ToList());
         }
 
         /*
@@ -349,7 +349,7 @@ namespace MyMameHelper.Pages
         */
 
 
-                
+
 
 
         /*
@@ -364,7 +364,7 @@ namespace MyMameHelper.Pages
 
         private void Select_Left()
         {
-            
+
             if (_MContext.LeftRomMode == "Mode Game")
                 _MContext.LeftSelected = _MContext.RawRomsFiltered.FirstOrDefault(x => x.Description.StartsWith(_MContext.LeftFilter, StringComparison.OrdinalIgnoreCase));
             else if (_MContext.LeftRomMode == "Archive Select")
@@ -399,7 +399,7 @@ namespace MyMameHelper.Pages
 
             char k = Methods.Keyboard.GetCharFromKey(e.Key);
             //
-            
+
             var LeftFilter = _MContext.LeftFilter;
 
             if (LeftFilter is null)
@@ -423,12 +423,47 @@ namespace MyMameHelper.Pages
 
 
         #region Datagrid Droite
-        /*
-        private void Can_Right2Left(object sender, CanExecuteRoutedEventArgs e)
+        private void Can_ResetRight(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = RomsToSave.Count > 0;
+            e.CanExecute = _MContext.RomsToSave.Count > 0;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Ex_ResetRight(object sender, ExecutedRoutedEventArgs e)
+        {
+            _MContext.ResetFromRight();
+        }
+
+
+
+        private void Can_Right2Left(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = _MContext.RomsToSave.Count > 0;
+        }
+
+
+        /// <summary>
+        /// Enlève de la datagrid de droite et déplace à gauche
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Ex_Right2Left(object sender, ExecutedRoutedEventArgs e)
+        {
+            romsSelected = dgRight.SelectedItems.Cast<CT_Rom>().ToList();
+            _MContext.RemoveFromRight(romsSelected);
+        }
+
+
+        /*
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ex_Right2Left(object sender, ExecutedRoutedEventArgs e)
         {
             romsSelected = dgRight.SelectedItems.Cast<CT_Rom>().ToList();
@@ -475,46 +510,37 @@ namespace MyMameHelper.Pages
         */
 
 
-        /*
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="window"></param>
-        private void AsyncRight2Left(AsyncWindowProgress window)
-        {
-            //romsList = new List<Aff_Rom>();
-            // Sélectionnés
-            for (int i = 0; i < romsSelected.Count; i++)
-            {
-                CT_Rom sel = romsSelected[i];
-                for (int j = 0; j < rawRomsDeleted.Count; j++)
-                {
-                    RawMameRom deleted = rawRomsDeleted[j];
-                    if (deleted.Name.Equals(sel.Archive_Name))
+                    /*
+                    /// <summary>
+                    /// 
+                    /// </summary>
+                    /// <param name="window"></param>
+                    private void AsyncRight2Left(AsyncWindowProgress window)
                     {
-                        RawRomsCollec.AddSilent(deleted);
-                        rawRomsDeleted.Remove(deleted);
-                        RomsToSave.RemoveSilent(sel);
-                        break;
+                        //romsList = new List<Aff_Rom>();
+                        // Sélectionnés
+                        for (int i = 0; i < romsSelected.Count; i++)
+                        {
+                            CT_Rom sel = romsSelected[i];
+                            for (int j = 0; j < rawRomsDeleted.Count; j++)
+                            {
+                                RawMameRom deleted = rawRomsDeleted[j];
+                                if (deleted.Name.Equals(sel.Archive_Name))
+                                {
+                                    RawRomsCollec.AddSilent(deleted);
+                                    rawRomsDeleted.Remove(deleted);
+                                    RomsToSave.RemoveSilent(sel);
+                                    break;
+                                }
+                            }
+
+                            window.AsyncUpProgressPercent(i);
+                        }
                     }
-                }
 
-                window.AsyncUpProgressPercent(i);
-            }
-        }
+                    */
 
-        */
 
-        private void Can_ResetRight(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = _MContext.RomsToSave.Count > 0;
-        }
-
-        private void Ex_ResetRight(object sender, ExecutedRoutedEventArgs e)
-        {
-            //romsSelected = dgRight.SelectedItems.Cast<CT_Rom>().ToList();
-            _MContext.ResetR();
-        }
 
         #endregion
 
@@ -642,7 +668,7 @@ namespace MyMameHelper.Pages
                 // RomsToSave.ChangeContent = sp.RomsFound.ToList();
             }
         }*/
-        
+
 
 
         #region Change
@@ -800,8 +826,9 @@ namespace MyMameHelper.Pages
         }
 
 
-            #endregion
+
+        #endregion
 
 
-        }
+    }
 }
