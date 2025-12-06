@@ -41,7 +41,7 @@ namespace MyMameHelper.ContTable
             get;
             set;
         }
-        public uint Year { get; set; }
+        public uint? Year { get; set; }
 
         public bool AllowCPath { get; set; }
 

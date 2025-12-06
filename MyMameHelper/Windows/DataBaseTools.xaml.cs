@@ -589,9 +589,12 @@ namespace MyMameHelper.Windows
 
                     Dictionary<string, List<CT_Machine>> machines = TableFeeder.Machine(srcFiles);
                     sqOP.Insert_Machines(machines["identified"], false, false);
-                    sqOP.Insert_Machines(machines["Constructeurs"], true, false);
+                    sqOP.Insert_Machines(machines["SystemRoms"], ignore: false, preservePK: true);
+                    sqOP.Insert_Machines(machines["Constructeurs"], ignore: false, preservePK: true);
 
                 }
+
+                System.Windows.MessageBox.Show("Machines created","", MessageBoxButton.OK, MessageBoxImage.Information );
             }
             catch (Exception ex)
             {
@@ -632,6 +635,8 @@ namespace MyMameHelper.Windows
 
                 sqOP.Map_RomMachine(machines, srcFiles.Keys.ToList());
             }
+            System.Windows.MessageBox.Show("Remap finished", "", MessageBoxButton.OK, MessageBoxImage.Information);
+
         }
 
 

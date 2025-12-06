@@ -1072,7 +1072,8 @@ namespace MyMameHelper.SQLite
         internal List<CT_Occurence<RawMameRom>> Get_RRomGroupedSFile()
         {
             SQLiteCommand sqlCommand = new SQLiteCommand(SQLiteConn);
-            sqlCommand.CommandText = $"SELECT Source_File, IsDevice, Is_Mechanical, count(*) AS  \"Nombre\" FROM {tTempRom} where IsDevice = \"False\" and HasSoftwares = \"False\" AND is_bios = \"False\" GROUP BY Source_File ORDER BY Source_File ASC; ";
+            sqlCommand.CommandText = $"SELECT Source_File, IsDevice, Is_Mechanical, count(*) AS  \"Nombre\" FROM {tTempRom} where HasSoftwares = \"False\" AND is_bios = \"False\" GROUP BY Source_File ORDER BY Source_File ASC; ";
+            //sqlCommand.CommandText = $"SELECT Source_File, IsDevice, Is_Mechanical, count(*) AS  \"Nombre\" FROM {tTempRom} where IsDevice = \"False\" and HasSoftwares = \"False\" AND is_bios = \"False\" GROUP BY Source_File ORDER BY Source_File ASC; ";
             //select Source_File from TempRoms where IsDevice = "False" and HasSoftwares = "False" AND is_bios = "False" GROUP BY Source_File ORDER BY Source_File;
             Trace.WriteLine($"Requete SQL: {sqlCommand.CommandText}");
 
@@ -1264,6 +1265,7 @@ namespace MyMameHelper.SQLite
                 machine.ID = uint.Parse(aRom.Machine_Id.ToString());
                 machine.Nom = Trans.GetString("Machine_Name", reader);
                 machine.Category = Trans.GetString("Category", reader);
+                machine.Year = Trans.GetNullableUInt("Year", reader);
              
                 aRom.Machine = machine;
             }
@@ -1352,7 +1354,7 @@ namespace MyMameHelper.SQLite
             //Dictionary<string, short> dicCol;
             string sql = $"SELECT [{tRom}].ID, [{tRom}].Archive_Name, [{tRom}].Game_Id" +
                           $", [{tGame}].Game_Name" +
-                          $", [{tMachine}].ID AS \"Machine_Id\", [{tMachine}].Nom AS \"Machine_Name\", [{tMachine}].Category" +
+                          $", [{tMachine}].ID AS \"Machine_Id\", [{tMachine}].Nom AS \"Machine_Name\", [{tMachine}].Category, [{tMachine}].Year" +
                           $" FROM [{tRom}] " +
                             $" LEFT JOIN [{tGame}] ON [{tGame}].ID= [{tRom}].Game_Id" +
                             $" LEFT JOIN [{tMachine}] ON [{tMachine}].ID= [{tRom}].Machine_Id " +

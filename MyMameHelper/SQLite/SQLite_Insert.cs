@@ -622,7 +622,8 @@ namespace MyMameHelper.SQLite
                     "ID",
                     "Nom",
                     "Description",
-                    "Category"
+                    "Category",
+                    "Year"
                 };
 
 
@@ -712,11 +713,12 @@ namespace MyMameHelper.SQLite
 
                 Trace.WriteLine($"Exec: {sqlCmd.CommandText}");
 
-                foreach (SQLiteParameter parameter in sqlCmd.Parameters)
+                /* Juste pour le debug
+                 * foreach (SQLiteParameter parameter in sqlCmd.Parameters)
                 {
                     Debug.WriteLine($"{parameter.ParameterName} | {parameter.Value}");
 
-                }
+                }*/
 
                 ExecNQ(sqlCmd);
                 UpdateProgress?.Invoke(this, i * 100 / machines.Count);
@@ -733,6 +735,7 @@ namespace MyMameHelper.SQLite
         /// <param name=""></param>
         public void Insert_Manus(IList<CT_MameManufacturer> manufacturers, bool ignore)
         {
+            // probleme ?
             uint max = 50;
             Debug.WriteLine($"Insertion de la collection de manufactureurs");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
@@ -749,6 +752,8 @@ namespace MyMameHelper.SQLite
             sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tMameManufacturer}] (" +
                           "[Nom] " +
                           ") VALUES ";
+
+            Debug.WriteLine($"Insert: {sqlCmd.CommandText}");
 
             for (int i = 0; i < manufacturers.Count; i++)
             {

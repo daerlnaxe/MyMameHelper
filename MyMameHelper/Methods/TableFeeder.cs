@@ -3,6 +3,7 @@ using MyMameHelper.SQLite;
 using MyMameHelper.Windows;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.SqlTypes;
 using System.Diagnostics;
@@ -13,15 +14,18 @@ using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace MyMameHelper.Methods
@@ -29,59 +33,17 @@ namespace MyMameHelper.Methods
 
     internal static class TableFeeder
     {
+
+        static List<string> _SystemRoms = new List<string>
+        {
+            "devices/sound/",
+            "devices/video/"
+        };
+
+
         /// <summary>
-        /// 
+        /// Tout n'a pas été totalement vérifié mais quasi sûr 
         /// </summary>
-        /// <remarks>
-        /// Synthesizer, sampler,
-        /// </remarks>
-        /// 
-        static List<string> _Audio = new List<string>()
-        {
-            "akai/akaivx600",
-            "casio/fz1",
-            "ensoniq/esq1",
-            "kawai/k1",
-            "kawai/k4",
-            "kawai/k5",
-            "kawai/sx240",
-            "korg/korgds8",
-            "korg/korgdss1",
-            "korg/korgdw8k",
-            "korg/korgtriton",
-            "korg/korgz3",
-            "korg/microkorg",
-            "korg/poly61",
-            "korg/poly800",
-            "korg/polysix",
-            "novation/basssta",
-            "philips/philipsbo",
-            "roland/alphajuno",
-            "roland/juno106",
-            "roland/juno6",
-            "roland/roland_d10",
-            "roland/roland_d50",
-            "roland/roland_d70",
-            "roland/roland_jd800",
-            "roland/roland_jv80",
-            "roland/roland_jx3p",
-            "roland/roland_jx8p",
-            "roland/roland_s10",
-            "roland/roland_s50",
-            "yamaha/yman1x",
-            "yamaha/ymdx100",
-            "yamaha/ymdx11",
-            "yamaha/ymdx7",
-            "yamaha/ymdx9",
-            "yamaha/ymsy35",
-        };
-
-        static List<string> _Echec = new List<string>()
-        {
-            "cxg"
-        };
-
-
         static List<string> _Bellfruits = new List<string>()
         {
             "barcrest/mpu1.cpp",
@@ -142,6 +104,135 @@ namespace MyMameHelper.Methods
             "sigma/sigmab52.cpp",
 
         };
+
+
+
+        static List<string> _Echec = new List<string>()
+        {
+            "chess/compuchess.cpp",
+            "chess/conchess.cpp",
+            "chess/conic_cchess2.cpp",
+            "chess/conic_cchess3.cpp",
+            "chess/tasc.cpp",
+            "chessking/master.cpp",
+            "commodore/chessmate.cpp",
+            "cxg/chess2001.cpp",
+            "cxg/computachess.cpp",
+            "cxg/computachess2.cpp",
+            "cxg/pchess.cpp",
+            "cxg/professor.cpp",
+            "ddr/chessmst.cpp",
+            "ddr/chessmstdm.cpp",
+            "devices/bus/c64/fcc.cpp",
+            "devices/bus/centronics/chessmec.cpp",
+            "devices/bus/chanf/rom.cpp",
+            "devices/bus/isa/chessmdr.cpp",
+            "devices/bus/isa/chessmsr.cpp",
+            "devices/bus/isa/finalchs.cpp",
+            "devices/bus/vc4000/rom.cpp",
+            "devices/machine/chessmachine.cpp",
+            "elektor/avrmax.cpp",
+            "fidelity/cc1.cpp",
+            "fidelity/cc10.cpp",
+            "fidelity/cc7.cpp",
+            "fidelity/chesster.cpp",
+            "fidelity/csc.cpp",
+            "fidelity/eldorado.cpp",
+            "fidelity/elegance.cpp",
+            "fidelity/msc.cpp",
+            "fidelity/phantom.cpp",
+            "fidelity/sc12.cpp",
+            "fidelity/sc6.cpp",
+            "fidelity/sc8.cpp",
+            "fidelity/sc9.cpp",
+            "fidelity/vcc.cpp",
+            "fidelity/vsc.cpp",
+            "handheld/chessking.cpp",
+            "igs/goldstar.cpp",
+            "igs/igs_m027.cpp",
+            "mattel/chess.cpp",
+            "novag/cnchess.cpp",
+            "novag/micro.cpp",
+            "novag/robotadv.cpp",
+            "saitek/chessac.cpp",
+            "saitek/chesstrv.cpp",
+            "saitek/companion.cpp",
+            "saitek/companion2.cpp",
+            "saitek/cp2000.cpp",
+            "saitek/delta1.cpp",
+            "saitek/electrio.cpp",
+            "saitek/exechess.cpp",
+            "saitek/intchess.cpp",
+            "saitek/mark5.cpp",
+            "saitek/minichess.cpp",
+            "saitek/prschess.cpp",
+            "saitek/schess.cpp",
+            "saitek/simultano.cpp",
+            "saitek/ssystem3.cpp",
+            "saitek/tschess.cpp",
+            "saitek/turbo16k.cpp",
+            "tryom/chess.cpp",
+
+        };
+
+        /*static List<string> _GameSystems = new List<string>()
+        {
+            "capcom/cps1.cpp",
+            "capcom/cps2.cpp"
+        };*/
+
+        [Obsolete]
+        /// <summary>
+        /// non vérifié
+        /// </summary>
+        /// <remarks>
+        /// Synthesizer, sampler,
+        /// </remarks>
+        /// 
+        static List<string> _Audio = new List<string>()
+        {
+            "akai/akaivx600",
+            "casio/fz1",
+            "ensoniq/esq1",
+            "kawai/k1",
+            "kawai/k4",
+            "kawai/k5",
+            "kawai/sx240",
+            "korg/korgds8",
+            "korg/korgdss1",
+            "korg/korgdw8k",
+            "korg/korgtriton",
+            "korg/korgz3",
+            "korg/microkorg",
+            "korg/poly61",
+            "korg/poly800",
+            "korg/polysix",
+            "novation/basssta",
+            "philips/philipsbo",
+            "roland/alphajuno",
+            "roland/juno106",
+            "roland/juno6",
+            "roland/roland_d10",
+            "roland/roland_d50",
+            "roland/roland_d70",
+            "roland/roland_jd800",
+            "roland/roland_jv80",
+            "roland/roland_jx3p",
+            "roland/roland_jx8p",
+            "roland/roland_s10",
+            "roland/roland_s50",
+            "yamaha/yman1x",
+            "yamaha/ymdx100",
+            "yamaha/ymdx11",
+            "yamaha/ymdx7",
+            "yamaha/ymdx9",
+            "yamaha/ymsy35",
+        };
+
+
+
+
+
 
         /// <summary>
         /// 
@@ -224,7 +315,7 @@ namespace MyMameHelper.Methods
             string line = "";
             if (!prevConstructor.Equals(strConstruct))
             {
-                line = $"============== {strConstruct} - Squelettes, pas une machine  ==============";
+                line = $"============== {strConstruct} - {category}  ==============";
                 prevConstructor = strConstruct;
             }
 
@@ -264,17 +355,24 @@ namespace MyMameHelper.Methods
                 f.WriteLine(notAccepted[i]);
             */
             string prevConstructor = "";
-            uint otherID = 1000;
-            uint keepID = 1000;
+            uint systemID = 1000;
+            uint otherID = 2000;
+            //  uint keepID = 1000;
 
             // Systèmes connus comme CPS1, Naomi
-            List<CT_Machine> isKnowedSystem = new List<CT_Machine>();
+            List<CT_Machine> knownSystem = new List<CT_Machine>();
+            // Rom pour le son par exemple
+            List<CT_Machine> systemRom = new List<CT_Machine>();
             // Les autres on garde juste le constructeur
             List<CT_Machine> onlyConstructs = new List<CT_Machine>();
 
             // Squelettes - roms non fonctionnelles
             List<string> skelettons = new List<string>();
             List<string> machinesASous = new List<string>();
+            List<string> SystemRoms = new List<string>();
+            List<string> chessRoms = new List<string>();
+
+
 
             List<string> pinball = new List<string>();
             List<string> materielElectronique = new List<string>();
@@ -291,13 +389,9 @@ namespace MyMameHelper.Methods
                 uint occur = grRes.Occurences;
 
 
-                if (isdevice)
-                {
-                    Debug.WriteLine($"Pass : {srcFile} est de type device");
-                    continue;
-                }
 
 
+                Debug.Write($"Traitement de {srcFile}");
 
 
 
@@ -317,12 +411,34 @@ namespace MyMameHelper.Methods
                 CT_Machine machine = new CT_Machine()
                 {
                     //Nom = $"{strConstruct} - {strMachine}"
-                    Nom= srcFile
+                    Nom = srcFile
                 };
 
                 // Subdivision
                 string rLine = $"{strConstruct} - {strMachine} ({occur})";
 
+
+
+                if (isdevice)
+                {
+                    // Cas de devices utilisés par des roms
+                    if (_SystemRoms.FirstOrDefault(x => srcFile.StartsWith(x)) != null)
+                    {
+                        SystemRoms.Add(WriteCategory("SystemRoms", ref prevConstructor, ref strConstruct));
+                        SystemRoms.Add(rLine);
+
+                        machine.ID = systemID;
+                        machine.Category = "SystemRoms";
+                        systemRom.Add(machine);
+
+                        systemID++;
+                        Debug.WriteLine($" - Keep : type device");
+                        continue;
+                    }
+
+                    Debug.WriteLine($" - Pass : type device");
+                    continue;
+                }
 
 
                 // Squelettes - roms non fonctionnelles
@@ -341,20 +457,48 @@ namespace MyMameHelper.Methods
                     machinesASous.Add(WriteCategory("Bellfruits", ref prevConstructor, ref strConstruct));
                     machinesASous.Add(rLine);
 
+
                     machine.Category = "Bellfruits";
-                    onlyConstructs.Add(machine);
+                    knownSystem.Add(machine);
 
                     continue;
                 }
 
+                // Jeux d'échec
+                if (_Echec.FirstOrDefault(x => x.Equals(srcFile)) != null)
+                {
+                    chessRoms.Add(WriteCategory("Chess", ref prevConstructor, ref strConstruct));
+                    chessRoms.Add(rLine);
+
+
+                    machine.Category = "Chess";
+                    knownSystem.Add(machine);
+
+                    continue;
+                }
+
+
+                // Game Systems
+                var res = IsKnowedSystem(strConstruct, ref machine, strMachine);
+                if (res > 0)
+                {
+                    chessRoms.Add(WriteCategory("Game Systems", ref prevConstructor, ref strConstruct));
+                    chessRoms.Add(rLine);
+
+                    knownSystem.Add(machine);
+
+                    Debug.WriteLine($" - Keep : type Game System");
+                    continue;
+                }
+
+                Debug.WriteLine("");
                 continue;
 
 
-                var res = IsKnowedSystem(strConstruct, ref machine, strMachine);
                 // knowed
                 if (res == 1)
                 {
-                    isKnowedSystem.Add(machine);
+                    knownSystem.Add(machine);
 
                     // On passe
                     continue;
@@ -604,8 +748,9 @@ epson/qx10.cpp
 
 
             return new Dictionary<string, List<CT_Machine>>() {
-                { "identified", isKnowedSystem } ,
-                { "Constructeurs", onlyConstructs }
+                { "identified", knownSystem } ,
+                { "Constructeurs", onlyConstructs },
+                { "SystemRoms",systemRom }
             };
             /*
             //Ajout à la base
@@ -699,6 +844,8 @@ epson/qx10.cpp
         /// <returns></returns>
         private static short IsKnowedSystem(string strConstruct, ref CT_Machine machine, string strMachine)
         {
+            
+
             // Amiga: 1
             if (strConstruct.Equals("amiga"))
             {
@@ -761,11 +908,23 @@ epson/qx10.cpp
             {
                 machine.IDConstructeur = 5;
 
-                if (strMachine.StartsWith("cps1") ||
-                    strMachine.StartsWith("cps2") ||
-                    strMachine.StartsWith("cps3")
-                    )
+                if (strMachine.StartsWith("cps1"))
                 {
+                    machine.Category = "Capcom - CPS1";
+                    machine.Year = 1988;
+                    return 1;
+                }
+                else if (strMachine.Equals("cps2"))
+                {
+                    machine.Category = $"Capcom - {strMachine.ToUpper()}";
+                    machine.Year = 1993;
+                    return 1;
+
+                }
+                else if (strMachine.Equals("cps3"))
+                {
+                    machine.Category = $"Capcom - {strMachine.ToUpper()}";
+                    machine.Year = 1996;
                     return 1;
                 }
                 return 0;
@@ -1066,10 +1225,15 @@ epson/qx10.cpp
             else if (strConstruct.Equals("neogeo"))
             {
                 machine.IDConstructeur = 26;
+                machine.Category = $"SNK - {strMachine.ToUpper()}";
 
-                if (
+                if (strMachine.StartsWith("neogeo"))
+                {
+                    machine.Year = 1990;
+                    return 1;
+                }
+                else if (
                     strMachine.StartsWith("midas") ||
-                    strMachine.StartsWith("neogeo") ||
                     strMachine.StartsWith("neopcb")
                     )
                 {
@@ -1113,8 +1277,15 @@ epson/qx10.cpp
             else if (strConstruct.Equals("sega"))
             {
                 machine.IDConstructeur = 29;
+                machine.Category = $"Sega - {strMachine.ToUpper()}";
 
-                if (
+                if (strMachine.StartsWith("segas16") || strMachine.StartsWith("system16"))
+                               {
+                    machine.Category = $"Sega - System 16" ;
+                    machine.Year = 1986;
+                    return 1;
+                }
+                else if (
                     strMachine.StartsWith("chihiro") ||
                     strMachine.StartsWith("dc_atomiswave") ||
                     strMachine.StartsWith("lindberghd") ||
@@ -1128,7 +1299,7 @@ epson/qx10.cpp
                     //strMachine.StartsWith("saturn") ||    // on dirait que c'est un bios
                     strMachine.StartsWith("segac2") ||  // Gamegear, Master System
                     strMachine.StartsWith("segag80") ||
-                    strMachine.StartsWith("segas16") ||
+            
                     strMachine.StartsWith("segas18") ||
                     strMachine.StartsWith("segas24") ||
                     strMachine.StartsWith("segas32") ||
@@ -1140,12 +1311,14 @@ epson/qx10.cpp
                     strMachine.StartsWith("turbo") ||
                     strMachine.StartsWith("vicdual") ||
 
-                    strMachine.StartsWith("system1") ||
-                    strMachine.StartsWith("system16")
+                    strMachine.StartsWith("system1") 
+                    
                     )
                 {
                     return 1;
                 }
+
+                machine.Category=null;
                 return 0;
 
             }
@@ -1215,16 +1388,30 @@ epson/qx10.cpp
             else if (strConstruct.Equals("snk"))
             {
                 machine.IDConstructeur = 36;
+                machine.Category = $"SNK - {strMachine.ToUpper()}";
 
-                if (
-                    strMachine.StartsWith("snk") ||
-                    strMachine.StartsWith("snk6502") ||
-                    strMachine.StartsWith("snk68") //||
-
-                    )
+                if (strMachine.StartsWith("snk6502"))
                 {
+                    machine.Year = 1980;
                     return 1;
                 }
+                else if (strMachine.StartsWith("snk"))
+                {
+                    machine.Year = 1983;
+                    return 1;
+                }
+                else if (strMachine.StartsWith("snk68"))
+                {
+                    machine.Year = 1986;
+                    return 1;
+                }
+                else if (strMachine.StartsWith("hng64"))
+                {
+                    machine.Year = 1996;
+                    return 1;
+                }
+
+                machine.Category = null;
                 return 0;
             }
             // SNK: 37
@@ -1291,7 +1478,9 @@ epson/qx10.cpp
                 return 0;
             }
 
+
             //
+
             return -1;
         }
 

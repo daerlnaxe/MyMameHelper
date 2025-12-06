@@ -510,35 +510,35 @@ namespace MyMameHelper.Pages
         */
 
 
-                    /*
-                    /// <summary>
-                    /// 
-                    /// </summary>
-                    /// <param name="window"></param>
-                    private void AsyncRight2Left(AsyncWindowProgress window)
+        /*
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="window"></param>
+        private void AsyncRight2Left(AsyncWindowProgress window)
+        {
+            //romsList = new List<Aff_Rom>();
+            // Sélectionnés
+            for (int i = 0; i < romsSelected.Count; i++)
+            {
+                CT_Rom sel = romsSelected[i];
+                for (int j = 0; j < rawRomsDeleted.Count; j++)
+                {
+                    RawMameRom deleted = rawRomsDeleted[j];
+                    if (deleted.Name.Equals(sel.Archive_Name))
                     {
-                        //romsList = new List<Aff_Rom>();
-                        // Sélectionnés
-                        for (int i = 0; i < romsSelected.Count; i++)
-                        {
-                            CT_Rom sel = romsSelected[i];
-                            for (int j = 0; j < rawRomsDeleted.Count; j++)
-                            {
-                                RawMameRom deleted = rawRomsDeleted[j];
-                                if (deleted.Name.Equals(sel.Archive_Name))
-                                {
-                                    RawRomsCollec.AddSilent(deleted);
-                                    rawRomsDeleted.Remove(deleted);
-                                    RomsToSave.RemoveSilent(sel);
-                                    break;
-                                }
-                            }
-
-                            window.AsyncUpProgressPercent(i);
-                        }
+                        RawRomsCollec.AddSilent(deleted);
+                        rawRomsDeleted.Remove(deleted);
+                        RomsToSave.RemoveSilent(sel);
+                        break;
                     }
+                }
 
-                    */
+                window.AsyncUpProgressPercent(i);
+            }
+        }
+
+        */
 
 
 
@@ -804,24 +804,28 @@ namespace MyMameHelper.Pages
         private void EX_SaveDB(object sender, ExecutedRoutedEventArgs e)
         {
 
-
             if (MessageBox.Show("Would you want to save missing manufacturers. Refusing it, will stop all the process.", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
+                Cursor = Cursors.Wait;
                 _MContext.SaveManufacturers();
+                Cursor = Cursors.Arrow;
             }
             else
             {
                 return;
             }
 
+
             // Sauvegarde des roms
             if (MessageBox.Show("Would you want to save this roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
+                Cursor = Cursors.Wait;
                 _MContext.SaveRoms();
+                Cursor = Cursors.Arrow;
             }
 
 
-
+            MessageBox.Show("Task Finished", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
 
         }
 

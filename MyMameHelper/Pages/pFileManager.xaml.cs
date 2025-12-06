@@ -293,6 +293,25 @@ namespace MyMameHelper.Pages
             // Pour chaque jeu
             foreach (CT_Rom_Mapped romMapped in FilteredGamesMapped)
             {
+                string romFile = Path.Combine(PProp.Default.RomSource, $"{romMapped.Archive_Name}.zip");
+
+
+                // Vérifie que le fichier existe
+                Debug.Write($"Test présence '{romFile}': ");
+                if (!File.Exists(romFile))
+                {
+                    Debug.Write("Absent\n");
+
+                    MissingRoms.Add(romMapped);
+
+                  /*  if (IncompleteGames.FirstOrDefault(x => x == dbG) == null)
+                    {
+                        IncompleteGames.Add(dbG);
+                    }*/
+
+                    continue;
+                }
+
                 Debug.WriteLine($"Travail sur : '{romMapped.Archive_Name}'");
 
                 string dest = Destination_Folder;
@@ -321,24 +340,6 @@ namespace MyMameHelper.Pages
 
                 //Console.WriteLine($"{dicMachines[Convert.ToUInt32(dbG.Machine)].Constructeur} | {dbG.Machine.Nom} | {dbG.Game_Name}");
 
-                string romFile = Path.Combine(PProp.Default.RomSource, $"{romMapped.Archive_Name}.zip");
-
-
-                // Vérifie que le fichier existe
-                Debug.Write($"Test présence '{romFile}': ");
-                if (!File.Exists(romFile))
-                {
-                    Debug.WriteLine("Absent");
-
-                    MissingRoms.Add(romMapped);
-
-                    if (IncompleteGames.FirstOrDefault(x => x == dbG) == null)
-                    {
-                        IncompleteGames.Add(dbG);
-                    }
-
-                    continue;
-                }
 
                 Debug.WriteLine("Présent");
 
@@ -439,6 +440,9 @@ namespace MyMameHelper.Pages
 
         private string Get_Path4Special(CT_Rom_Mapped romMapped)
         {
+
+            //)
+
             if (romMapped.Machine == null || romMapped.Machine_Id == null)
                 return Path.Combine(PProp.Default.RomDestination, "_No_Special");
 
@@ -449,7 +453,7 @@ namespace MyMameHelper.Pages
 
 
 
-            dest = Path.Combine(PProp.Default.RomDestination, romMapped.Machine.Category);
+            dest = Path.Combine(PProp.Default.RomDestination, $"{romMapped.Machine.Category} ({romMapped.Machine.Year})");
 
             if (romMapped.Game.Unwanted == true && useUnwanted.IsChecked == true)
             {

@@ -1,3 +1,10 @@
+icone attente sur l'ajout de rom
+message fin après avoir ajouté les roms
+contenu des roms en base ?
+progression sur le déplacement de roms
+mode simulation pour le transfert de roms
+
+
 
 27/10/2025: reprise du programme et publication, j'avais totalement oublié de le faire depuis 2020 ou 2022, je ne sais plus. Analyse du fonctionnement via le code (je n'avais laissé aucune doc :/)
 
