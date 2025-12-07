@@ -112,10 +112,12 @@
     <Compile Include="Commands\SaveToVracCommand.cs" />
     <Compile Include="Commands\SearchCommand.cs" />
     <None Include="ContTable\CT_Developer.cs" />
+    <Compile Include="Container\Cont_Machine.cs" />
     <Compile Include="ContTable\CT_Game_Mapped.cs" />
     <Compile Include="ContTable\CT_Constructor.cs" />
     <Compile Include="ContTable\CT_Occurence.cs" />
     <Compile Include="ContTable\CT_Rom_Mapped.cs" />
+    <Compile Include="Container\Cont_Constructeur.cs" />
     <Compile Include="ContTable\Map_RomGame.cs" />
     <Compile Include="ContTable\CT_Bios.cs" />
     <Compile Include="ContTable\CT_Genre.cs" />

@@ -1,4 +1,5 @@
-﻿using MyMameHelper.ContTable;
+﻿using MyMameHelper.Container;
+using MyMameHelper.ContTable;
 using MyMameHelper.SQLite;
 using MyMameHelper.Windows;
 using System;
@@ -361,6 +362,8 @@ namespace MyMameHelper.Methods
 
             // Systèmes connus comme CPS1, Naomi
             List<CT_Machine> knownSystem = new List<CT_Machine>();
+            // Casino, Bellfruits...
+            List<CT_Machine> moneyMachine = new List<CT_Machine>();
             // Rom pour le son par exemple
             List<CT_Machine> systemRom = new List<CT_Machine>();
             // Les autres on garde juste le constructeur
@@ -459,7 +462,7 @@ namespace MyMameHelper.Methods
 
 
                     machine.Category = "Bellfruits";
-                    knownSystem.Add(machine);
+                    moneyMachine.Add(machine);
 
                     continue;
                 }
@@ -479,7 +482,7 @@ namespace MyMameHelper.Methods
 
 
                 // Game Systems
-                var res = IsKnowedSystem(strConstruct, ref machine, strMachine);
+                var res = IsKnowedSystem(strConstruct, ref machine, strMachine, srcFile);
                 if (res > 0)
                 {
                     chessRoms.Add(WriteCategory("Game Systems", ref prevConstructor, ref strConstruct));
@@ -489,6 +492,11 @@ namespace MyMameHelper.Methods
 
                     Debug.WriteLine($" - Keep : type Game System");
                     continue;
+                }
+                else if (res == 0)
+                {
+
+                    knownSystem.Add(machine);
                 }
 
                 Debug.WriteLine("");
@@ -749,6 +757,7 @@ epson/qx10.cpp
 
             return new Dictionary<string, List<CT_Machine>>() {
                 { "identified", knownSystem } ,
+                { "money", moneyMachine } ,
                 { "Constructeurs", onlyConstructs },
                 { "SystemRoms",systemRom }
             };
@@ -787,7 +796,7 @@ epson/qx10.cpp
         }
 
 
-
+        [Obsolete]
         private static List<String> Platform = new List<string> {
                    "alliedleisure",
                     "alpha", // microordinateur avec quelques portages de jeux
@@ -834,19 +843,9 @@ epson/qx10.cpp
                     "vtech",
                     "zaccaria"
         };
+        /*
 
-        /// <summary>
-        /// Système sélectionnés par mes soins
-        /// </summary>
-        /// <param name="strConstruct"></param>
-        /// <param name="machine"></param>
-        /// <param name="strMachine"></param>
-        /// <returns></returns>
-        private static short IsKnowedSystem(string strConstruct, ref CT_Machine machine, string strMachine)
-        {
-            
-
-            // Amiga: 1
+                    // Amiga: 1
             if (strConstruct.Equals("amiga"))
             {
                 machine.IDConstructeur = 1;
@@ -855,9 +854,176 @@ epson/qx10.cpp
                     return 1;
                 }
                 return 0;
+            }*/
+
+        public static List<Cont_Constructeur> _KnownSystems = new List<Cont_Constructeur>()
+        {
+            // Amiga: 1
+            new Cont_Constructeur(1, "Amiga")
+            {
+
+            },
+            // Capcom : 5
+            new Cont_Constructeur(5, "Capcom")
+            {
+                Machines = new List<Cont_Machine>()
+                {
+                    new Cont_Machine("capcom/cps1.cpp")
+                    {
+                        Year=1988,
+                        FirstVersion=1988,
+                        Category="Capcom - CPS1"
+
+                    },
+                    new Cont_Machine("capcom/cps2.cpp")
+                    {
+                        Year=1993,
+                        FirstVersion=1993,
+                        Category="Capcom - CPS2"
+
+                    },
+                    new Cont_Machine("capcom/cps3.cpp")
+                    {
+                        Year=1996,
+                        FirstVersion=1996,
+                        Category="Capcom - CPS3"
+                    }
+                }
+            },
+            // Neogeo : 26
+            new Cont_Constructeur(26, "NeoGeo")
+            {
+                Machines = new List<Cont_Machine>()
+                {
+                    new Cont_Machine("neogeo/neogeo.cpp")
+                    {
+                        //machine.IDConstructeur = 5;
+                        Year=1990,
+                        FirstVersion=1990,
+                        Category="SNK - NeoGeo"
+
+                    },
+                    new Cont_Machine("neogeo/neopcb.cpp")
+                    {
+                        //machine.IDConstructeur = 5;
+                        Year = 2003,
+                        FirstVersion = 2003,
+                        Category = "SNK - NeoPCB"
+
+                    },
+                }
+            },
+            // Sega : 29
+            new Cont_Constructeur(29, "Sega")
+            {
+                Machines = new List<Cont_Machine>()
+                {
+                    // System 1
+                    new Cont_Machine("sega/segas1")
+                    {
+                        Year=1983,
+                        FirstVersion=19836,
+                        Category="Sega - System 1"
+                    },
+                    // System 16
+                    new Cont_Machine("sega/segas16a", "sega/segas16b","sega/system16.cpp" ,"sega/segas16b_isgsm.cpp")
+                    {
+                        Year=1986,
+                        FirstVersion=1986,
+                        Category="Sega - System 16"
+                    },
+                    new Cont_Machine("sega/segas16b_isgsm.cpp")
+                    {
+                        Year=1986,
+                        FirstVersion=1986,
+                        Category="Sega - System 16"
+                    },
+                    // System 18
+                    new Cont_Machine("sega/segas18.cpp")
+                    {
+                        Year=1989,
+                        FirstVersion=1989,
+                        Category="Sega - System 18"
+                    },
+                }
             }
+        };
+
+
+
+
+
+        /// <summary>
+        /// Système sélectionnés par mes soins
+        /// </summary>
+        /// <param name="strConstruct"></param>
+        /// <param name="machine"></param>
+        /// <param name="strMachine"></param>
+        /// <returns></returns>
+        private static short IsKnowedSystem(string strConstruct, ref CT_Machine machine, string strMachine, string machineName)
+        {
+            if (machineName.Equals("neogeo/midas.cpp"))
+            {
+                machine.Category = "Andamiro - Clone NeoGeo";
+                return 0;
+            }
+
+
+
+            var mapConst = _KnownSystems.FirstOrDefault(x => x.Constructeur.ToUpper().Equals(strConstruct.ToUpper()));
+
+            if (mapConst != null)
+            {
+
+                CT_Machine machineFound = null;
+
+
+                for (int i = 0; i < mapConst.Machines.Count; i++)
+                {
+                    machineFound = mapConst.Machines[i].Get_Machine(machineName);
+                    if (machineFound != null)
+                        return 1;
+                }
+
+
+
+                /*
+                if (machineFound != null)
+                {
+                    machine = machineFound;
+                    return 1;
+                }
+
+                machineFound = mapConst.Machines.FirstOrDefault(x => x.Nom.StartsWith($"{strConstruct}/{strMachine}"));
+                if (machineFound != null)
+                {
+                    machineFound.Nom = machineName;
+                    machine = machineFound;
+                    return 1;
+                }
+
+                machine.Category = strConstruct;*/
+                return 0;
+
+            }
+
+            return -1;
+
+            //Totalement revoir
+            /*new CT_Machine("neogeo/midas.cpp")
+            {
+                //machine.IDConstructeur = 5;
+                Year = 1990,
+                FirstVersion = 1990,
+                Category = "SNK - Midas"
+
+            },
+                  */
+
+
+
             // Amstrad: 2
-            else if (strConstruct.Equals("amstrad"))
+            if (strConstruct.Equals("amstrad"))
             {
                 machine.IDConstructeur = 2;
                 if (strMachine.StartsWith("amstrad"))
@@ -903,32 +1069,7 @@ epson/qx10.cpp
                 }
                 return 0;
             }
-            // Capcom : 5
-            else if (strConstruct.Equals("capcom"))
-            {
-                machine.IDConstructeur = 5;
 
-                if (strMachine.StartsWith("cps1"))
-                {
-                    machine.Category = "Capcom - CPS1";
-                    machine.Year = 1988;
-                    return 1;
-                }
-                else if (strMachine.Equals("cps2"))
-                {
-                    machine.Category = $"Capcom - {strMachine.ToUpper()}";
-                    machine.Year = 1993;
-                    return 1;
-
-                }
-                else if (strMachine.Equals("cps3"))
-                {
-                    machine.Category = $"Capcom - {strMachine.ToUpper()}";
-                    machine.Year = 1996;
-                    return 1;
-                }
-                return 0;
-            }
             // Casio : 6
             else if (strConstruct.Equals("casio"))
             {
@@ -1221,26 +1362,7 @@ epson/qx10.cpp
                 }
                 return 0;
             }
-            // Neogeo : 26
-            else if (strConstruct.Equals("neogeo"))
-            {
-                machine.IDConstructeur = 26;
-                machine.Category = $"SNK - {strMachine.ToUpper()}";
 
-                if (strMachine.StartsWith("neogeo"))
-                {
-                    machine.Year = 1990;
-                    return 1;
-                }
-                else if (
-                    strMachine.StartsWith("midas") ||
-                    strMachine.StartsWith("neopcb")
-                    )
-                {
-                    return 1;
-                }
-                return 0;
-            }
             // Nintendo : 27
             else if (strConstruct.Equals("nintendo"))
             {
@@ -1280,9 +1402,15 @@ epson/qx10.cpp
                 machine.Category = $"Sega - {strMachine.ToUpper()}";
 
                 if (strMachine.StartsWith("segas16") || strMachine.StartsWith("system16"))
-                               {
-                    machine.Category = $"Sega - System 16" ;
+                {
+                    machine.Category = $"Sega - System 16";
                     machine.Year = 1986;
+                    return 1;
+                }
+                else if (strMachine.StartsWith("segas18"))
+                {
+                    machine.Category = $"Sega - System 18";
+                    machine.Year = 1989;
                     return 1;
                 }
                 else if (
@@ -1299,8 +1427,7 @@ epson/qx10.cpp
                     //strMachine.StartsWith("saturn") ||    // on dirait que c'est un bios
                     strMachine.StartsWith("segac2") ||  // Gamegear, Master System
                     strMachine.StartsWith("segag80") ||
-            
-                    strMachine.StartsWith("segas18") ||
+
                     strMachine.StartsWith("segas24") ||
                     strMachine.StartsWith("segas32") ||
                     strMachine.StartsWith("segasp") ||
@@ -1311,14 +1438,14 @@ epson/qx10.cpp
                     strMachine.StartsWith("turbo") ||
                     strMachine.StartsWith("vicdual") ||
 
-                    strMachine.StartsWith("system1") 
-                    
+                    strMachine.StartsWith("system1")
+
                     )
                 {
                     return 1;
                 }
 
-                machine.Category=null;
+                machine.Category = null;
                 return 0;
 
             }

@@ -11,13 +11,15 @@ namespace MyMameHelper.ContTable
 {
     public class CT_Machine 
     {
+
+
         /*: INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }*/
+{
+public event PropertyChangedEventHandler PropertyChanged;
+protected void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+{
+PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}*/
 
         public uint ID { get; set; }
 
@@ -42,6 +44,7 @@ namespace MyMameHelper.ContTable
             set;
         }
         public uint? Year { get; set; }
+        public uint? FirstVersion { get; set; }
 
         public bool AllowCPath { get; set; }
 
@@ -57,6 +60,7 @@ namespace MyMameHelper.ContTable
             this.Revision = machine.Revision;
             this.IDConstructeur = machine.IDConstructeur;
             this.Year = machine.Year;
+            this.FirstVersion = machine.FirstVersion;
             this.AllowCPath = machine.AllowCPath;
         }
 
@@ -65,6 +69,10 @@ namespace MyMameHelper.ContTable
 
         }
 
+        public CT_Machine(string name)
+        {
+            this.Nom = name;
+        }
 
         public static CT_Machine Result2Class(Dictionary<string, object> dico)
         {
@@ -77,6 +85,7 @@ namespace MyMameHelper.ContTable
             cTC.Revision = Trans.GetString("Revision", dico);
             cTC.IDConstructeur = Trans.GetUInt("Constructeur", dico);
             cTC.Year = Trans.GetUInt("Year", dico);
+            cTC.FirstVersion= Trans.GetUInt("FirstVersion", dico);
 
             return cTC;
         }
@@ -92,6 +101,7 @@ namespace MyMameHelper.ContTable
             cTC.Revision = Trans.GetString("Revision", reader);
             cTC.IDConstructeur = Trans.GetUInt("Constructeur", reader);
             cTC.Year = Trans.GetUInt("Year", reader);
+            cTC.FirstVersion = Trans.GetUInt("FirstVersion", reader);
 
             return cTC;
         }

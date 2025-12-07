@@ -589,6 +589,7 @@ namespace MyMameHelper.Windows
 
                     Dictionary<string, List<CT_Machine>> machines = TableFeeder.Machine(srcFiles);
                     sqOP.Insert_Machines(machines["identified"], false, false);
+                    sqOP.Insert_Machines(machines["money"], false, false);
                     sqOP.Insert_Machines(machines["SystemRoms"], ignore: false, preservePK: true);
                     sqOP.Insert_Machines(machines["Constructeurs"], ignore: false, preservePK: true);
 
