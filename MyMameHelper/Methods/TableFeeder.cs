@@ -908,7 +908,7 @@ epson/qx10.cpp
                         //machine.IDConstructeur = 5;
                         Year = 2003,
                         FirstVersion = 2003,
-                        Category = "SNK - NeoPCB"
+                        Category = "SNK - NeoGeo + PCB "
 
                     },
                 }
@@ -919,31 +919,81 @@ epson/qx10.cpp
                 Machines = new List<Cont_Machine>()
                 {
                     // System 1
-                    new Cont_Machine("sega/segas1")
+                    new Cont_Machine("sega/system1.cpp", "sega/segasm1.cpp")
                     {
                         Year=1983,
                         FirstVersion=19836,
                         Category="Sega - System 1"
                     },
                     // System 16
-                    new Cont_Machine("sega/segas16a", "sega/segas16b","sega/system16.cpp" ,"sega/segas16b_isgsm.cpp")
+                    new Cont_Machine("sega/segas16a.cpp", "sega/segas16b.cpp","sega/system16.cpp" ,"sega/segas16b_isgsm.cpp")
                     {
                         Year=1986,
                         FirstVersion=1986,
                         Category="Sega - System 16"
                     },
-                    new Cont_Machine("sega/segas16b_isgsm.cpp")
+                    // System 24
+                    new Cont_Machine("sega/segas24.cpp")
                     {
-                        Year=1986,
-                        FirstVersion=1986,
-                        Category="Sega - System 16"
+                        Year=1988,
+                        FirstVersion=1988,
+                        Category="Sega - System 24"
                     },
                     // System 18
-                    new Cont_Machine("sega/segas18.cpp")
+                    new Cont_Machine("sega/segas18.cpp", "sega/segas18_astormbl.cpp")
                     {
                         Year=1989,
                         FirstVersion=1989,
                         Category="Sega - System 18"
+                    },
+                    // System 32
+                    new Cont_Machine("sega/segas32.cpp")
+                    {
+                        Year=1990,
+                        FirstVersion=1990,
+                        Category="Sega - System 32"
+                    },
+                    // Model 1
+                    new Cont_Machine("sega/model1.cpp")
+                    {
+                        Year=1992,
+                        FirstVersion=1992,
+                        Category="Sega - Model 1"
+                    },
+                    // Sega C2
+                    new Cont_Machine("sega/segac2.cpp")
+                    {
+                        Year=1993,
+                        FirstVersion=1993,
+                        Category="Sega - C2"
+                    },
+                    // Model 2 - 3D
+                    new Cont_Machine("sega/model2.cpp")
+                    {
+                        Year=1993,
+                        FirstVersion=1993,
+                        Category="Sega - Model 2"
+                    },
+                    // Titan Video
+                    new Cont_Machine("sega/stv.cpp")
+                    {
+                        Year=1994,
+                        FirstVersion=1994,
+                        Category="Sega - Titan Video"
+                    },
+                    // Model 3 - 3D
+                    new Cont_Machine("sega/model3.cpp")
+                    {
+                        Year=1996,
+                        FirstVersion=1996,
+                        Category="Sega - Model 3"
+                    },
+                    // Naomi
+                    new Cont_Machine("sega/naomi.cpp")
+                    {
+                        Year=1998,
+                        FirstVersion=1998,
+                        Category="Sega - Naomi"
                     },
                 }
             }
@@ -982,7 +1032,10 @@ epson/qx10.cpp
                 {
                     machineFound = mapConst.Machines[i].Get_Machine(machineName);
                     if (machineFound != null)
+                    {
+                        machine = machineFound;
                         return 1;
+                    }
                 }
 
 
@@ -1000,9 +1053,9 @@ epson/qx10.cpp
                     machineFound.Nom = machineName;
                     machine = machineFound;
                     return 1;
-                }
+                }*/
 
-                machine.Category = strConstruct;*/
+                machine.Category = strConstruct;
                 return 0;
 
             }

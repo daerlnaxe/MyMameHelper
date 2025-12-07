@@ -660,7 +660,7 @@ namespace MyMameHelper.SQLite
                     if (j != 0)
                         sqlCmd.CommandText += ",(";
 
- 
+
                     // ligne
                     for (int k = 0; k < fields.Count; k++)
                     {
@@ -681,7 +681,7 @@ namespace MyMameHelper.SQLite
 
                             // Ajout de la valeur au champ à remplir
                             if (valeur == null)
-                                sqlCmd.Parameters.Add($"@{field}{j}", DbType.String).Value =null;
+                                sqlCmd.Parameters.Add($"@{field}{j}", DbType.String).Value = null;
                             else if (valeur.GetType() == typeof(string))
                                 sqlCmd.Parameters.Add($"@{field}{j}", DbType.String).Value = valeur;
                             else if (valeur.GetType() == typeof(uint))
@@ -736,12 +736,10 @@ namespace MyMameHelper.SQLite
         public void Insert_Manus(IList<CT_MameManufacturer> manufacturers, bool ignore)
         {
             // probleme ?
-            uint max = 50;
+            uint max = 2;
             Debug.WriteLine($"Insertion de la collection de manufactureurs");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
 
             // Add ignore if asked
             string sqlIgnore = "";
@@ -749,14 +747,20 @@ namespace MyMameHelper.SQLite
                 sqlIgnore = "OR IGNORE";
 
 
-            sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tMameManufacturer}] (" +
-                          "[Nom] " +
-                          ") VALUES ";
-
-            Debug.WriteLine($"Insert: {sqlCmd.CommandText}");
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
             for (int i = 0; i < manufacturers.Count; i++)
+
             {
+
+                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tMameManufacturer}] (" +
+                              "[Nom] " +
+                              ") VALUES ";
+
+                Debug.WriteLine($"Insert: {sqlCmd.CommandText}");
+
+
                 CT_MameManufacturer dev = manufacturers[i];
                 //  string vals = null;
 
@@ -769,9 +773,10 @@ namespace MyMameHelper.SQLite
                         sqlCmd.CommandText += ", ";
 
                     sqlCmd.CommandText += $"(" +
-                                          $"@Nom{j} " +
+                                          $"@Nom{j}" +
                                           $")";
 
+                    Debug.WriteLine($"{manufacturers[i].Nom}");
                     sqlCmd.Parameters.Add($"@Nom{j}", DbType.String).Value = manufacturers[i].Nom;
 
                     // a surveiller si bug
@@ -780,6 +785,7 @@ namespace MyMameHelper.SQLite
                 }
 
                 //Trace.WriteLine($"Requete: {sqlCmd.CommandText}");
+
 
                 ExecNQ(sqlCmd);
 
