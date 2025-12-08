@@ -54,13 +54,13 @@ namespace MyMameHelper.Windows
 
             using (SQLite_OP sqReq = new SQLite_OP())
             {
-                Obj_Select objDev = new Obj_Select(PProp.Default.T_TempRoms, colonnes: new string[] { "Manufacturer" }, groups: new string[] { "Manufacturer" });
+                Obj_Select objDev = new Obj_Select(PProp.Default.T_TempRoms, fields: new string[] { "Manufacturer" }, groups: new string[] { "Manufacturer" });
                 objDev.AddConds(new SqlCond("Manufacturer", eWhere.Not_Like, "Null"));
 
                 Developers.ChangeContent = sqReq.GetStringOf(objDev);
 
 
-                Obj_Select objSourceF = new Obj_Select(PProp.Default.T_TempRoms, colonnes: new string[] { "Source_File" }, groups: new string[] { "Source_File" });
+                Obj_Select objSourceF = new Obj_Select(PProp.Default.T_TempRoms, fields: new string[] { "Source_File" }, groups: new string[] { "Source_File" });
                 objSourceF.AddConds(new SqlCond("Source_File", eWhere.Not_Like, "Null"));
 
                 Source_Files.ChangeContent = sqReq.GetStringOf(objSourceF);

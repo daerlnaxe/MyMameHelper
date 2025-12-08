@@ -90,7 +90,7 @@ namespace MyMameHelper.SQLite
         /// <param name="colonnes"></param>
         /// <param name="conditions"></param>
         /// <returns></returns>
-        public SQLiteDataReader ResultSelect(Obj_Select objSelect)
+        private SQLiteDataReader ResultSelect(Obj_Select objSelect)
         {
             try
             {

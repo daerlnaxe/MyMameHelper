@@ -23,7 +23,7 @@ namespace MyMameHelper.SQLite
         /// </summary>
         /// <param name="table">Table de la base</param>
         /// <param name="all">Tous les champs</param>
-        /// <param name="colonnes"></param>
+        /// <param name="fields"></param>
         /// <param name="conditions"></param>
         /// <param name="groups"></param>
         /// <param name="orders"></param>
@@ -31,11 +31,11 @@ namespace MyMameHelper.SQLite
         /// <example>
         /// order: new []{}
         /// </example>
-        public Obj_Select(string table = null, bool all = false, string[] colonnes = null, string[] groups = null, uint? limit = null)
+        public Obj_Select(string table = null, bool all = false, string[] fields = null, string[] groups = null, uint? limit = null)
         {
             Table = table;
             All = all;
-            Colonnes = colonnes;
+            Colonnes = fields;
             //Conditions = conditions;
             Groups = groups;
            // Orders = orders;

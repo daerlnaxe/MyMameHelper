@@ -250,7 +250,7 @@ namespace MyMameHelper.Models
                 _RomsInDb = sqReq.AffRoms_List();
 
                 // Jeux dans la base
-                _GamesInDB = sqReq.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, colonnes: new[] { "ID", "Game_Name" }, all: true));
+                _GamesInDB = sqReq.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, fields: new[] { "ID", "Game_Name" }, all: true));
             }
 
             // Chargement asynchrone des roms
@@ -785,7 +785,7 @@ namespace MyMameHelper.Models
             using (SQLite_OP sqOp = new SQLite_OP())
             {
                 sqOp.Insert_CollecInGames(gameToAdd);
-                _GamesInDB = sqOp.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, colonnes: new[] { "ID", "Game_Name" }, all: true));
+                _GamesInDB = sqOp.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, fields: new[] { "ID", "Game_Name" }, all: true));
             }
             #endregion
 
@@ -899,7 +899,7 @@ namespace MyMameHelper.Models
 
 
         #region Sauvegarde des constructeurs
-        internal void SaveManufacturers()
+        internal void SaveMameManufacturers()
         {
             Debug.WriteLine("Vérification des constructeurs manquants");
 

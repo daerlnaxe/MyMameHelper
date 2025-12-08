@@ -1,5 +1,6 @@
 ﻿using MyMameHelper.ContTable;
 using MyMameHelper.Methods;
+using MyMameHelper.Models;
 using MyMameHelper.SQLite;
 using MyMameHelper.SQLite;
 using System;
@@ -21,21 +22,17 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using PProp = MyMameHelper.Properties.Settings;
 
 namespace MyMameHelper.Windows
 {
     /// <summary>
     /// Logique d'interaction pour DataBaseTools.xaml
     /// </summary>
-    public partial class DataBaseTools : Window, INotifyPropertyChanged
+    public partial class DataBaseTools : Window
     {
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        private MDBTools _MDBTools;
+
         /*
         private ObservableCollection<Game> _Constructors = new ObservableCollection<Game>();
         public ObservableCollection<Game> Constructors
@@ -51,78 +48,25 @@ namespace MyMameHelper.Windows
             }
         }*/
 
-        private string _DataBase_Path;
-        public string DataBase_Path
-        {
-            get { return _DataBase_Path; }
-            set
-            {
-                if (value != _DataBase_Path)
-                {
-                    _DataBase_Path = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
 
-        public List<string> lTables { get; private set; }
 
-        public MyObservableCollection<CT_MameManufacturer> Constructors { get; private set; } = new MyObservableCollection<CT_MameManufacturer>();
-        public MyObservableCollection<CT_Genre> Genres { get; private set; } = new MyObservableCollection<CT_Genre>();
+
+
         public MyObservableCollection<Aff_Machine> Machines { get; private set; } = new MyObservableCollection<Aff_Machine>();
-        public MyObservableCollection<CT_MameManufacturer> Manufacturers { get; private set; } = new MyObservableCollection<CT_MameManufacturer>();
+
 
 
         public DataBaseTools()
         {
             InitializeComponent();
-            DataContext = this;
+            DataContext = _MDBTools = new MDBTools();
 
-            DataBase_Path = Properties.Settings.Default.DataBase_Path;
-            if (String.IsNullOrEmpty(DataBase_Path))
-            {
-                Properties.Settings.Default.DataBase_Path = DataBase_Path = "./MyMameHelper.sqlite";
-                Properties.Settings.Default.Save();
-            }
-            Init();
+
+
+            _MDBTools.Init();
         }
 
-        private void Init()
-        {
-            try
-            {
-                using (SQLite_OP sqRead = new SQLite_OP())
-                {
-                    // Liste des tables
-                    lTables = sqRead.GET_TablesName();
 
-
-                    // Liste des constructeurs 
-                    var objSelConst = new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true);
-                    objSelConst.AddOrders(new SqlOrder("Nom"));
-                    Constructors.ChangeContent = sqRead.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, objSelConst);
-
-                    var objSelGenres = new Obj_Select(table: PProp.Default.T_Genres, all: true);
-                    objSelGenres.AddOrders(new SqlOrder("Nom"));
-                    // Liste des genres
-                    Genres.ChangeContent = sqRead.GetListOf<CT_Genre>(CT_Genre.Result2Class, objSelGenres);
-
-
-                    // Liste des Manufacturers
-                    Manufacturers.ChangeContent = sqRead.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_Constructors, all: true));
-
-
-
-                }
-            }
-            catch (Exception exc)
-            {
-                Debug.WriteLine(exc);
-                // DxMBox.ShowDial($"Problème de connexion à la base de donnée: {exc.Message}", "Alerte", DxTBoxWPF.Common.DxButtons.Ok);
-                // Continue = false;
-            }
-
-        }
 
         #region Base de donnée
         private void Choose_DataBase_Click(object sender, RoutedEventArgs e)
@@ -134,7 +78,7 @@ namespace MyMameHelper.Windows
                 fbd.SelectedPath = Properties.Settings.Default.DataBase_Path;
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
-                    DataBase_Path = fbd.SelectedPath;
+                    _MDBTools.DataBase_Path = fbd.SelectedPath;
                     Properties.Settings.Default.LastPath = fbd.SelectedPath;
                 }
             }
@@ -143,12 +87,12 @@ namespace MyMameHelper.Windows
         private void tbDataBase_Path_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (Directory.Exists(tbDataBase_Path.Text))
-                DataBase_Path = tbDataBase_Path.Text;
+                _MDBTools.DataBase_Path = tbDataBase_Path.Text;
         }
 
         private void Create_DataBase_Click(object sender, RoutedEventArgs e)
         {
-            SQLiteNewDb.Create(DataBase_Path);
+            SQLiteNewDb.Create(_MDBTools.DataBase_Path);
         }
 
         #endregion
@@ -232,69 +176,56 @@ namespace MyMameHelper.Windows
 
         private void Ex_AddGenre(object sender, ExecutedRoutedEventArgs e)
         {
-            LambdaValue lval = new LambdaValue();
-            if (lval.ShowDialog() == true)
-            {
-                using (SQLite_OP sqReq = new SQLite_OP())
-                {
-                    sqReq.Insert_Genre(new CT_Genre() { Nom = lval.Valeur });
-                    var objSelGenres = new Obj_Select(table: PProp.Default.T_Genres, all: true);
-                    objSelGenres.AddOrders(new SqlOrder("Nom"));
-
-                    Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, objSelGenres);
-                }
-            }
-
+            _MDBTools.AddGenre();
         }
 
         private void Can_EditGenre(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = Genres.Count > 0;
+            e.CanExecute = _MDBTools.Genres.Count > 0;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ex_EditGenre(object sender, ExecutedRoutedEventArgs e)
         {
             CT_Genre ctGenre = (CT_Genre)dgGenres.SelectedItem;
 
             LambdaValue lval = new LambdaValue();
             lval.Valeur = ctGenre.Nom;
+            ctGenre.Nom = lval.Valeur;
 
             if (lval.ShowDialog() == true)
             {
-                ctGenre.Nom = lval.Valeur;
-
-                using (SQLite_OP sqReq = new SQLite_OP())
-                {
-                    sqReq.Update_Genre(ctGenre);
-                    var objSelGenres = new Obj_Select(table: PProp.Default.T_Genres, all: true);
-                    objSelGenres.AddOrders(new SqlOrder("Nom"));
-                    Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, objSelGenres);
-                }
+                _MDBTools.EditGenre(ctGenre);
             }
         }
 
+
         private void Can_RemoveGenre(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = Genres.Count > 0;
+            e.CanExecute = _MDBTools.Genres.Count > 0;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ex_RemoveGenre(object sender, ExecutedRoutedEventArgs e)
         {
             CT_Genre ctGenre = (CT_Genre)dgGenres.SelectedItem;
             if (System.Windows.MessageBox.Show($"Remove {ctGenre.Nom} ?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                using (SQLite_OP sqReq = new SQLite_OP())
-                {
-                    SqlCond cond = new SqlCond("ID", eWhere.Equal, ctGenre.ID);
-                    sqReq.Delete_Genre(new SqlCond[] { cond });
-                    var objSelGenres = new Obj_Select(table: PProp.Default.T_Genres, all: true);
-                    objSelGenres.AddOrders(new SqlOrder("Nom"));
-                    Genres.ChangeContent = sqReq.GetListOf<CT_Genre>(CT_Genre.Result2Class, objSelGenres);
-                }
+                _MDBTools.RemoveGenre(ctGenre);
             }
         }
 
-        #endregion
+        #endregion Genre
+
 
         #region Hardware
         private void Can_AddConstructor(object sender, CanExecuteRoutedEventArgs e)
@@ -302,6 +233,11 @@ namespace MyMameHelper.Windows
             e.CanExecute = true;
         }
 
+        /// <summary>
+        /// Ajouter un constructeur
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ex_AddConstructor(object sender, ExecutedRoutedEventArgs e)
         {
             LambdaValue lval = new LambdaValue();
@@ -310,15 +246,18 @@ namespace MyMameHelper.Windows
                 using (SQLite_OP sqReq = new SQLite_OP())
                 {
                     sqReq.Insert_MameManufacturer(new CT_MameManufacturer() { Nom = lval.Valeur });
-                    Constructors.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
+                    _MDBTools.Constructors.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
                 }
             }
         }
 
+
+
         private void Can_EditConstructor(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = Constructors.Count > 0;
+            e.CanExecute = _MDBTools.Constructors.Count > 0;
         }
+
 
         private void Ex_EditConstructor(object sender, ExecutedRoutedEventArgs e)
         {
@@ -334,16 +273,28 @@ namespace MyMameHelper.Windows
                 using (SQLite_OP sqReq = new SQLite_OP())
                 {
                     sqReq.Update_MameManufacturer(ctConst);
-                    Constructors.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
+                    _MDBTools.Constructors.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
                 }
             }
         }
 
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Can_RemoveConstructor(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = Constructors.Count > 0;
+            e.CanExecute = _MDBTools.Constructors.Count > 0;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ex_RemoveConstructor(object sender, ExecutedRoutedEventArgs e)
         {
             CT_MameManufacturer ctConst = (CT_MameManufacturer)dgConstructors.SelectedItem;
@@ -353,13 +304,20 @@ namespace MyMameHelper.Windows
                 {
                     SqlCond cond = new SqlCond("ID", eWhere.Equal, ctConst.ID);
                     sqReq.Delete_Constructor(new SqlCond[] { cond });
-                    Constructors.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
+                    _MDBTools.Constructors.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
                 }
             }
         }
         #endregion
 
+
+
         #region Machines
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Can_AddMachine(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -399,7 +357,7 @@ namespace MyMameHelper.Windows
             CT_Machine ctMachine = new CT_Machine((Aff_Machine)dgMachines.SelectedItem);
 
             wMachine wMach = new wMachine();
-            wMach.Constructeurs = Constructors;
+            wMach.Constructeurs = _MDBTools.Constructors;
             wMach.Machine = ctMachine;
             //wMach.SelectedConstructeur = ctConst;
             /*
@@ -472,61 +430,64 @@ namespace MyMameHelper.Windows
             e.CanExecute = true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ex_AddManufacturer(object sender, ExecutedRoutedEventArgs e)
         {
             LambdaValue lval = new LambdaValue();
             if (lval.ShowDialog() == true)
             {
-                using (SQLite_OP sqReq = new SQLite_OP())
-                {
-                    sqReq.Insert_Constructor(new CT_MameManufacturer() { Nom = lval.Valeur });
-                    Manufacturers.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_Constructors, all: true));
-                }
+                _MDBTools.AddManufacturer(lval.Valeur);
+
+
             }
         }
 
         private void Can_EditManufacturer(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = Manufacturers.Count > 0;
+            e.CanExecute = _MDBTools.Manufacturers.Count > 0;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ex_EditManufacturer(object sender, ExecutedRoutedEventArgs e)
         {
             CT_MameManufacturer ctManu = (CT_MameManufacturer)dgManufacturers.SelectedItem;
 
             LambdaValue lval = new LambdaValue();
             lval.Valeur = ctManu.Nom;
+            ctManu.Nom = lval.Valeur;
+
 
             if (lval.ShowDialog() == true)
             {
-                ctManu.Nom = lval.Valeur;
-
-                using (SQLite_OP sqReq = new SQLite_OP())
-                {
-                    sqReq.Update_MameManufacturer(ctManu);
-                    Manufacturers.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_Constructors, all: true));
-                }
+                _MDBTools.EditManufacturer(ctManu);
             }
         }
 
         private void Can_RemoveManufacturer(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = Manufacturers.Count > 0;
+            e.CanExecute = _MDBTools.Manufacturers.Count > 0;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ex_RemoveManufacturer(object sender, ExecutedRoutedEventArgs e)
         {
             CT_MameManufacturer ctManu = (CT_MameManufacturer)dgManufacturers.SelectedItem;
 
             if (System.Windows.MessageBox.Show($"Remove {ctManu.Nom} ?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                using (SQLite_OP sqReq = new SQLite_OP())
-                {
-                    SqlCond cond = new SqlCond("ID", eWhere.Equal, ctManu.ID);
-                    sqReq.Delete_MameManufacturer(new SqlCond[] { cond });
-
-                    Manufacturers.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_Constructors, all: true));
-                }
+                _MDBTools.RemoveManufacturer(ctManu);
             }
 
         }
@@ -571,51 +532,56 @@ namespace MyMameHelper.Windows
         }
 
 
+        #region Machine
         /// <summary>
         /// Construction des machines en se servant des roms temporaires de MAME
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+        /// <remarks>
+        /// Détruit l'ancienne
+        /// </remarks>
         private void Build_Machines(object sender, RoutedEventArgs e)
         {
             try
             {
-                using (SQLite_OP sqOP = new SQLite_OP())
-                {
-                    sqOP.Drop_TMachine();
-                    sqOP.Create_TMachine();
+                _MDBTools.BuildMachines();
 
-                    var srcFiles = sqOP.Get_RRomGroupedSFile();
-
-                    Dictionary<string, List<CT_Machine>> machines = TableFeeder.Machine(srcFiles);
-                    sqOP.Insert_Machines(machines["identified"], false, false);
-                    sqOP.Insert_Machines(machines["money"], false, false);
-                    sqOP.Insert_Machines(machines["SystemRoms"], ignore: false, preservePK: true);
-                    sqOP.Insert_Machines(machines["Constructeurs"], ignore: false, preservePK: true);
-
-                }
-
-                System.Windows.MessageBox.Show("Machines created","", MessageBoxButton.OK, MessageBoxImage.Information );
+                System.Windows.MessageBox.Show("Machines created", "", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
+                System.Windows.MessageBox.Show("Problem with machine builder", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Trace.WriteLine($"Erreur à la construction des machines: {ex}");
             }
 
         }
 
 
+        /// <summary>
+        /// Update de la table
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Update_Machines(object sender, RoutedEventArgs e)
         {
-            using (SQLite_OP sqOP = new SQLite_OP())
+            try
             {
-                sqOP.SafeAlter_TMachine();
+                _MDBTools.Update_Machine();
 
+                System.Windows.MessageBox.Show("Table Machines updated", "", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("Problem with table machine updater", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Trace.WriteLine($"Erreur à l'update de la tale machine: {ex}");
+            }
+
         }
+        #endregion Machine
 
 
-
+        #region Remap
         /// <summary>
         /// Map Rom's Machine_ID to Machine table
         /// </summary>
@@ -623,23 +589,17 @@ namespace MyMameHelper.Windows
         /// <param name="e"></param>
         private void Remap_RomMachine(object sender, RoutedEventArgs e)
         {
-            using (SQLite_OP sqOP = new SQLite_OP())
-            {
-                Dictionary<string, object[]> srcFiles = sqOP.Get_RomGroupedSFile();
-
-                // Machines
-                var objSel = new Obj_Select(table: PProp.Default.T_Machines, colonnes: new string[] { "ID", "Nom" });
-                //objSel.AddConds(new SqlCond("Constructeur", eWhere.Equal, idConstruct.ToString()));
-                objSel.AddOrders(new SqlOrder("Nom"));
-                var machines = sqOP.GetListOf(CT_Machine.Result2Class, objSel);
-
-
-                sqOP.Map_RomMachine(machines, srcFiles.Keys.ToList());
-            }
+            _MDBTools.RemapRomMachine();
             System.Windows.MessageBox.Show("Remap finished", "", MessageBoxButton.OK, MessageBoxImage.Information);
 
         }
 
 
+        private void Remap_ManuMachine(object sender, RoutedEventArgs e)
+        {
+            _MDBTools.Remap_ManuMachine();
+            System.Windows.MessageBox.Show("Remap finished", "", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        #endregion Remap
     }
 }

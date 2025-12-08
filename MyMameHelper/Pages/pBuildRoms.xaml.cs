@@ -807,14 +807,14 @@ namespace MyMameHelper.Pages
             if (MessageBox.Show("Would you want to save missing manufacturers. Refusing it, will stop all the process.", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 Cursor = Cursors.Wait;
-                _MContext.SaveManufacturers();
+                _MContext.SaveMameManufacturers();
                 Cursor = Cursors.Arrow;
             }
             else
             {
                 return;
             }
-            return;
+            
 
             // Sauvegarde des roms
             if (MessageBox.Show("Would you want to save this roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)

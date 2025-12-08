@@ -141,6 +141,7 @@
     <Compile Include="Models\AsyncWorkBool.cs" />
     <Compile Include="Models\IAsyncProgressWork.cs" />
     <Compile Include="Models\MBuildRoms.cs" />
+    <Compile Include="Models\MDBTools.cs" />
     <Compile Include="MyList.cs" />
     <Compile Include="Pages\pBuildManus.xaml.cs">
       <DependentUpon>pBuildManus.xaml</DependentUpon>

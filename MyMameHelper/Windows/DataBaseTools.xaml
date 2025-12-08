@@ -107,8 +107,8 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <StackPanel>
-                    <Button Content="Update Machines"  Click="Update_Machines" ToolTip="Alter Table Machine to add missing columns"/>
-                    <Button Content="Build Machines"  Click="Build_Machines" ToolTip="Build Machines From Mame's Temp Roms"/>
+                        <Button Content="Update Machines"  Click="Update_Machines" ToolTip="Alter Table Machine to add missing columns"/>
+                        <Button Content="Build Machines"  Click="Build_Machines" ToolTip="Build Machines From Mame's Temp Roms"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -156,14 +156,22 @@
                     <Button x:Name="Choose_DataBase" Content="Choose..." Command="" Click="Choose_DataBase_Click" Grid.Column="3" />
                     <!-- Création -->
                     <Button x:Name="Create_DataBase" Content="Créer" Command="" Click="Create_DataBase_Click" Grid.Column="4"  />
-                    
+
                     <!-- Reset Temp -->
                     <Button Content="Reset Temp Roms" Grid.Row="2" Click="Reset_TempRoms_Click"/>
                     <Button x:Name="button" Content="Update" Command="commands:UICommands.UpdateDb" Grid.Column="3" HorizontalAlignment="Left" Height="25" Grid.Row="2" VerticalAlignment="Top" Width="51"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Remap">
-                <Button Content="Remap Rom and Machine" Click="Remap_RomMachine"/>
+                <StackPanel>
+                    <GroupBox Header="Machine">
+                        <Button Content="Remap Rom and Machine" Click="Remap_RomMachine"/>
+                    </GroupBox>
+                    <GroupBox Header="Manufacturers">
+                        <Button Content="Remap Rom and Manufacturer" Click="Remap_ManuMachine" ToolTip="Use the Temp Roms to remap roms and machines"/>
+                    </GroupBox>
+                </StackPanel>
+
             </TabItem>
         </TabControl>
 
