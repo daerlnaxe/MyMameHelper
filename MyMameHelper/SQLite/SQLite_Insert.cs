@@ -104,7 +104,7 @@ namespace MyMameHelper.SQLite
         /// </summary>
         /// <param name="ctC"></param>
         /// <returns></returns>
-        public bool Insert_Constructor(CT_MameManufacturer ctC)
+        public bool Insert_Constructor(CT_Constructor ctC)
         {
             Debug.WriteLine($"Insertion de la companie: {ctC.Nom}");
 

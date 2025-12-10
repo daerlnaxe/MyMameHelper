@@ -178,6 +178,7 @@ namespace MyMameHelper.SQLite
             return default(T);
         }
 
+
         /// <summary>
         /// Methode générique de collecte
         /// </summary>

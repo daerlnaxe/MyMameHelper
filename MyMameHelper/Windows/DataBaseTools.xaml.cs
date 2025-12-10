@@ -245,8 +245,8 @@ namespace MyMameHelper.Windows
             {
                 using (SQLite_OP sqReq = new SQLite_OP())
                 {
-                    sqReq.Insert_MameManufacturer(new CT_MameManufacturer() { Nom = lval.Valeur });
-                    _MDBTools.Constructors.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
+                    sqReq.Insert_Constructor(new CT_Constructor() { Nom = lval.Valeur });
+                    _MDBTools.Constructors.ChangeContent = sqReq.GetListOf<CT_Constructor>(CT_Constructor.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
                 }
             }
         }
@@ -273,7 +273,7 @@ namespace MyMameHelper.Windows
                 using (SQLite_OP sqReq = new SQLite_OP())
                 {
                     sqReq.Update_MameManufacturer(ctConst);
-                    _MDBTools.Constructors.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
+                    _MDBTools.Constructors.ChangeContent = sqReq.GetListOf<CT_Constructor>(CT_Constructor.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
                 }
             }
         }
@@ -304,7 +304,7 @@ namespace MyMameHelper.Windows
                 {
                     SqlCond cond = new SqlCond("ID", eWhere.Equal, ctConst.ID);
                     sqReq.Delete_Constructor(new SqlCond[] { cond });
-                    _MDBTools.Constructors.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
+                    _MDBTools.Constructors.ChangeContent = sqReq.GetListOf<CT_Constructor>(CT_Constructor.Result2Class, new Obj_Select(table: "Constructeurs", all: true));
                 }
             }
         }
@@ -353,7 +353,7 @@ namespace MyMameHelper.Windows
 
         private void Ex_EditMachine(object sender, ExecutedRoutedEventArgs e)
         {
-            CT_MameManufacturer ctConst = (CT_MameManufacturer)dgConstructors.SelectedItem;
+            CT_Constructor ctConst = (CT_Constructor)dgConstructors.SelectedItem;
             CT_Machine ctMachine = new CT_Machine((Aff_Machine)dgMachines.SelectedItem);
 
             wMachine wMach = new wMachine();
@@ -597,9 +597,14 @@ namespace MyMameHelper.Windows
 
         private void Remap_ManuMachine(object sender, RoutedEventArgs e)
         {
-            _MDBTools.Remap_ManuMachine();
-            System.Windows.MessageBox.Show("Remap finished", "", MessageBoxButton.OK, MessageBoxImage.Information);
+            
         }
         #endregion Remap
+
+        private void Remap_RomManu(object sender, RoutedEventArgs e)
+        {
+            _MDBTools.Remap_RomManu();
+            System.Windows.MessageBox.Show("Remap finished", "", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }

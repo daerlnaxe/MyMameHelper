@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
+using System.Data.SqlTypes;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 
 namespace MyMameHelper.SQLite
 {
@@ -235,7 +237,7 @@ namespace MyMameHelper.SQLite
                                         $"[Description]=@Description, " +
                                         $"[Game_Id]=@Game_Id, " +
                                         $"[Year]=@Year, " +
-                                        $"[Manufacturer]=@Manufacturer, " +
+                                        $"[Manufacturer_Id]=@Manufacturer_Id, " +
                                         $"[Unwanted]=@Unwanted " +
                                         //
                                         $"WHERE ID=@ID";
@@ -251,7 +253,7 @@ namespace MyMameHelper.SQLite
                     sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt16).Value = null;
                 }
                 sqlCmd.Parameters.Add($"@Year", DbType.String).Value = rom.Year;
-                sqlCmd.Parameters.Add($"@Manufacturer", DbType.UInt32).Value = rom.Manufacturer;
+                sqlCmd.Parameters.Add($"@Manufacturer_Id", DbType.UInt32).Value = rom.Manufacturer.ID;
                 sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = rom.Unwanted;
 
                 // condition
@@ -263,7 +265,95 @@ namespace MyMameHelper.SQLite
         }
 
 
- 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Roms"></param>
+        /// <remarks>
+        /// Beaucoup plus rapide
+        /// </remarks>
+        public void Update_MassiveRoms<T>(IList<T> roms, params string[] fields) where T : iCT_Rom
+        {
+            Debug.WriteLine($"Update massif de la collection de roms");
+
+            // Début de la transaction
+            using (var transaction = SQLiteConn.BeginTransaction())
+            {
+                using (var sqlCmd = SQLiteConn.CreateCommand())
+                {
+                    sqlCmd.CommandText = $"UPDATE [{tRom}]" +
+                        $"SET " +
+                        $"[Archive_Name]=@Archive_Name, " +
+                        $"[Description]=@Description, " +
+                        $"[Game_Id]=@Game_Id, " +
+                        $"[Year]=@Year, " +
+                        $"[Manufacturer_Id]=@Manufacturer_Id, " +
+                        $"[Unwanted]=@Unwanted " +
+                    //
+                        $"WHERE ID=@ID";
+
+                    // Paramètres
+                    //-- Archives
+                    var pArchiveName = sqlCmd.CreateParameter();
+                    pArchiveName.ParameterName="@Archive_Name";
+                    pArchiveName.DbType= DbType.String;
+                    sqlCmd.Parameters.Add(pArchiveName);
+
+
+                    // Condition
+                    var pId = sqlCmd.CreateParameter();
+                    pId.ParameterName = "@ID";
+                    pId.DbType= DbType.Int32;
+                    sqlCmd.Parameters.Add(pId);
+
+
+                    //---- A continuer
+                    sqlCmd.Parameters.Add($"@Description", DbType.String).Value = rom.Description;
+                    if (rom.Game_Id != null)
+                    {
+                        sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt32).Value = rom.Game_Id;
+                    }
+                    else
+                    {
+                        sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt16).Value = null;
+                    }
+                    sqlCmd.Parameters.Add($"@Year", DbType.String).Value = rom.Year;
+                    sqlCmd.Parameters.Add($"@Manufacturer_Id", DbType.UInt32).Value = rom.Manufacturer.ID;
+                    sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = rom.Unwanted;
+
+
+                    
+                    
+                    
+                    //---
+
+
+
+     
+
+                    sqlCmd.Prepare(); // compile le SQL une fois
+
+                    foreach (var rom in roms)
+                    {
+                        //sqlCmd.Parameters.Add($"@Archive_Name", ).Value = rom.Archive_Name;
+                        pArchiveName.Value  = rom.Archive_Name;
+                        
+                        
+                        
+                        // condition
+                        pId.Value = rom.ID;
+
+                        sqlCmd.ExecuteNonQuery();
+                    }
+                }
+
+                transaction.Commit();
+            }
+
+        }
+
         #endregion
     }
 }

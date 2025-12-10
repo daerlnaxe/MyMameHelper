@@ -146,7 +146,7 @@ namespace MyMameHelper.Models
         /// <summary>
         /// Manufacturers
         /// </summary>
-        public MyObservableCollection<CT_MameManufacturer> Constructeurs { get; set; } = new MyObservableCollection<CT_MameManufacturer>();
+        public MyObservableCollection<CT_MameManufacturer> Manufacturers { get; set; } = new MyObservableCollection<CT_MameManufacturer>();
 
 
         #endregion Collections
@@ -244,7 +244,7 @@ namespace MyMameHelper.Models
                 Machines.ChangeContent = sqReq.GetListOf(CT_Machine.Result2Class, objSel);
 
                 //
-                Constructeurs.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
+                Manufacturers.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
 
                 // Roms déjà construites
                 _RomsInDb = sqReq.AffRoms_List();
@@ -604,7 +604,7 @@ namespace MyMameHelper.Models
 
                 #region 
                 // Transformation du Constructeur
-                CT_MameManufacturer dev = Constructeurs.FirstOrDefault(x => x.Nom.Equals(rawRom.Manufacturer));
+                CT_MameManufacturer dev = Manufacturers.FirstOrDefault(x => x.Nom.Equals(rawRom.Manufacturer));
 
                 // Le constructeur existe dans la table et correspond à celui affiché par la rawrom
                 if (dev != null)
@@ -806,7 +806,7 @@ namespace MyMameHelper.Models
                     rom.Manufacturer = tmp.ID;
                     rom.Aff_Manufacturer = tmp.Nom;
                     */
-                    var tmp = Constructeurs.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom);
+                    var tmp = Manufacturers.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom);
                     rom.Manufacturer = tmp;
 
                 }
@@ -857,7 +857,7 @@ namespace MyMameHelper.Models
 
             foreach (CT_Rom rom in romsTS)
             {
-                var id = Constructeurs.FirstOrDefault(x => x.Nom.Equals(rom.Manufacturer));
+                var id = Manufacturers.FirstOrDefault(x => x.Nom.Equals(rom.Manufacturer));
 
                 // HAndler pour spliter les roms parents et les roms enfants
                 if (rom.IsParent == true)
@@ -909,7 +909,7 @@ namespace MyMameHelper.Models
             {
                 var rom = RomsToSave[i];
 
-                if (Constructeurs.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null)
+                if (Manufacturers.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null)
                     // Ajout à la liste des constructeurs à sauvegarder
                     manuToAdd.Add(new CT_MameManufacturer()
                     {
@@ -928,7 +928,7 @@ namespace MyMameHelper.Models
                 // Mise à jour de la liste des constructeurs
                 using (SQLite_OP sqReq = new SQLite_OP())
                 {
-                    Constructeurs.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
+                    Manufacturers.ChangeContent = sqReq.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
                 }
             }
 

@@ -41,23 +41,23 @@ namespace MyMameHelper.ContTable
         public string Year { get; set; }
 
         /*
-        private uint _Manufacturer;
+        private uint _Manufacturer_Id;
         /// <summary>
         /// Developpeur
         /// </summary>
-        public uint Manufacturer// => 09/11/2025 on passe en objet plutôt
+        public uint Manufacturer_Id// => 09/11/2025 on passe en objet plutôt
         {
-            get { return _Manufacturer; }
+            get { return _Manufacturer_Id; }
             set
             {
-                if(value != _Manufacturer)
+                if(value != _Manufacturer_Id)
                 {
-                    _Manufacturer = value;
+                    _Manufacturer_Id = value;
                     NotifyPropertyChanged();
                 }
             }
-        }
-        */
+        }*/
+        
 
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace MyMameHelper.ContTable
         /// <remarks>
         /// Ajout le 09/11/2025 pour changement
         /// </remarks>
-        private CT_MameManufacturer _Manufacturer;
+        private CT_MameManufacturer _Manufacturer = new CT_MameManufacturer();
         public CT_MameManufacturer Manufacturer
         {
             get => _Manufacturer;
@@ -140,6 +140,7 @@ namespace MyMameHelper.ContTable
             this.Machine_Id = another.Machine_Id;
             //this.Aff_Manufacturer = another.Aff_Manufacturer;
 
+            
             this.Manufacturer = another.Manufacturer;
             this.Unwanted = another.Unwanted;
             this.Year = another.Year;
@@ -155,6 +156,8 @@ namespace MyMameHelper.ContTable
             rom.SourceFile = Trans.GetString("Description", dico);
             rom.SourceFile = Trans.GetString("Source_File", dico);
             rom.Machine_Id = Trans.GetUInt("Machine_Id", dico);
+                        
+            rom.Manufacturer.ID = Trans.GetUInt("Manufacturer_Id", dico);
             rom.IsParent = Trans.GetBool("IsParent", dico);
             rom.Clone_Of = Trans.GetUInt("Clone_Of", dico);
             rom.Unwanted = Trans.GetBool("Unwanted", dico);

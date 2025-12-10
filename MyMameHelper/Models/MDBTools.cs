@@ -60,7 +60,7 @@ namespace MyMameHelper.Models
         #region Collection
         public List<string> lTables { get; private set; }
 
-        public MyObservableCollection<CT_MameManufacturer> Constructors { get; private set; } = new MyObservableCollection<CT_MameManufacturer>();
+        public MyObservableCollection<CT_Constructor> Constructors { get; private set; } = new MyObservableCollection<CT_Constructor>();
 
         public MyObservableCollection<CT_Genre> Genres { get; private set; } = new MyObservableCollection<CT_Genre>();
 
@@ -95,18 +95,17 @@ namespace MyMameHelper.Models
                     // Liste des constructeurs 
                     var objSelConst = new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true);
                     objSelConst.AddOrders(new SqlOrder("Nom"));
-                    Constructors.ChangeContent = sqRead.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, objSelConst);
+                    Constructors.ChangeContent = sqRead.GetListOf<CT_Constructor>(CT_Constructor.Result2Class, objSelConst);
 
                     var objSelGenres = new Obj_Select(table: PProp.Default.T_Genres, all: true);
                     objSelGenres.AddOrders(new SqlOrder("Nom"));
+
                     // Liste des genres
                     Genres.ChangeContent = sqRead.GetListOf<CT_Genre>(CT_Genre.Result2Class, objSelGenres);
 
 
                     // Liste des Manufacturers
                     Manufacturers.ChangeContent = sqRead.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_Constructors, all: true));
-
-
 
                 }
             }
@@ -224,7 +223,7 @@ namespace MyMameHelper.Models
         {
             using (SQLite_OP sqReq = new SQLite_OP())
             {
-                sqReq.Insert_Constructor(new CT_MameManufacturer()
+                sqReq.Insert_MameManufacturer(new CT_MameManufacturer()
                 {
                     Nom = nom
                 });
@@ -285,8 +284,19 @@ namespace MyMameHelper.Models
 
         }
 
-        internal void Remap_ManuMachine()
+
+        /// <summary>
+        /// Remap les roms avec les manufacturers
+        /// </summary>
+        internal void Remap_RomManu()
         {
+            IList<CT_Rom> roms = null;
+
+            // Roms temporaires pour faire la correspondance
+            List<RawMameRom> tempRoms;
+
+            // Roms à updater
+            List<CT_Rom> romsToUpdate = new List<CT_Rom> { };
 
             using (SQLite_OP sqRead = new SQLite_OP())
             {
@@ -299,35 +309,72 @@ namespace MyMameHelper.Models
                 objSelect.Orders = new SqlOrder[] { new SqlOrder("Name") };
 
                 //
-                List<RawMameRom> tempRoms = (List<RawMameRom>)sqRead.GetCollectionOf<RawMameRom>(RawMameRom.Result2Class, objSelect);
+                tempRoms = (List<RawMameRom>)sqRead.GetCollectionOf<RawMameRom>(RawMameRom.Result2Class, objSelect);
+
+                // Liste des Manufacturers
+                Manufacturers.ChangeContent = sqRead.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_MameManufacturers, all: true));
+
+                // Liste des roms
+                roms = sqRead.GetCollectionOf<CT_Rom>(CT_Rom.Result2Class, new Obj_Select
+                    (
+                    table: PProp.Default.T_Roms,
+                    fields: new string[] { "ID", "Archive_Name", "Manufacturer_Id" }
+                    ));
+
+                //200 ms ?
             }
 
 
+            //
+            foreach (CT_Rom r in roms)
+            {
+                RawMameRom rawrom = tempRoms.FirstOrDefault(x => x.Name.Equals(r.Archive_Name));
 
-            // Liste des Manufacturers
-            // Manufacturers.ChangeContent = sqRead.GetListOf<CT_MameManufacturer>(CT_MameManufacturer.Result2Class, new Obj_Select(table: PProp.Default.T_Constructors, all: true));
+                // Dans le cas où ça n'existe pas
+                if (rawrom == null)
+                    continue;
+
+                // Réduction du temps de traitement
+                tempRoms.Remove(rawrom);
+
+                // Recherche du manufacturer par rapport à la temprom
+                CT_MameManufacturer manufacturer = Manufacturers.FirstOrDefault(x => x.Nom.Equals(rawrom.Manufacturer));
+
+                // Assignation à null pour la rom
+                if (manufacturer == null && r.Manufacturer.ID != null)
+                {
+                    // Ajouter aux roms à updater
+                    r.Manufacturer.ID = 0;
+                    romsToUpdate.Add(r);
+                }
+                // Si duo ok, changer le manufacturer_id
+                else if (manufacturer != null && r.Manufacturer.ID != manufacturer.ID)
+                {
+                    // Ajouter aux roms à updater
+                    r.Manufacturer.ID = manufacturer.ID;
+                    romsToUpdate.Add(r);
+                }
+
+            }
 
 
+            using (SQLite_OP sqWrite = new SQLite_OP())
+            {
+                sqWrite.Update_Roms(romsToUpdate);
 
+            }
 
-            // Pour chaque rom, récupérer une valeur du duo temproms|MameManufacturer
+            //
+            AsyncWindowProgress window = new AsyncWindowProgress();
+            window.Arguments = new List<object>() { romsToUpdate };
+            window.Message_Value = "Updating roms";
 
-            // Si duo ok, changer le manufacturer_id
+            window.go += new AsyncWindowProgress.AsyncAction(AsyncUpdateRomManu);
 
-            // Ajouter aux roms à updater
+            window.Total = rawRomsSelected.Count;
+            window.ShowDialog();
 
-            // update
-
-            throw new NotImplementedException();
         }
-
-
-
-
-
-
-
-
         #endregion Remapping
     }
 }
