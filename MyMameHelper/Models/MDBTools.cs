@@ -360,12 +360,12 @@ namespace MyMameHelper.Models
 
             using (SQLite_OP sqWrite = new SQLite_OP())
             {
-                sqWrite.Update_Roms(romsToUpdate);
-
+               // sqWrite.Update_Roms(romsToUpdate);
+                sqWrite.Update_MassiveRoms(romsToUpdate);
             }
 
             //
-            AsyncWindowProgress window = new AsyncWindowProgress();
+           /* AsyncWindowProgress window = new AsyncWindowProgress();
             window.Arguments = new List<object>() { romsToUpdate };
             window.Message_Value = "Updating roms";
 
@@ -373,7 +373,7 @@ namespace MyMameHelper.Models
 
             window.Total = rawRomsSelected.Count;
             window.ShowDialog();
-
+           */
         }
         #endregion Remapping
     }

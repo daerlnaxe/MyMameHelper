@@ -295,11 +295,39 @@ namespace MyMameHelper.SQLite
                         $"WHERE ID=@ID";
 
                     // Paramètres
-                    //-- Archives
+                    //-- Archives / Nom
                     var pArchiveName = sqlCmd.CreateParameter();
                     pArchiveName.ParameterName="@Archive_Name";
                     pArchiveName.DbType= DbType.String;
                     sqlCmd.Parameters.Add(pArchiveName);
+                    //-- Description
+                    var pDescription = sqlCmd.CreateParameter();
+                    pDescription.ParameterName = "@Description";
+                    pDescription.DbType = DbType.String;
+                    sqlCmd.Parameters.Add(pDescription);
+                    //-- Year
+                    //sqlCmd.Parameters.Add($"@Year", DbType.String).Value = rom.Year;
+                    var pYear = sqlCmd.CreateParameter();
+                    pYear.ParameterName = "@Year";
+                    pYear.DbType = DbType.String;
+                    sqlCmd.Parameters.Add(pYear);
+                    //-- Unwanted
+                    //sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = rom.Unwanted;
+                    var pUnwanted = sqlCmd.CreateParameter();
+                    pUnwanted.ParameterName = "@Unwanted";
+                    pUnwanted.DbType = DbType.String;
+                    sqlCmd.Parameters.Add(pUnwanted);
+                    //-- Manufacturer_Id
+                    //sqlCmd.Parameters.Add($"@Manufacturer_Id", DbType.UInt32).Value = rom.Manufacturer.ID;
+                    var pManufacturer_Id = sqlCmd.CreateParameter();
+                    pManufacturer_Id.ParameterName = "@Manufacturer_Id";
+                    pManufacturer_Id.DbType = DbType.String;
+                    sqlCmd.Parameters.Add(pManufacturer_Id);
+                    //--- Game_Id
+                    var pGame_Id = sqlCmd.CreateParameter();
+                    pGame_Id.ParameterName = "@Game_Id";
+                    pGame_Id.DbType = DbType.UInt32;
+                    sqlCmd.Parameters.Add(pGame_Id);
 
 
                     // Condition
@@ -309,39 +337,26 @@ namespace MyMameHelper.SQLite
                     sqlCmd.Parameters.Add(pId);
 
 
-                    //---- A continuer
-                    sqlCmd.Parameters.Add($"@Description", DbType.String).Value = rom.Description;
-                    if (rom.Game_Id != null)
-                    {
-                        sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt32).Value = rom.Game_Id;
-                    }
-                    else
-                    {
-                        sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt16).Value = null;
-                    }
-                    sqlCmd.Parameters.Add($"@Year", DbType.String).Value = rom.Year;
-                    sqlCmd.Parameters.Add($"@Manufacturer_Id", DbType.UInt32).Value = rom.Manufacturer.ID;
-                    sqlCmd.Parameters.Add($"@Unwanted", DbType.Boolean).Value = rom.Unwanted;
 
-
-                    
-                    
-                    
-                    //---
-
-
-
-     
-
+                    //
                     sqlCmd.Prepare(); // compile le SQL une fois
 
                     foreach (var rom in roms)
                     {
                         //sqlCmd.Parameters.Add($"@Archive_Name", ).Value = rom.Archive_Name;
                         pArchiveName.Value  = rom.Archive_Name;
+                        pDescription.Value = rom.Description;
+                        pYear.Value = rom.Year;
+                        pUnwanted.Value = rom.Unwanted;
+
+                        pManufacturer_Id.Value = rom.Manufacturer?.ID;
                         
-                        
-                        
+                        pYear.Value = rom.Year;
+                        //sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt32).Value = rom.Game_Id;
+                        //sqlCmd.Parameters.Add($"@Game_Id", DbType.UInt16).Value = null;
+                        pGame_Id.Value = rom.Game_Id != null ? rom.Game_Id : null;
+
+
                         // condition
                         pId.Value = rom.ID;
 

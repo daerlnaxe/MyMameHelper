@@ -203,7 +203,11 @@ namespace MyMameHelper.SQLite
                         Dictionary<string, object> dico = new Dictionary<string, object>();
                         for (short i = 0; i < reader.FieldCount; i++)
                         {
-                            dico.Add(reader.GetName(i), reader[i]);
+                            //Debug.WriteLine(reader.GetName(i) + " | " + reader[i] + " | " + reader[i].GetType());
+                            object value = reader.GetValue(i);
+                            //dict[reader.GetName(i)] = value == DBNull.Value ? null : value
+                            // Evite le problème d'exception catchée pour les null
+                            dico.Add(reader.GetName(i), value == DBNull.Value ? null : value);
                         }
 
                         T data = method(dico);

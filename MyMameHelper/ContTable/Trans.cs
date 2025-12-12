@@ -19,7 +19,15 @@ namespace MyMameHelper.ContTable
         /// <returns></returns>
         public static string GetString(string key, Dictionary<string, object> dico)
         {
-            return dico.ContainsKey(key) == true ? dico[key].ToString() : null;
+            if (!dico.ContainsKey(key))
+                return null;
+
+
+            //object value = dico[key];
+
+            return dico[key] == null ? null : dico[key] as string;
+
+            //return dico.ContainsKey(key) == true ? dico[key].ToString() : null;
         }
 
         public static string GetString(string key, SQLiteDataReader reader)
