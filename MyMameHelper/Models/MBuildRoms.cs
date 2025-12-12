@@ -792,8 +792,10 @@ namespace MyMameHelper.Models
 
 
             Debug.WriteLine("Construction des liaisons");
+
             /* Construction des liaisons 
              *      On le fait aussi pour les games, puisqu'une fois sauvé on ne verra plus dans la liste ensuite */
+
             for (int i = 0; i < RomsToSave.Count; i++)
             {
                 CT_Rom rom = RomsToSave[i];
@@ -821,20 +823,18 @@ namespace MyMameHelper.Models
                     rom.Game_Id = tmp.ID;
                 }
 
-
-
             }
 
 
             // Sauvegarde des roms
-            if (MessageBox.Show("Would you want to save this roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
+            /*if (MessageBox.Show("Would you want to save this roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {*/
                 // Sauvegarde des roms
                 AsyncWindowProgress window = new AsyncWindowProgress();
                 window.Arguments.Add(RomsToSave.ToList());
                 window.go += new AsyncWindowProgress.AsyncAction(AsyncSaveRoms);
                 window.ShowDialog();
-            }
+            //}
             RomsToSave.Clear();
 
             return true;
@@ -873,7 +873,7 @@ namespace MyMameHelper.Models
                 sqReq.UpdateProgress += ((x, y) => window.AsyncUpProgressPercent(y));
 
                 window.AsyncMessage("Insertion of Parent Roms");
-                sqReq.Insert_Roms(parentsToSave, true);
+                sqReq.InsertMassive_Roms(parentsToSave, true);
 
                 Obj_Select oSel = new Obj_Select(PProp.Default.T_Roms, all: true);
                 oSel.AddConds(new SqlCond("IsParent", eWhere.Is, 1));
@@ -893,7 +893,7 @@ namespace MyMameHelper.Models
             {
                 sqReq.UpdateProgress += ((x, y) => window.AsyncUpProgressPercent(y));
                 window.AsyncMessage("Insertion of Children Roms");
-                sqReq.Insert_Roms(childrenToSave, true);
+                sqReq.InsertMassive_Roms(childrenToSave, true);
             }
         }
 
@@ -908,6 +908,9 @@ namespace MyMameHelper.Models
             for (int i = 0; i < RomsToSave.Count; i++)
             {
                 var rom = RomsToSave[i];
+
+                if (rom.Manufacturer == null)
+                    continue;
 
                 if (Manufacturers.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null && manuToAdd.FirstOrDefault(x => x.Nom == rom.Manufacturer.Nom) == null)
                     // Ajout à la liste des constructeurs à sauvegarder

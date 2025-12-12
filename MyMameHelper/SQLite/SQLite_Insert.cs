@@ -294,17 +294,18 @@ namespace MyMameHelper.SQLite
 
         }
 
+
         /// <summary>
-        /// /
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="Games"></param>
         public void InsertMassive_CollecInGames<T>(IList<T> Games) where T : iCT_Games
-        {
+       {
             uint max = 100;
             Debug.WriteLine($"Insertion de la collection");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
-           
+
 
             int i = 0;
             while (i < Games.Count)
@@ -353,6 +354,7 @@ namespace MyMameHelper.SQLite
                 }
             }
         }
+
 
 
 
@@ -912,9 +914,7 @@ namespace MyMameHelper.SQLite
 
                 //Trace.WriteLine($"Requete: {sqlCmd.CommandText}");
 
-
                 ExecNQ(sqlCmd);
-
 
 
                 UpdateProgress?.Invoke(this, i * 100 / manufacturers.Count);
@@ -1109,6 +1109,97 @@ namespace MyMameHelper.SQLite
             }
 
         }
+
+
+        /// <summary>
+        /// Insère une collection de Roms
+        /// </summary>
+        /// <param name=""></param>
+        public void InsertMassive_Roms<T>(IList<T> Roms, bool ignore) where T : iCT_Rom
+
+        {
+            uint max = 50;
+            Debug.WriteLine($"Insertion Massive de la collection de Roms");
+            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+
+            string strIgnore = "";
+            if (ignore)
+                strIgnore = "OR IGNORE";
+
+
+            int i = 0;
+            while (i < Roms.Count)
+            {
+                sqlCmd.CommandText = $"Insert {strIgnore} INTO [{tRom}] (" +
+                                       "[Archive_Name], " +
+                                       "[Description], " +
+                                       "[Source_File], " +
+                                       "[Game_Id]," +
+                                       "[Unwanted]," +
+                                       "[Year], " +
+                                       "[Manufacturer_Id], " +
+                                       "[Machine_Id], " +
+                                       "[IsParent], " +
+                                       "[Clone_Of]," +
+                                       "[IsPinball]" +
+                                       ") VALUES ";
+
+
+                // Commencement de la transaction pour ce batch
+                using (var transaction = SQLiteConn.BeginTransaction())
+                {
+                    sqlCmd.Parameters.Clear();
+                    sqlCmd.Transaction = transaction;
+
+                    // Par rapport à while, pour ne pas dépasser
+                    int batchSize = (int)Math.Min(max, Roms.Count - i);
+
+                    //
+                    for (int j = 0; j < batchSize; j++)
+                    {
+                        if (j != 0)
+                            sqlCmd.CommandText += ", ";
+
+                        sqlCmd.CommandText += $"(@Archive_Name{j}, @Description{j}, @Source_File{j}, @Game_Id{j}" +
+                                                    $", @Unwanted{j}, @Year{j}, @Manufacturer_Id{j}, @Machine_Id{j}" +
+                                                    $", @IsParent{j}, @Clone_Of{j}, @IsPinball{j}" +
+                                                    ")";
+
+                                                    
+
+
+                        var game = Roms[i + j];
+
+
+                        sqlCmd.Parameters.AddWithValue($"@Archive_Name{j}", game.Archive_Name ?? "");
+                        sqlCmd.Parameters.AddWithValue($"@Description{j}", game.Description ?? "");
+                        sqlCmd.Parameters.AddWithValue($"@Source_File{j}", game.SourceFile ?? "");
+                        sqlCmd.Parameters.AddWithValue($"@Game_Id{j}", game.Game_Id);
+                        sqlCmd.Parameters.AddWithValue($"@Unwanted{j}", game.Unwanted);
+                        sqlCmd.Parameters.AddWithValue($"@Year{j}", game.Year);
+                        sqlCmd.Parameters.AddWithValue($"@Manufacturer_Id{j}", game.Manufacturer?.ID);
+                        sqlCmd.Parameters.AddWithValue($"@Machine_Id{j}", game.Machine_Id);
+                        sqlCmd.Parameters.AddWithValue($"@IsParent{j}", game.IsParent);
+                        sqlCmd.Parameters.AddWithValue($"@Clone_Of{j}", game.Clone_Of);
+                        sqlCmd.Parameters.AddWithValue($"@IsPinball{j}", game.IsPinball);
+                    }
+
+                    Debug.WriteLine(sqlCmd.ToString());
+                    sqlCmd.ExecuteNonQuery();
+
+                    // Commit de la transaction
+                    transaction.Commit();
+
+                    // on update
+                    i += batchSize;
+
+                    UpdateProgress?.Invoke(this, i * 100 / Roms.Count);
+                }
+            }
+        }
+
+
+
 
 
         /// <summary>
