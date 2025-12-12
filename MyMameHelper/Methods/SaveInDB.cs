@@ -39,6 +39,7 @@ namespace MyMameHelper.Methods
 
 
 
+
         /// <summary>
         /// Ajoute des Manufacturers en base
         /// </summary>
@@ -51,7 +52,7 @@ namespace MyMameHelper.Methods
             using (SQLite_OP sqReq = new SQLite_OP())
             {
                 sqReq.UpdateProgress += ((x, y) => windows.AsyncUpProgressPercent(y));
-                sqReq.Insert_Manus(Manufacturers, true);
+                sqReq.InsertMassive_Manus(Manufacturers, true);
                 //return true;
             }
             //return false;

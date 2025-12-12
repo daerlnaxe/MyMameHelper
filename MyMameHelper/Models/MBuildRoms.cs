@@ -784,7 +784,7 @@ namespace MyMameHelper.Models
             // Ajout de la collection.
             using (SQLite_OP sqOp = new SQLite_OP())
             {
-                sqOp.Insert_CollecInGames(gameToAdd);
+                sqOp.InsertMassive_CollecInGames(gameToAdd);
                 _GamesInDB = sqOp.GetListOf(CT_Game.Result2Class, new Obj_Select(table: PProp.Default.T_Games, fields: new[] { "ID", "Game_Name" }, all: true));
             }
             #endregion

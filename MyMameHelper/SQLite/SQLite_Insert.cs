@@ -294,6 +294,68 @@ namespace MyMameHelper.SQLite
 
         }
 
+        /// <summary>
+        /// /
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Games"></param>
+        public void InsertMassive_CollecInGames<T>(IList<T> Games) where T : iCT_Games
+        {
+            uint max = 100;
+            Debug.WriteLine($"Insertion de la collection");
+            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+           
+
+            int i = 0;
+            while (i < Games.Count)
+            {
+                sqlCmd.CommandText = "INSERT INTO [" + tGame + "] " +
+                    "([Game_Name], [Description], [Unwanted], [Machine_Id], [Genre_Id], [IsMahjong], [IsQuizz], [Rate]) VALUES ";
+
+                // Commencement de la transaction pour ce batch
+                using (var transaction = SQLiteConn.BeginTransaction())
+                {
+                    sqlCmd.Parameters.Clear();
+                    sqlCmd.Transaction = transaction;
+
+                    // Par rapport à while, pour ne pas dépasser
+                    int batchSize = (int)Math.Min(max, Games.Count - i);
+
+                    //
+                    for (int j = 0; j < batchSize; j++)
+                    {
+                        if (j != 0)
+                            sqlCmd.CommandText += ", ";
+
+                        sqlCmd.CommandText += $"(@Game_Name{j}, @Description{j}, @Unwanted{j}, @Machine_Id{j}, @Genre_Id{j}, @IsMahjong{j}, @IsQuizz{j}, @Rate{j})";
+
+                        var game = Games[i + j];
+                        sqlCmd.Parameters.AddWithValue($"@Game_Name{j}", game.Game_Name ?? "");
+                        sqlCmd.Parameters.AddWithValue($"@Description{j}", game.Description ?? "");
+                        sqlCmd.Parameters.AddWithValue($"@Unwanted{j}", game.Unwanted);
+                        sqlCmd.Parameters.AddWithValue($"@Machine_Id{j}", game.Machine_Id);
+                        sqlCmd.Parameters.AddWithValue($"@Genre_Id{j}", game.Genre_Id);
+                        sqlCmd.Parameters.AddWithValue($"@IsMahjong{j}", game.IsMahjong);
+                        sqlCmd.Parameters.AddWithValue($"@IsQuizz{j}", game.IsQuizz);
+                        sqlCmd.Parameters.AddWithValue($"@Rate{j}", game.Rate);
+                    }
+
+                    Debug.WriteLine(sqlCmd.ToString());
+                    sqlCmd.ExecuteNonQuery();
+
+                    // Commit de la transaction
+                    transaction.Commit();
+
+                    // on update
+                    i += batchSize;
+
+                    UpdateProgress?.Invoke(this, i * 100 / Games.Count);
+                }
+            }
+        }
+
+
+
 
         /// <summary>
         /// Insère une collection de constructeurs
@@ -735,9 +797,73 @@ namespace MyMameHelper.SQLite
         /// <param name=""></param>
         public void Insert_Manus(IList<CT_MameManufacturer> manufacturers, bool ignore)
         {
+            uint max = 100;
+            Debug.WriteLine($"Insertion Massive de collection de Manufactureurs");
+
+            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+
+
+            // Add ignore if asked
+            string sqlIgnore = "";
+            if (ignore)
+                sqlIgnore = "OR IGNORE";
+
+
+            sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tMameManufacturer}] (" +
+              "[Nom] " +
+              ") VALUES ";
+
+
+            int i = 0;
+            while (i < manufacturers.Count)
+            {
+                // Commencement de la transaction pour ce batch
+                using (var transaction = SQLiteConn.BeginTransaction())
+                {
+                    sqlCmd.Parameters.Clear();
+                    sqlCmd.Transaction = transaction;
+
+                    // Par rapport à while, pour ne pas dépasser
+                    int batchSize = (int)Math.Min(max, manufacturers.Count - i);
+
+                    //
+                    for (int j = 0; j < batchSize; j++)
+                    {
+                        if (j != 0)
+                            sqlCmd.CommandText += ", ";
+
+                        sqlCmd.CommandText += $"(@Nom{j})";
+
+                        var mameManufacturer = manufacturers[i + j];
+                        sqlCmd.Parameters.AddWithValue($"@Game_Name{j}", mameManufacturer.Nom ?? "");
+
+                    }
+
+                    //
+                    Debug.WriteLine($"Insert: {sqlCmd.CommandText}");
+
+                    sqlCmd.ExecuteNonQuery();
+
+                    // Commit de la transaction
+                    transaction.Commit();
+
+                    // on update
+                    i += batchSize;
+
+                    UpdateProgress?.Invoke(this, i * 100 / manufacturers.Count);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Insère une collection de manufacturers
+        /// </summary>
+        /// <param name=""></param>
+        public void InsertMassive_Manus(IList<CT_MameManufacturer> manufacturers, bool ignore)
+        {
             // probleme ?
-            uint max = 2;
-            Debug.WriteLine($"Insertion de la collection de manufactureurs");
+            uint max = 100;
+            Debug.WriteLine($"Insertion Massive de collection de Manufactureurs");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
 
@@ -798,6 +924,7 @@ namespace MyMameHelper.SQLite
 
 
         }
+
 
 
         /// <summary>
