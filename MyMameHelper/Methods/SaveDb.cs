@@ -56,7 +56,7 @@ namespace MyMameHelper.Methods
             using (SQLite_OP sqReq = new SQLite_OP())
             {
                 sqReq.UpdateProgress += ((x, y) => sender.SetProgress(y));
-                sqReq.Insert_CollecInGames(_Games);
+                sqReq.Insert_Games(_Games);
             }
         }
 

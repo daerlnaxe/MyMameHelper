@@ -97,5 +97,33 @@ namespace MyMameHelper.SQLite
             }
 
         }
+
+
+
+        /// <summary>
+        /// Execute la requête avec gestion erreurs
+        /// </summary>
+        /// <param name="sqlCmd"></param>
+        /// <returns></returns>
+        internal bool ExecNQ(SQLiteCommand sqlCmd)
+        {
+            try
+            {
+                sqlCmd.ExecuteNonQuery();
+                return true;
+            }
+            catch (SQLiteException sqlExc)
+            {
+                System.Windows.MessageBox.Show($"{sqlExc.Message}\n{sqlCmd.CommandText}", "Sqlite Exception");
+                Console.WriteLine(sqlExc);
+                return false;
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine(exc);
+                return false;
+            }
+
+        }
     }
 }

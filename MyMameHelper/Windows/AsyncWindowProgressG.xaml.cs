@@ -31,7 +31,7 @@ namespace MyMameHelper.Windows
         }
 
 
-        internal IAsyncProgressWork ProgressContext {get;set;}
+        internal IAsyncProgressWork ProgressContext { get; set; }
 
 
         //
@@ -75,9 +75,15 @@ namespace MyMameHelper.Windows
         }
 
 
-        public void AsyncUpProgressPercent(int percent)
+        private int _LastPercent = 0;
+        public void AsyncUpProgressPercent(int value)
         {
-            this.Dispatcher?.Invoke(new Action(() => Progress_Value = percent));
+            int currentPercent = value * 100 / Total;
+            if (currentPercent > _LastPercent)
+            {
+                this.Dispatcher?.Invoke(new Action(() => Progress_Value = value));
+                _LastPercent = currentPercent;
+            }                
         }
 
         public void AsyncMessage(string value)
@@ -104,11 +110,11 @@ namespace MyMameHelper.Windows
         private void AsyncWork()
         {
             AsyncCallback ra = new AsyncCallback(Finished);
-            
+
             //go?.BeginInvoke(this, ra, null);
             //ProgressContext.go?.BeginInvoke(this,ra, null);
 
-            
+
 
             ProgressContext?.BeginGo(this, ra, null);
 
@@ -118,7 +124,7 @@ namespace MyMameHelper.Windows
             Console.WriteLine("Fini");*/
         }
 
-        public object Resultat {  get; private set; }
+        public object Resultat { get; private set; }
         internal void Finished(IAsyncResult ar)
         {
             Resultat = ProgressContext.EndGo(ar);

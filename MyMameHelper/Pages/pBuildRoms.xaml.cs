@@ -801,31 +801,17 @@ namespace MyMameHelper.Pages
         ///     Le manufacturer existe en liaison avec la rawrom, on s'appuie dessus
         ///     Le Jeu existe peut être en base mais directement avec la rawrom, par contre une fois la rom entrée on ne la verra plus par rapport au différentiel au chargement.
         /// </remarks>
-        private void EX_SaveDB(object sender, ExecutedRoutedEventArgs e)
+        private void EX_SaveToDB(object sender, ExecutedRoutedEventArgs e)
         {
 
-            if (MessageBox.Show("Would you want to save missing manufacturers. Refusing it, will stop all the process.", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (this._MContext.SaveToDB())
             {
-                Cursor = Cursors.Wait;
-                _MContext.SaveMameManufacturers();
-                Cursor = Cursors.Arrow;
+                MessageBox.Show("Task Finished", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
-                return;
+
             }
-            
-
-            // Sauvegarde des roms
-            if (MessageBox.Show("Would you want to save this roms ? ", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                Cursor = Cursors.Wait;
-                _MContext.SaveRoms();
-                Cursor = Cursors.Arrow;
-            }
-
-
-            MessageBox.Show("Task Finished", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
 
         }
 

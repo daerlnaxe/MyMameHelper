@@ -76,6 +76,10 @@ namespace MyMameHelper.ContTable
                 if (!dico.ContainsKey(key))
                     return 0;
 
+                var value = dico[key];
+                if (value.GetType()== typeof(DBNull))
+                    return 0;
+
                 return Convert.ToUInt32(dico[key]);
             }
             catch

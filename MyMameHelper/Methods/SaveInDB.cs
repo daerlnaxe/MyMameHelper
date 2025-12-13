@@ -17,6 +17,7 @@ namespace MyMameHelper.Methods
     /// </summary>
     internal static class SaveInDB
     {
+        #region Manufacturers
         internal static bool Insert_Manus(List<CT_MameManufacturer> manufacturers)
         {
             AsyncWindowProgress awP = new AsyncWindowProgress();
@@ -27,9 +28,12 @@ namespace MyMameHelper.Methods
             awP.go += new AsyncWindowProgress.AsyncAction(Insert_AsyncManus);
             awP.ShowDialog();
 
+            //8.7s pour tout VS 491ms avec le commit en fin
             using (SQLite_OP sqReq = new SQLite_OP())
             {
                 MainWindow.NumberOf_Dev = sqReq.Count(PProp.Default.T_MameManufacturers);
+
+                // 3ms pour la requête
                 return true;
             }
 
@@ -59,5 +63,57 @@ namespace MyMameHelper.Methods
         }
 
 
+    
+
+    #endregion
+
+      #region Games
+        internal static bool Insert_Games(List<CT_Game> games)
+        {
+            AsyncWindowProgress awP = new AsyncWindowProgress();
+            awP.Arguments = new List<object>() { games };
+            awP.Message_Value = "Adding Game(s)";
+
+            //awP.go += new AsyncWindowProgress.AsyncAction(Save_DoWork);
+            awP.go += new AsyncWindowProgress.AsyncAction(Insert_AsyncGames);
+            awP.ShowDialog();
+
+            /*
+            using (SQLite_OP sqReq = new SQLite_OP())
+            {
+                //MainWindow.NumberOf_Dev = sqReq.Count(PProp.Default.T_MameManufacturers);
+                
+
+                return true;
+            }*/
+
+            return false;
+
+        }
+
+
+
+
+        /// <summary>
+        /// Ajoute des Manufacturers en base
+        /// </summary>
+        /// <param name="windows"></param>
+        internal static void Insert_AsyncGames(AsyncWindowProgress windows)
+        {
+            // probleme problème
+            List<CT_Game> games = (List<CT_Game>)windows.Arguments[0];
+
+            using (SQLite_OP sqReq = new SQLite_OP())
+            {
+                sqReq.UpdateProgress += ((x, y) => windows.AsyncUpProgressPercent(y));
+                sqReq.InsertMassive_Games(games);
+                //return true;
+            }
+            //return false;
+        }
+
+
     }
+
+    #endregion
 }

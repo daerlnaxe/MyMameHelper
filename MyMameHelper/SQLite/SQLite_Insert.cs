@@ -1,5 +1,6 @@
 ﻿
 using MyMameHelper.ContTable;
+using MyMameHelper.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -239,7 +240,7 @@ namespace MyMameHelper.SQLite
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="Games"></param>
-        public void Insert_CollecInGames<T>(IList<T> Games) where T : iCT_Games
+        public void Insert_Games<T>(IList<T> Games) where T : iCT_Games
         {
             uint max = 100;
             Debug.WriteLine($"Insertion de la collection");
@@ -300,22 +301,22 @@ namespace MyMameHelper.SQLite
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="Games"></param>
-        public void InsertMassive_CollecInGames<T>(IList<T> Games) where T : iCT_Games
-       {
+        public void InsertMassive_Games<T>(IList<T> Games) where T : iCT_Games
+        {
             uint max = 100;
             Debug.WriteLine($"Insertion de la collection");
             SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
 
 
-            int i = 0;
-            while (i < Games.Count)
+            // Commencement de la transaction pour ce batch
+            using (var transaction = SQLiteConn.BeginTransaction())
             {
-                sqlCmd.CommandText = "INSERT INTO [" + tGame + "] " +
-                    "([Game_Name], [Description], [Unwanted], [Machine_Id], [Genre_Id], [IsMahjong], [IsQuizz], [Rate]) VALUES ";
-
-                // Commencement de la transaction pour ce batch
-                using (var transaction = SQLiteConn.BeginTransaction())
+                int i = 0;
+                while (i < Games.Count)
                 {
+                    sqlCmd.CommandText = "INSERT INTO [" + tGame + "] " +
+                        "([Game_Name], [Description], [Unwanted], [Machine_Id], [Genre_Id], [IsMahjong], [IsQuizz], [Rate]) VALUES ";
+
                     sqlCmd.Parameters.Clear();
                     sqlCmd.Transaction = transaction;
 
@@ -345,13 +346,13 @@ namespace MyMameHelper.SQLite
                     sqlCmd.ExecuteNonQuery();
 
                     // Commit de la transaction
-                    transaction.Commit();
 
                     // on update
                     i += batchSize;
 
                     UpdateProgress?.Invoke(this, i * 100 / Games.Count);
                 }
+                transaction.Commit();
             }
         }
 
@@ -878,47 +879,52 @@ namespace MyMameHelper.SQLite
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            for (int i = 0; i < manufacturers.Count; i++)
-
+            // Commencement de la transaction pour ce batch
+            using (var transaction = SQLiteConn.BeginTransaction())
             {
+                for (int i = 0; i < manufacturers.Count; i++)
 
-                sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tMameManufacturer}] (" +
-                              "[Nom] " +
-                              ") VALUES ";
-
-                Debug.WriteLine($"Insert: {sqlCmd.CommandText}");
-
-
-                CT_MameManufacturer dev = manufacturers[i];
-                //  string vals = null;
-
-
-                for (int j = 0; j < max; j++)
                 {
-                    if (i == manufacturers.Count)
-                        break;
-                    if (j != 0)
-                        sqlCmd.CommandText += ", ";
 
-                    sqlCmd.CommandText += $"(" +
-                                          $"@Nom{j}" +
-                                          $")";
+                    sqlCmd.CommandText = $"Insert {sqlIgnore} INTO [{tMameManufacturer}] (" +
+                                  "[Nom] " +
+                                  ") VALUES ";
 
-                    Debug.WriteLine($"{manufacturers[i].Nom}");
-                    sqlCmd.Parameters.Add($"@Nom{j}", DbType.String).Value = manufacturers[i].Nom;
+                    Debug.WriteLine($"Insert: {sqlCmd.CommandText}");
 
-                    // a surveiller si bug
-                    if (j < max - 1)
-                        i++;
+
+                    CT_MameManufacturer dev = manufacturers[i];
+                    //  string vals = null;
+
+
+                    for (int j = 0; j < max; j++)
+                    {
+                        if (i == manufacturers.Count)
+                            break;
+                        if (j != 0)
+                            sqlCmd.CommandText += ", ";
+
+                        sqlCmd.CommandText += $"(" +
+                                              $"@Nom{j}" +
+                                              $")";
+
+                        //Debug.WriteLine($"{manufacturers[i].Nom}");
+                        sqlCmd.Parameters.Add($"@Nom{j}", DbType.String).Value = manufacturers[i].Nom;
+
+                        // a surveiller si bug
+                        if (j < max - 1)
+                            i++;
+                    }
+
+                    //Trace.WriteLine($"Requete: {sqlCmd.CommandText}");
+
+                    ExecNQ(sqlCmd);
+
+                    UpdateProgress?.Invoke(this, i * 100 / manufacturers.Count);
+                    //Debug.WriteLine($"{i} - {sw.ElapsedMilliseconds}");
                 }
 
-                //Trace.WriteLine($"Requete: {sqlCmd.CommandText}");
-
-                ExecNQ(sqlCmd);
-
-
-                UpdateProgress?.Invoke(this, i * 100 / manufacturers.Count);
-                Debug.WriteLine($"{i} - {sw.ElapsedMilliseconds}");
+                transaction.Commit();
             }
             Debug.WriteLine($"{sw.ElapsedMilliseconds}");
 
@@ -1128,26 +1134,27 @@ namespace MyMameHelper.SQLite
 
 
             int i = 0;
-            while (i < Roms.Count)
+            // Commencement de la transaction pour ce batch
+            using (var transaction = SQLiteConn.BeginTransaction())
             {
-                sqlCmd.CommandText = $"Insert {strIgnore} INTO [{tRom}] (" +
-                                       "[Archive_Name], " +
-                                       "[Description], " +
-                                       "[Source_File], " +
-                                       "[Game_Id]," +
-                                       "[Unwanted]," +
-                                       "[Year], " +
-                                       "[Manufacturer_Id], " +
-                                       "[Machine_Id], " +
-                                       "[IsParent], " +
-                                       "[Clone_Of]," +
-                                       "[IsPinball]" +
-                                       ") VALUES ";
-
-
-                // Commencement de la transaction pour ce batch
-                using (var transaction = SQLiteConn.BeginTransaction())
+                while (i < Roms.Count)
                 {
+                    sqlCmd.CommandText = $"Insert {strIgnore} INTO [{tRom}] (" +
+                                           "[Archive_Name], " +
+                                           "[Description], " +
+                                           "[Source_File], " +
+                                           "[Game_Id]," +
+                                           "[Unwanted]," +
+                                           "[Year], " +
+                                           "[Manufacturer_Id], " +
+                                           "[Machine_Id], " +
+                                           "[IsParent], " +
+                                           "[Clone_Of]," +
+                                           "[IsPinball]" +
+                                           ") VALUES ";
+
+
+
                     sqlCmd.Parameters.Clear();
                     sqlCmd.Transaction = transaction;
 
@@ -1165,7 +1172,7 @@ namespace MyMameHelper.SQLite
                                                     $", @IsParent{j}, @Clone_Of{j}, @IsPinball{j}" +
                                                     ")";
 
-                                                    
+
 
 
                         var game = Roms[i + j];
@@ -1188,13 +1195,13 @@ namespace MyMameHelper.SQLite
                     sqlCmd.ExecuteNonQuery();
 
                     // Commit de la transaction
-                    transaction.Commit();
 
                     // on update
                     i += batchSize;
 
                     UpdateProgress?.Invoke(this, i * 100 / Roms.Count);
                 }
+                transaction.Commit();
             }
         }
 

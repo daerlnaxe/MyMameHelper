@@ -165,7 +165,10 @@
             <TabItem Header="Remap">
                 <StackPanel>
                     <GroupBox Header="Machine">
-                        <Button Content="Remap Rom and Machine" Click="Remap_RomMachine"/>
+                        <StackPanel>
+                            <Button Content="Remap Rom and Machine" Click="Remap_RomMachine"/>
+                            <!--Button Content="Remap Machine and Constructor" Click="Remap_MachineConstructor"/-->
+                        </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Manufacturers">
                         <Button Content="Remap Rom and Manufacturer" Click="Remap_RomManu" ToolTip="Use the Temp Roms to remap roms and manufacturer"/>
