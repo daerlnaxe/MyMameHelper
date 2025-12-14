@@ -178,7 +178,9 @@
                         <StackPanel Orientation="Vertical">
                             <!-- Constructeurs -->
                             <Label Content="Select a Constructor" />
-                            <ComboBox x:Name="cboxConstructeur" ItemsSource="{Binding Constructeurs}" DisplayMemberPath="Nom" SelectedValuePath="ID" SelectionChanged="CbConstructeur_SelectionChanged" />
+                            <ComboBox x:Name="cboxConstructeur" ItemsSource="{Binding Constructeurs}" DisplayMemberPath="Nom" SelectedValuePath="ID"
+                                      />
+                            <!--SelectionChanged="CbConstructeur_SelectionChanged" /-->
                             <!-- Hardware -->
                             <Label Content="Select a Machine"/>
                             <ComboBox x:Name="cboxMachines" ItemsSource="{Binding Machines}" DisplayMemberPath="Nom" SelectedValuePath="ID" IsEnabled="{Binding Machines.Count}" Style="{StaticResource ResourceKey=AutoHide}"/>
@@ -216,10 +218,12 @@
                     </Grid.RowDefinitions>
                     <!--RadioButton GroupName="Mode2" Content="Mode Archive" Checked="RightMode_Changed" VerticalAlignment="Top" Margin="5" />
                     <RadioButton GroupName="Mode2" Content="Mode Game" Grid.Row="1" IsChecked="True" Checked="RightMode_Changed" VerticalAlignment="Top" Margin="5"/-->
-                    <Label Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Content="{Binding RightFilter}" KeyUp="RListView_KeyUp" />
+                    <Label Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Content="{Binding RightFilter}" />
+                    <!--KeyUp="RListView_KeyUp" /-->
                 </Grid>
-                <DataGrid x:Name="dgRight" AutoGenerateColumns="False" CanUserAddRows="False" KeyUp="RListView_KeyUp"
+                <DataGrid x:Name="dgRight" AutoGenerateColumns="False" CanUserAddRows="False"
                           ItemsSource="{Binding RomsToSave}" SelectedItem="{Binding RightSelected}">
+                    <!--KeyUp="RListView_KeyUp"-->
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Remove" Command="commands:UICommands.SwapRight2Left"/>

@@ -614,6 +614,7 @@ namespace MyMameHelper.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+        /*
         private void RListView_KeyUp(object sender, KeyEventArgs e)
         {
             if (!((e.Key >= Key.A && e.Key <= Key.Z)
@@ -648,7 +649,7 @@ namespace MyMameHelper.Pages
 
 
             //Select_Right();*/
-        }
+        //}
 
         #endregion
 
@@ -774,8 +775,9 @@ namespace MyMameHelper.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+        /*
         private void CbConstructeur_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        { /*
+        { 
             ComboBox cb = (ComboBox)sender;
             int idConstruct = Convert.ToInt32(cb.SelectedValue);
 
@@ -786,8 +788,9 @@ namespace MyMameHelper.Pages
                 objSel.AddOrders(new SqlOrder("Nom"));
 
                 Machines.ChangeContent = sqReq.GetListOf(CT_Machine.Result2Class, objSel);
-            }*/
+            }
         }
+        */
 
 
 
