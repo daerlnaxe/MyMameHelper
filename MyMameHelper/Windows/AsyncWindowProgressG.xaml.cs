@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -81,6 +82,7 @@ namespace MyMameHelper.Windows
             int currentPercent = value * 100 / Total;
             if (currentPercent > _LastPercent)
             {
+                Debug.WriteLine(currentPercent);
                 this.Dispatcher?.Invoke(new Action(() => Progress_Value = value));
                 _LastPercent = currentPercent;
             }                

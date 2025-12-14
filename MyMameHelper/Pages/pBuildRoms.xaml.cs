@@ -20,6 +20,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -76,18 +77,26 @@ namespace MyMameHelper.Pages
             {
                 this.Cursor = Cursors.Wait;
                 _MContext.LoadCollecs();
+
+                _MContext.LeftRbArchive = true;
+
                 this.Cursor = Cursors.Arrow;
             }
         }
 
 
-
+        /*
         private void Select_All(object sender, ExecutedRoutedEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            dg2Organize.SelectAll(); // utile ?
+
+                //dg2Organize.SelectionChanged -= OnSelectionChanged;
+
+                dg2Organize.SelectAll(); // utile ?
+
+            //dg2Organize.SelectionChanged += OnSelectionChanged;
             Mouse.OverrideCursor = Cursors.Arrow;
-        }
+        }*/
 
 
 
@@ -361,20 +370,16 @@ namespace MyMameHelper.Pages
         }
         */
 
-
+        /*
         private void Select_Left()
         {
-
-            if (_MContext.LeftRomMode == "Mode Game")
-                _MContext.LeftSelected = _MContext.RawRomsFiltered.FirstOrDefault(x => x.Description.StartsWith(_MContext.LeftFilter, StringComparison.OrdinalIgnoreCase));
-            else if (_MContext.LeftRomMode == "Archive Select")
-                _MContext.LeftSelected = _MContext.RawRomsFiltered.FirstOrDefault(x => x.Name.StartsWith(_MContext.LeftFilter, StringComparison.OrdinalIgnoreCase));
+            _MContext.getFilteredLeft();
 
             if (_MContext.LeftSelected != null)
             {
                 dg2Organize.ScrollIntoView(dg2Organize.SelectedItem);
             }
-        }
+        }*/
 
         #region
         /// <summary>
@@ -384,7 +389,8 @@ namespace MyMameHelper.Pages
         /// <param name="e"></param>
         private void LListView_KeyUp(object sender, KeyEventArgs e)
         {
-            if (!((e.Key >= Key.A && e.Key <= Key.Z)
+            // Difficilement compatible avec les filtres
+        /*    if (!((e.Key >= Key.A && e.Key <= Key.Z)
                || (e.Key >= Key.D0 && e.Key <= Key.D9)
                || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9)
                || e.Key == Key.Back
@@ -416,7 +422,7 @@ namespace MyMameHelper.Pages
                 _MContext.LeftFilter += k;
 
 
-            Select_Left();
+            Select_Left();*/
         }
         #endregion
 
@@ -577,10 +583,12 @@ namespace MyMameHelper.Pages
         */
 
 
-        private void RightMode_Changed(object sender, RoutedEventArgs e)
+
+        
+        private void LeftMode_Changed(object sender, RoutedEventArgs e)
         {
-            if (DataContext != null)
-                _MContext.LeftRomMode = ((RadioButton)sender).Content.ToString();
+           /*if (DataContext != null)
+               _MContext.LeftRomMode = ((RadioButton)sender).Content.ToString();
 
             /*if (LeftFilter != null)
                 Select_Right();*/

@@ -37,7 +37,7 @@
         <!--CommandBinding Command="commands:UICommands.DeleteFromDb" Executed="DeleteGames" CanExecute="Can_Delete"/-->
         <!-- Panneau de gauche -->
         <!--CommandBinding Command="commands:UICommands.SearchCmd" Executed="Ex_Search" /-->
-        <CommandBinding Command="commands:UICommands.Select_AllCmd" Executed="Select_All"/>
+        <!--CommandBinding Command="commands:UICommands.Select_AllCmd" Executed="Select_All"/-->
         <CommandBinding Command="commands:UICommands.Add_AllCmd" Executed="Add_All"/>
         <CommandBinding Command="commands:UICommands.SwapLeft2Right" Executed="Ex_Left2Right" CanExecute="Can_Left2Right"/>
 
@@ -103,11 +103,11 @@
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2">
                         <RadioButton GroupName="Mode" Content="{Binding Archive_Mode, FallbackValue='Archive Select'}" 
-                                     Checked="RightMode_Changed"  ToolTip="Select by Archive Name"/>
+                                     IsChecked="{Binding LeftRbArchive}"  ToolTip="Select by Archive Name"/>
                         <RadioButton GroupName="Mode" Content="{Binding Description_Mode, FallbackValue='Description Select'}" 
-                                     Checked="RightMode_Changed"  IsChecked="True" ToolTip="Select by Description"/>
+                                     IsChecked="{Binding LeftRbDescription}"  ToolTip="Select by Description"/>
                         <RadioButton GroupName="Mode" Content="{Binding Source_Mode, FallbackValue='SourceFile Select'}" 
-                                     Checked="RightMode_Changed"  IsChecked="True" ToolTip="Select by Description"/>
+                                     IsChecked="{Binding LeftRbSrcFile}" ToolTip="Select by Description"/>
                     </StackPanel>
                     <!--CheckBox Content="GetChildren" Grid.Row="1" ToolTip="Add Parent of children" IsChecked="{Binding GetChildren}"/-->
                     <!--CheckBox Content="Horizontal link" Grid.Column="1" Grid.Row="1" ToolTip="Add Brothers" IsChecked="{Binding BrothersChecked}"/-->
@@ -121,10 +121,15 @@
                 <!-- grille gauche (central) -->
                 <DataGrid x:Name="dg2Organize" KeyUp="LListView_KeyUp"  IsReadOnly="True"  AutoGenerateColumns="False"
                           ItemsSource="{Binding RawRomsFiltered}" SelectedItem="{Binding LeftSelected, Mode=TwoWay}"  ToolTip="Hit a key to filter"
+                          EnableRowVirtualization="True"
+    EnableColumnVirtualization="True"
+    VirtualizingPanel.IsVirtualizing="True"
+    VirtualizingPanel.VirtualizationMode="Recycling"
+    ScrollViewer.CanContentScroll="True" 
                           >
                     <DataGrid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Select All" Command="commands:UICommands.Select_AllCmd"/>
+                            <!--MenuItem Header="Select All" Command="commands:UICommands.Select_AllCmd"/-->
                             <MenuItem Header="Add" Command="commands:UICommands.SwapLeft2Right"/>
                             <MenuItem Header="Add All" Command="commands:UICommands.Add_AllCmd"/>
                             <Separator/>
