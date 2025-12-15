@@ -180,6 +180,7 @@ namespace MyMameHelper.SQLite
             {
 
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Rom_Of] VARCHAR");
+                AlterTable($"ALTER TABLE [{tTempRom}] ADD [Source_File] VARCHAR");
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Clone_Of] VARCHAR");
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Sample_Of] VARCHAR");
                 AlterTable($"ALTER TABLE [{tTempRom}] ADD [Is_Bios] BOOLEAN");

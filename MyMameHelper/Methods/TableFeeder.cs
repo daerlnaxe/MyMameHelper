@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
@@ -369,18 +370,21 @@ namespace MyMameHelper.Methods
             // Les autres on garde juste le constructeur
             List<CT_Machine> onlyConstructs = new List<CT_Machine>();
 
+
+
             // Squelettes - roms non fonctionnelles
             List<string> skelettons = new List<string>();
             List<string> machinesASous = new List<string>();
             List<string> SystemRoms = new List<string>();
             List<string> chessRoms = new List<string>();
 
+            // Les non identifiés
+            List<string> pass_notid = new List<string>();
 
 
             List<string> pinball = new List<string>();
             List<string> materielElectronique = new List<string>();
             List<string> mahjong = new List<string>();
-            List<string> pass_notid = new List<string>();
             List<string> pass_id = new List<string>();
             List<string> mechanics = new List<string>();
 
@@ -497,6 +501,19 @@ namespace MyMameHelper.Methods
                 {
 
                     knownSystem.Add(machine);
+                    continue;
+                }
+
+                //
+                if (onlyConstructs.FirstOrDefault(x => x.Nom.Equals(srcFile)) == null)
+                {
+                    machine.ID = otherID;
+                    otherID++;
+
+                    machine.Category = strConstruct;
+                    onlyConstructs.Add(machine);
+
+                    continue;
                 }
 
                 Debug.WriteLine("");
@@ -863,6 +880,119 @@ epson/qx10.cpp
             {
 
             },
+            // Amstrad: 2
+            new Cont_Constructeur(2, "Amstrad")
+            {
+                Machines = new List<Cont_Machine>()
+                {
+                    new Cont_Machine("amstrad/amstrad.cpp")
+                    {
+                        Category="Amstrad"
+                    }
+                }
+            },
+            // Atari: 3
+            new Cont_Constructeur(3, "Atari")
+            {
+                Machines = new List<Cont_Machine>()
+                {
+                    new Cont_Machine("atari/atari400.cpp")
+                    {
+                        Year=1979,
+                        FirstVersion=1979,
+                        Category="Atari 400"
+                    },
+                    new Cont_Machine("atari/atarist.cpp")
+                    {
+                        Year=1985,
+                        FirstVersion=1985,
+                        Category="Atari 400"
+                    },
+                    new Cont_Machine("atari/lynx.cpp") // Salon
+                    {
+                        Year=1989,
+                        FirstVersion=1989,
+                        Category="Atari - Lynx"
+                    },
+                    new Cont_Machine("atari/jaguar.cpp") // Salon
+                    {
+                        Year=1993,
+                        FirstVersion=1993,
+                        Category="Atari - Jaguar"
+                    },
+                    // Arcade
+                    new Cont_Machine("atari/atarittl.cpp") // A vérifier
+                    {
+                        Year=1972,
+                        FirstVersion=1972,
+                        Category="Atari - Arcade"
+                    },
+                    new Cont_Machine("atari/atarisy1.cpp") // A vérifier
+                    {
+                        Year=1983,
+                        FirstVersion=1983,
+                        Category="Atari - System 1"
+                    },
+                    new Cont_Machine("atari/atarisy2.cpp") // A vérifier
+                    {
+                        Year=1985,
+                        FirstVersion=1985,
+                        Category="Atari - System 2"
+                    },
+                    new Cont_Machine("atari/atarisy4.cpp") // A vérifier
+                    {
+                        Year=1986,
+                        FirstVersion=1986,
+                        Category="Atari - System 4"
+                    },
+                    new Cont_Machine("atari/atarig1.cpp") // A vérifier, arcade
+                    {
+                        Year=1988,
+                        FirstVersion=1988,
+                        Category="Atari - Atari G1"
+                    },
+                    new Cont_Machine("atari/atarig42.cpp") // A vérifier, arcade
+                    {
+                        Year=1991,
+                        FirstVersion=1991,
+                        Category="Atari - Atari G42"
+                    },
+                    new Cont_Machine("atari/atarigt.cpp") // A vérifier, arcade course
+                    {
+                        Year=1992,
+                        FirstVersion=1992,
+                        Category="Atari - Atari GT"
+                    },
+                    new Cont_Machine("atari/atarigx2.cpp") // A vérifier, arcade course
+                    {
+                        Year=1994,
+                        FirstVersion=1994,
+                        Category="Atari - Atari GX2"
+                    },
+                    //
+                    new Cont_Machine("atari/mediagx.cpp") // A vérifier, mais ça serait un pcx86 générique
+                    {
+                        Year=1994,
+                        FirstVersion=1994,
+                        Category="PC - X86"
+                    },
+
+                }
+            },
+             // Atlus : 4
+            new Cont_Constructeur(4, "Atlus")
+            {
+                Machines = new List<Cont_Machine>()
+                {
+                    new Cont_Machine("atlus/cave.cpp")
+                    {
+                        Year=1988,
+                        FirstVersion=1988,
+                        Category="Atlus - Cave"
+
+                    },
+                }
+            },
             // Capcom : 5
             new Cont_Constructeur(5, "Capcom")
             {
@@ -1075,17 +1205,17 @@ epson/qx10.cpp
 
 
 
-            // Amstrad: 2
+            // Amstrad: 2 ok
             if (strConstruct.Equals("amstrad"))
             {
                 machine.IDConstructeur = 2;
-                if (strMachine.StartsWith("amstrad"))
+                if (strMachine.StartsWith("amstrad")) //ok
                 {
                     return 1;
                 }
                 return 0;
             }
-            // Atari: 3
+            // Atari: 3 ok
             else if (strConstruct.Equals("atari"))
             {
                 machine.IDConstructeur = 3;
@@ -1112,7 +1242,7 @@ epson/qx10.cpp
                 return 0;
 
             }
-            // Atlus: 4
+            // Atlus: 4 ok 
             else if (strConstruct.Equals("atlus"))
             {
                 machine.IDConstructeur = 4;
@@ -1123,7 +1253,7 @@ epson/qx10.cpp
                 return 0;
             }
 
-            // Casio : 6
+            // Casio : 6 - nothing
             else if (strConstruct.Equals("casio"))
             {
                 machine.IDConstructeur = 6;

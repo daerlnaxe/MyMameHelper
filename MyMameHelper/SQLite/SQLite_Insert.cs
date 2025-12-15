@@ -678,6 +678,8 @@ namespace MyMameHelper.SQLite
                 //  string vals = null;
 
                 sqlCmd.CommandText = $"INSERT {sqlIgnore} INTO [{tMachine}]";
+                sqlCmd.Parameters.Clear();
+
 
                 // Add Key if asked
                 //sqlCmd.CommandText = preservePK == true ? $" ([ID], [Nom]" : " ([Nom]";
@@ -692,7 +694,7 @@ namespace MyMameHelper.SQLite
                 };
 
 
-                // On lèvre ID si on ne veut pas préserver les pk
+                // On lève ID si on ne veut pas préserver les pk
                 if (!preservePK)
                     fields.Remove("ID");
 
@@ -792,6 +794,131 @@ namespace MyMameHelper.SQLite
             Trace.WriteLine($"{sw.ElapsedMilliseconds}");
 
         }
+
+
+        internal void InsertMassive_Machines(IList<CT_Machine> machines, bool ignore, bool preservePK)
+        {
+            Debug.WriteLine($"Insertion Massive de la collection de machines");
+
+
+            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+
+
+            // Add ignore if asked
+            string sqlIgnore = "";
+            if (ignore)
+                sqlIgnore = "OR IGNORE";
+
+            using (var transaction = SQLiteConn.BeginTransaction())
+            {
+
+                for (int i = 0; i < machines.Count; i++)
+                {
+                    CT_Machine dev = machines[i];
+                    //  string vals = null;
+
+                    sqlCmd.CommandText = $"INSERT {sqlIgnore} INTO [{tMachine}]";
+                    sqlCmd.Parameters.Clear();
+
+
+                    // Add Key if asked
+                    //sqlCmd.CommandText = preservePK == true ? $" ([ID], [Nom]" : " ([Nom]";
+
+                    List<string> fields = new List<string>()
+                    {
+                        "ID",
+                        "Nom",
+                        "Description",
+                        "Category",
+                        "Year"
+                    };
+
+
+                    // On lève ID si on ne veut pas préserver les pk
+                    if (!preservePK)
+                        fields.Remove("ID");
+
+
+
+                    // On ajoute les champs
+                    for (int k = 0; k < fields.Count; k++)
+                    {
+                        string field = fields[k];
+
+
+                        if (k == 0)
+                            sqlCmd.CommandText += " (";
+
+                        // Ajout de la virgule entre les champs
+                        if (k != 0)
+                            sqlCmd.CommandText += ",";
+
+                        sqlCmd.CommandText += $"[{field}]";
+
+                    }
+
+
+                    sqlCmd.CommandText += ") Values (";
+
+                    // ligne
+                    for (int k = 0; k < fields.Count; k++)
+                    {
+                        string field = fields[k];
+
+                        // Récupération de l'accesseur en fonction du champ
+                        PropertyInfo prop = machines[i].GetType().GetProperty(field);
+                        if (prop != null)
+                        {
+                            object valeur = prop.GetValue(machines[i]);
+
+                            // Ajout de la virgule entre les champs
+                            if (k != 0)
+                                sqlCmd.CommandText += ",";
+
+                            // Ajout du champ à remplir
+                            sqlCmd.CommandText += $"@{field}";
+
+                            // Ajout de la valeur au champ à remplir
+                            if (valeur == null)
+                                sqlCmd.Parameters.Add($"@{field}", DbType.String).Value = null;
+                            else if (valeur.GetType() == typeof(string))
+                                sqlCmd.Parameters.Add($"@{field}", DbType.String).Value = valeur;
+                            else if (valeur.GetType() == typeof(uint))
+                                sqlCmd.Parameters.Add($"@{field}", DbType.UInt64).Value = valeur;
+                        }
+                        else
+                        {
+                            throw new Exception($"Unknown accessor: {field}");
+                        }
+
+
+                    }
+
+                    // On termine la ligne
+                    sqlCmd.CommandText += ")";
+
+
+                    Trace.WriteLine($"Exec: {sqlCmd.CommandText}");
+
+                    // Juste pour le debug
+                    foreach (SQLiteParameter parameter in sqlCmd.Parameters)
+                    {
+                        Debug.WriteLine($"{parameter.ParameterName} | {parameter.Value}");
+
+                    }
+
+                    //ExecNQ(sqlCmd);
+
+                    sqlCmd.ExecuteNonQuery();
+
+                    UpdateProgress?.Invoke(this, i * 100 / machines.Count);
+                    Debug.WriteLine($"{i}/{machines.Count} ()");
+                }
+            
+                transaction.Commit();
+            }
+        }
+
 
 
         /// <summary>
@@ -1023,8 +1150,97 @@ namespace MyMameHelper.SQLite
 
 
             }
-            Debug.WriteLine($"{sw.ElapsedMilliseconds}");
+            Debug.WriteLine($"{sw.ElapsedMilliseconds}");  // <= 174 secondes sans optimisations
         }
+
+
+        /// <summary>
+        /// Insère une collection de roms dans la table temp
+        /// </summary>
+        /// <param name="Roms"></param>
+        public void InsertMassive_RawRomsInTemp(IList<RawMameRom> Roms)
+        {
+            uint max = 75;
+            Debug.WriteLine($"Insertion de la collection de roms brutes");
+            SQLiteCommand sqlCmd = new SQLiteCommand(SQLiteConn);
+
+            // Commencement de la transaction pour ce batch
+            using (var transaction = SQLiteConn.BeginTransaction())
+            {
+                for (int i = 0; i < Roms.Count; i++)
+                {
+                    if (Stopit)
+                        break;
+
+                    RawMameRom rom = Roms[i];
+                    //  string vals = null;
+                    sqlCmd.CommandText = $"Insert INTO [{tTempRom}] (" +
+                                            "[Name], " +
+                                            "[Source_File], " +
+                                            "[Rom_Of], " +
+                                            "[Clone_Of], " +
+                                            "[Sample_Of], " +
+                                            "[Is_Bios], " +
+                                            "[Is_Mechanical], " +
+                                            "[Description], " +
+                                            "[Year], " +
+                                            "[Manufacturer], " +
+                                            "[HasSoftwares], " +
+                                            "[IsDevice] " +
+                                            ") VALUES ";
+
+                    for (int j = 0; j < max; j++)
+                    {
+                        if (i == Roms.Count)
+                            break;
+                        if (j != 0)
+                            sqlCmd.CommandText += ", ";
+
+                        sqlCmd.CommandText += $"(" +
+                                              $"@Name{j}, " +
+                                              $"@Source_File{j}, " +
+                                              $"@Rom_Of{j}, " +
+                                              $"@Clone_Of{j}, " +
+                                              $"@Sample_Of{j}, " +
+                                              $"@Is_Bios{j}, " +
+                                              $"@Is_Mechanical{j}, " +
+                                              $"@Description{j}, " +
+                                              $"@Year{j}, " +
+                                              $"@Manufacturer{j}," +
+                                              $"@HasSoftwares{j}," +
+                                              $"@IsDevice{j}" +
+                                              $")";
+
+                        sqlCmd.Parameters.Add($"@Name{j}", DbType.String).Value = Roms[i].Name;
+                        sqlCmd.Parameters.Add($"@Source_File{j}", DbType.String).Value = Roms[i].Source_File;
+                        sqlCmd.Parameters.Add($"@Rom_Of{j}", DbType.String).Value = Roms[i].Rom_Of;
+                        sqlCmd.Parameters.Add($"@Clone_Of{j}", DbType.String).Value = Roms[i].Clone_Of;
+                        sqlCmd.Parameters.Add($"@Sample_Of{j}", DbType.String).Value = Roms[i].Sample_Of;
+                        sqlCmd.Parameters.Add($"@Is_Bios{j}", DbType.String).Value = Roms[i].Is_Bios;
+                        sqlCmd.Parameters.Add($"@Is_Mechanical{j}", DbType.String).Value = Roms[i].Is_Mechanical;
+                        sqlCmd.Parameters.Add($"@Description{j}", DbType.String).Value = Roms[i].Description;
+                        sqlCmd.Parameters.Add($"@Year{j}", DbType.String).Value = Roms[i].Year;
+                        sqlCmd.Parameters.Add($"@Manufacturer{j}", DbType.String).Value = Roms[i].Manufacturer;
+                        sqlCmd.Parameters.Add($"@HasSoftwares{j}", DbType.String).Value = Roms[i].HasSoftwares;
+                        sqlCmd.Parameters.Add($"@IsDevice{j}", DbType.String).Value = Roms[i].Is_Device;
+
+                        if (j < max - 1)
+                            i++;
+
+                        UpdateProgress?.Invoke(this, i * 100 / Roms.Count);
+                    }
+
+                    //Trace.WriteLine($"Requete: {sqlCmd.CommandText}");
+
+                    ExecNQ(sqlCmd);
+                }
+                // Commit à la toute fin
+                transaction.Commit(); // <= 17s au lieu de 175s
+            }
+        }
+
+
+
 
 
         /// <summary>

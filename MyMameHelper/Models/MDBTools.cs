@@ -192,10 +192,10 @@ namespace MyMameHelper.Models
                 var srcFiles = sqOP.Get_RRomGroupedSFile();
 
                 Dictionary<string, List<CT_Machine>> machines = TableFeeder.Machine(srcFiles);
-                sqOP.Insert_Machines(machines["identified"], false, false);
-                sqOP.Insert_Machines(machines["money"], false, false);
-                sqOP.Insert_Machines(machines["SystemRoms"], ignore: false, preservePK: true);
-                sqOP.Insert_Machines(machines["Constructeurs"], ignore: false, preservePK: true);
+                sqOP.InsertMassive_Machines(machines["identified"], false, false);
+                sqOP.InsertMassive_Machines(machines["money"], false, false);
+                sqOP.InsertMassive_Machines(machines["SystemRoms"], ignore: false, preservePK: true);
+                sqOP.InsertMassive_Machines(machines["Constructeurs"], ignore: false, preservePK: true);
 
             }
         }

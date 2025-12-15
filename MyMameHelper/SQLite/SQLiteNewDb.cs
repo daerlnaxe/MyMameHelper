@@ -193,17 +193,18 @@ namespace MyMameHelper.SQLite
 
             // Constructeurs de Bornes (Feed manuel)
             List<CT_Constructor> constructors = new List<CT_Constructor>();
-            constructors.Add(new CT_Constructor() { ID = 1, Nom = "Atari" });
-            constructors.Add(new CT_Constructor() { ID = 2, Nom = "Capcom" });
-            constructors.Add(new CT_Constructor() { ID = 3, Nom = "Data East" });
-            constructors.Add(new CT_Constructor() { ID = 4, Nom = "Konami" });
-            constructors.Add(new CT_Constructor() { ID = 5, Nom = "Irem" });
-            constructors.Add(new CT_Constructor() { ID = 6, Nom = "Midway" });
-            constructors.Add(new CT_Constructor() { ID = 7, Nom = "Namco" });
-            constructors.Add(new CT_Constructor() { ID = 8, Nom = "Sega" });
-            constructors.Add(new CT_Constructor() { ID = 9, Nom = "SNK" });
-            constructors.Add(new CT_Constructor() { ID = 10, Nom = "Taito" });
-            constructors.Add(new CT_Constructor() { ID = 11, Nom = "Williams" });
+            constructors.Add(new CT_Constructor() { ID = 1, Nom = "Amiga" });
+            constructors.Add(new CT_Constructor() { ID = 2, Nom = "Atari" });
+            constructors.Add(new CT_Constructor() { ID = 3, Nom = "Capcom" });
+            constructors.Add(new CT_Constructor() { ID = 4, Nom = "Data East" });
+            constructors.Add(new CT_Constructor() { ID = 5, Nom = "Konami" });
+            constructors.Add(new CT_Constructor() { ID = 6, Nom = "Irem" });
+            constructors.Add(new CT_Constructor() { ID = 7, Nom = "Midway" });
+            constructors.Add(new CT_Constructor() { ID = 8, Nom = "Namco" });
+            constructors.Add(new CT_Constructor() { ID = 9, Nom = "Sega" });
+            constructors.Add(new CT_Constructor() { ID = 10, Nom = "SNK" });
+            constructors.Add(new CT_Constructor() { ID = 11, Nom = "Taito" });
+            constructors.Add(new CT_Constructor() { ID = 12, Nom = "Williams" });
 
             _SQLite_Op.Insert_Constructors(constructors, ignore: false, preservePK: true);
 
