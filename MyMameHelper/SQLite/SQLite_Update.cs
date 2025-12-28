@@ -93,7 +93,7 @@ namespace MyMameHelper.SQLite
                                     "WHERE ID=@ID";
 
             sqlCmd.Parameters.Add($"@Nom", DbType.String).Value = Machine.Nom;
-            sqlCmd.Parameters.Add($"@Constructeur", DbType.String).Value = Machine.IDConstructeur;
+            sqlCmd.Parameters.Add($"@Constructeur", DbType.String).Value = Machine.Constructeur_Id;
             sqlCmd.Parameters.Add($"@Year", DbType.UInt32).Value = Machine.Year;
             sqlCmd.Parameters.Add($"@AllowCPath", DbType.Boolean).Value = Machine.AllowCPath;
 

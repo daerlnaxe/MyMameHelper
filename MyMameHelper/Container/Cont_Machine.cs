@@ -10,7 +10,7 @@ namespace MyMameHelper.Container
     internal class Cont_Machine
     {
         public string[] Names { get; }
-        public uint Constructor_Id { get; }
+        //public uint Constructor_Id { get; }
 
        // private CT_Machine _Machine = new CT_Machine();
 
@@ -60,7 +60,7 @@ namespace MyMameHelper.Container
                 {
                     CT_Machine machine = new CT_Machine();
                     machine.Nom = Names[i];
-                    machine.IDConstructeur = this.Constructor_Id;
+                    //machine.IDConstructeur = this.Constructor_Id;
                     machine.Year = this.Year;
                     machine.FirstVersion = this.FirstVersion;   
                     machine.Category = this.Category;   

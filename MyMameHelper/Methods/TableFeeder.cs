@@ -35,6 +35,22 @@ namespace MyMameHelper.Methods
 
     internal static class TableFeeder
     {
+        /// <summary>
+        /// Systèmes connus comme CPS1, Naomi
+        /// </summary>
+        internal static List<CT_Machine> KnownSystem { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        internal static List<CT_Constructor> KnownConstructors => _KnownSystems.Select(kk => Cont_Constructeur.Convert(kk)).ToList();
+
+
+
+
+
+
+
 
         static List<string> _SystemRoms = new List<string>
         {
@@ -342,13 +358,17 @@ namespace MyMameHelper.Methods
             }
         }*/
 
+
+        //------------------------------
+
         /// <summary>
         /// Construit les machines en fonction de source_file des roms temporaires de M.A.M.E
         /// </summary>
         internal static Dictionary<string, List<CT_Machine>> Machine(List<CT_Occurence<RawMameRom>> groupedResultats)
         {
-            //var machine = new List<CT_Machine>();
-            //var machines = new Dictionary<string, List<CT_Machine>>();
+            KnownSystem = new List<CT_Machine>();
+            //KnownConstructors = new List<CT_Constructor>();
+
             //List<CT_Machine> machinesSimple = new List<CT_Machine>();
             Dictionary<string, List<string>> notAccepted = new Dictionary<string, List<string>>();
 
@@ -361,8 +381,7 @@ namespace MyMameHelper.Methods
             uint otherID = 2000;
             //  uint keepID = 1000;
 
-            // Systèmes connus comme CPS1, Naomi
-            List<CT_Machine> knownSystem = new List<CT_Machine>();
+
             // Casino, Bellfruits...
             List<CT_Machine> moneyMachine = new List<CT_Machine>();
             // Rom pour le son par exemple
@@ -479,38 +498,38 @@ namespace MyMameHelper.Methods
 
 
                     machine.Category = "Chess";
-                    knownSystem.Add(machine);
+                    KnownSystem.Add(machine);
 
                     continue;
                 }
 
 
                 // Game Systems
-                var res = IsKnowedSystem(strConstruct, ref machine, strMachine, srcFile);
+                short res = IsKnowedSystem(strConstruct, ref machine, strMachine, srcFile);
                 if (res > 0)
                 {
                     chessRoms.Add(WriteCategory("Game Systems", ref prevConstructor, ref strConstruct));
                     chessRoms.Add(rLine);
 
-                    knownSystem.Add(machine);
+                    KnownSystem.Add(machine);
 
                     Debug.WriteLine($" - Keep : type Game System");
                     continue;
                 }
                 else if (res == 0)
                 {
+                    KnownSystem.Add(machine);
 
-                    knownSystem.Add(machine);
                     continue;
                 }
 
-                //
+                // Pas sûr que ça soit utile.
                 if (onlyConstructs.FirstOrDefault(x => x.Nom.Equals(srcFile)) == null)
                 {
                     machine.ID = otherID;
                     otherID++;
 
-                    machine.Category = strConstruct;
+                    //machine.Category = strConstruct;
                     onlyConstructs.Add(machine);
 
                     continue;
@@ -523,7 +542,7 @@ namespace MyMameHelper.Methods
                 // knowed
                 if (res == 1)
                 {
-                    knownSystem.Add(machine);
+                    KnownSystem.Add(machine);
 
                     // On passe
                     continue;
@@ -773,7 +792,7 @@ epson/qx10.cpp
 
 
             return new Dictionary<string, List<CT_Machine>>() {
-                { "identified", knownSystem } ,
+               // { "identified", KnownSystem } ,
                 { "money", moneyMachine } ,
                 { "Constructeurs", onlyConstructs },
                 { "SystemRoms",systemRom }
@@ -873,7 +892,8 @@ epson/qx10.cpp
                 return 0;
             }*/
 
-        public static List<Cont_Constructeur> _KnownSystems = new List<Cont_Constructeur>()
+
+        private static List<Cont_Constructeur> _KnownSystems = new List<Cont_Constructeur>()
         {
             // Amiga: 1
             new Cont_Constructeur(1, "Amiga")
@@ -1019,7 +1039,40 @@ epson/qx10.cpp
                         Category="Capcom - CPS3"
                     }
                 }
+            }, // Data East : 9
+            new Cont_Constructeur(9, "DataEast")
+            {
+                Machines = new List<Cont_Machine>()
+                {
+                    /*new Cont_Machine("dataeast/dec0.cpp")
+                    {
+                        //machine.IDConstructeur = 5;
+                        Year=1990,
+                        FirstVersion=1990,
+                        Category="DataEast' - NeoGeo"
+
+                    },
+                    new Cont_Machine("neogeo/neopcb.cpp")
+                    {
+                        //machine.IDConstructeur = 5;
+                        Year = 2003,
+                        FirstVersion = 2003,
+                        Category = "SNK - NeoGeo + PCB "
+
+                    },*/
+                }
             },
+
+                    /*strMachine.StartsWith("dec0") ||
+                    strMachine.StartsWith("dec8") ||
+                    strMachine.StartsWith("deco32") ||
+                    strMachine.StartsWith("deco_mlc") ||
+                    strMachine.StartsWith("simpl156") ||
+                    strMachine.StartsWith("decocass")
+                    )
+                {
+                    return 1;
+                }*/
             // Neogeo : 26
             new Cont_Constructeur(26, "NeoGeo")
             {
@@ -1149,14 +1202,11 @@ epson/qx10.cpp
             }
 
 
-
-            var mapConst = _KnownSystems.FirstOrDefault(x => x.Constructeur.ToUpper().Equals(strConstruct.ToUpper()));
+            Cont_Constructeur mapConst = _KnownSystems.FirstOrDefault(x => x.Constructeur.ToUpper().Equals(strConstruct.ToUpper()));
 
             if (mapConst != null)
             {
-
                 CT_Machine machineFound = null;
-
 
                 for (int i = 0; i < mapConst.Machines.Count; i++)
                 {
@@ -1164,6 +1214,7 @@ epson/qx10.cpp
                     if (machineFound != null)
                     {
                         machine = machineFound;
+                        machine.Constructeur_Id = (uint)mapConst.ID;
                         return 1;
                     }
                 }
@@ -1185,7 +1236,8 @@ epson/qx10.cpp
                     return 1;
                 }*/
 
-                machine.Category = strConstruct;
+                machine.Constructeur_Id = (uint)mapConst.ID;
+                //machine.Category = strConstruct;
                 return 0;
 
             }
@@ -1208,7 +1260,7 @@ epson/qx10.cpp
             // Amstrad: 2 ok
             if (strConstruct.Equals("amstrad"))
             {
-                machine.IDConstructeur = 2;
+                machine.Constructeur_Id = 2;
                 if (strMachine.StartsWith("amstrad")) //ok
                 {
                     return 1;
@@ -1218,7 +1270,7 @@ epson/qx10.cpp
             // Atari: 3 ok
             else if (strConstruct.Equals("atari"))
             {
-                machine.IDConstructeur = 3;
+                machine.Constructeur_Id = 3;
 
                 if (
                     strMachine.StartsWith("atari400") ||
@@ -1245,7 +1297,7 @@ epson/qx10.cpp
             // Atlus: 4 ok 
             else if (strConstruct.Equals("atlus"))
             {
-                machine.IDConstructeur = 4;
+                machine.Constructeur_Id = 4;
                 if (strMachine.StartsWith("cave"))
                 {
                     return 1;
@@ -1256,7 +1308,7 @@ epson/qx10.cpp
             // Casio : 6 - nothing
             else if (strConstruct.Equals("casio"))
             {
-                machine.IDConstructeur = 6;
+                machine.Constructeur_Id = 6;
 
                 if (strMachine.StartsWith("pickytlk"))
                 {
@@ -1267,7 +1319,7 @@ epson/qx10.cpp
             // Cave: 7
             else if (strConstruct.Equals("cave"))
             {
-                machine.IDConstructeur = 7;
+                machine.Constructeur_Id = 7;
                 if (strMachine.StartsWith("cv1k"))
                 {
                     return 1;
@@ -1277,17 +1329,17 @@ epson/qx10.cpp
             // Commodore: 8
             else if (strConstruct.Equals("commodore"))
             {
-                machine.IDConstructeur = 8;
+                machine.Constructeur_Id = 8;
                 if (strMachine.StartsWith("c64dtv"))
                 {
                     return 1;
                 }
                 return 0;
             }
-            // Data East : 9
+            // Data East : 9 
             else if (strConstruct.Equals("dataeast"))
             {
-                machine.IDConstructeur = 9;
+                machine.Constructeur_Id = 9;
 
                 if (
                     strMachine.StartsWith("dec0") ||
@@ -1306,7 +1358,7 @@ epson/qx10.cpp
             // Dooyong: 10
             else if (strConstruct.Equals("dooyong"))
             {
-                machine.IDConstructeur = 10;
+                machine.Constructeur_Id = 10;
                 if (
                     strMachine.StartsWith("dooyong")
                     )
@@ -1318,7 +1370,7 @@ epson/qx10.cpp
             // Emusy: 11
             else if (strConstruct.Equals("emusys"))
             {
-                machine.IDConstructeur = 11;
+                machine.Constructeur_Id = 11;
                 if (
                     strMachine.StartsWith("emu2") ||
                     strMachine.StartsWith("emu3") ||
@@ -1332,7 +1384,7 @@ epson/qx10.cpp
             // Eolith: 12
             else if (strConstruct.Equals("eolith"))
             {
-                machine.IDConstructeur = 12;
+                machine.Constructeur_Id = 12;
                 if (
                     strMachine.StartsWith("eolith") /*||
                             strMachine.StartsWith("emu3") ||
@@ -1347,7 +1399,7 @@ epson/qx10.cpp
             // Exidy: 13
             else if (strConstruct.Equals("exidy"))
             {
-                machine.IDConstructeur = 13;
+                machine.Constructeur_Id = 13;
                 if (
                     strMachine.StartsWith("exidy") ||
                     strMachine.StartsWith("exidy440") /*||
@@ -1361,7 +1413,7 @@ epson/qx10.cpp
             // Gaelco: 14
             else if (strConstruct.Equals("gaelco"))
             {
-                machine.IDConstructeur = 14;
+                machine.Constructeur_Id = 14;
                 if (
                     strMachine.StartsWith("gaelco") ||
                     strMachine.StartsWith("gaelco2") ||
@@ -1375,7 +1427,7 @@ epson/qx10.cpp
             // Gottlieb: 15
             else if (strConstruct.Equals("gottlieb"))
             {
-                machine.IDConstructeur = 15;
+                machine.Constructeur_Id = 15;
                 if (
                     strMachine.StartsWith("gottlieb")/* ||
                             strMachine.StartsWith("exidy440") /*||
@@ -1389,7 +1441,7 @@ epson/qx10.cpp
             // Gottlieb: 16
             else if (strConstruct.Equals("handheld"))
             {
-                machine.IDConstructeur = 16;
+                machine.Constructeur_Id = 16;
                 if (
                     strMachine.StartsWith("hh_sm510") ||
                     strMachine.StartsWith("hh_tms1k") ||
@@ -1403,7 +1455,7 @@ epson/qx10.cpp
             // IGS :17
             else if (strConstruct.Equals("igs"))
             {
-                machine.IDConstructeur = 17;
+                machine.Constructeur_Id = 17;
                 if (
                     strMachine.StartsWith("goldstar") ||
                     strMachine.StartsWith("igs_m027") ||
@@ -1419,7 +1471,7 @@ epson/qx10.cpp
             // Irem : 18
             else if (strConstruct.Equals("irem"))
             {
-                machine.IDConstructeur = 18;
+                machine.Constructeur_Id = 18;
                 if (
 
                     strMachine.StartsWith("m10") ||
@@ -1438,7 +1490,7 @@ epson/qx10.cpp
             // Itech: 19
             else if (strConstruct.Equals("itech"))
             {
-                machine.IDConstructeur = 19;
+                machine.Constructeur_Id = 19;
                 if (
 
                     strMachine.StartsWith("iteagle") ||
@@ -1454,7 +1506,7 @@ epson/qx10.cpp
             // Jalleco: 20
             else if (strConstruct.Equals("jaleco"))
             {
-                machine.IDConstructeur = 20;
+                machine.Constructeur_Id = 20;
                 if (
 
                     strMachine.StartsWith("megasys1") ||
@@ -1469,7 +1521,7 @@ epson/qx10.cpp
             // Kaneko: 21
             else if (strConstruct.Equals("kaneko"))
             {
-                machine.IDConstructeur = 21;
+                machine.Constructeur_Id = 21;
                 if (
 
                     strMachine.StartsWith("kaneko16") ||
@@ -1484,7 +1536,7 @@ epson/qx10.cpp
             // Konami: 22
             else if (strConstruct.Equals("konami"))
             {
-                machine.IDConstructeur = 22;
+                machine.Constructeur_Id = 22;
                 if (
 
                     strMachine.StartsWith("hornet") ||
@@ -1501,7 +1553,7 @@ epson/qx10.cpp
             // Midway - midw8080: 23
             else if (strConstruct.Equals("midw8080"))
             {
-                machine.IDConstructeur = 23;
+                machine.Constructeur_Id = 23;
                 if (
                     strMachine.StartsWith("8080bw") ||
                     strMachine.StartsWith("mw8080bw")
@@ -1514,7 +1566,7 @@ epson/qx10.cpp
             // Midway : 24
             else if (strConstruct.Equals("midway"))
             {
-                machine.IDConstructeur = 24;
+                machine.Constructeur_Id = 24;
                 if (
                     strMachine.StartsWith("mcr") ||
                     strMachine.StartsWith("mcr3") ||
@@ -1531,7 +1583,7 @@ epson/qx10.cpp
             // Namco : 25
             else if (strConstruct.Equals("namco"))
             {
-                machine.IDConstructeur = 25;
+                machine.Constructeur_Id = 25;
 
                 if (
                     strMachine.StartsWith("namco1") ||
@@ -1549,7 +1601,7 @@ epson/qx10.cpp
             // Nintendo : 27
             else if (strConstruct.Equals("nintendo"))
             {
-                machine.IDConstructeur = 27;
+                machine.Constructeur_Id = 27;
 
                 if (
                     strMachine.StartsWith("aleck64") || // nintendo 64
@@ -1568,7 +1620,7 @@ epson/qx10.cpp
             // nmk : 28
             else if (strConstruct.Equals("nmk"))
             {
-                machine.IDConstructeur = 28;
+                machine.Constructeur_Id = 28;
 
                 if (
                     strMachine.StartsWith("nmk16")
@@ -1581,7 +1633,7 @@ epson/qx10.cpp
             // Sega : 29
             else if (strConstruct.Equals("sega"))
             {
-                machine.IDConstructeur = 29;
+                machine.Constructeur_Id = 29;
                 machine.Category = $"Sega - {strMachine.ToUpper()}";
 
                 if (strMachine.StartsWith("segas16") || strMachine.StartsWith("system16"))
@@ -1635,7 +1687,7 @@ epson/qx10.cpp
             // Seibu: 30
             else if (strConstruct.Equals("seibu"))      // Toki ...
             {
-                machine.IDConstructeur = 30;
+                machine.Constructeur_Id = 30;
                 if (
                     strMachine.StartsWith("seibuspi")
                     )
@@ -1647,7 +1699,7 @@ epson/qx10.cpp
             // Seta: 31
             else if (strConstruct.Equals("seta"))
             {
-                machine.IDConstructeur = 31;
+                machine.Constructeur_Id = 31;
                 if (
                     strMachine.StartsWith("seta") ||
                     strMachine.StartsWith("seta2") ||
@@ -1662,25 +1714,25 @@ epson/qx10.cpp
             // sfrj: 32 - Jeux de Mahjong ou de Casino
             else if (strConstruct.Equals("sfrj"))
             {
-                machine.IDConstructeur = 32;
+                machine.Constructeur_Id = 32;
                 return 0;
             }
             // sgi: 33 - Basés sur Silicon graphics. Cruis'n usa etc..
             else if (strConstruct.Equals("sgi"))
             {
-                machine.IDConstructeur = 33;
+                machine.Constructeur_Id = 33;
                 return 0;
             }
             // Sharp: 34 
             else if (strConstruct.Equals("sharp"))
             {
-                machine.IDConstructeur = 34;
+                machine.Constructeur_Id = 34;
                 return 0;
             }
             // Sigma: 35 
             else if (strConstruct.Equals("sigma"))
             {
-                machine.IDConstructeur = 35;
+                machine.Constructeur_Id = 35;
 
                 if (
                     strMachine.StartsWith("sigma21") ||
@@ -1697,7 +1749,7 @@ epson/qx10.cpp
             // SNK: 36
             else if (strConstruct.Equals("snk"))
             {
-                machine.IDConstructeur = 36;
+                machine.Constructeur_Id = 36;
                 machine.Category = $"SNK - {strMachine.ToUpper()}";
 
                 if (strMachine.StartsWith("snk6502"))
@@ -1727,7 +1779,7 @@ epson/qx10.cpp
             // SNK: 37
             else if (strConstruct.Equals("sony"))
             {
-                machine.IDConstructeur = 37;
+                machine.Constructeur_Id = 37;
 
                 if (
                     strMachine.StartsWith("taitogn") ||
@@ -1742,7 +1794,7 @@ epson/qx10.cpp
             // Taito: 38
             else if (strConstruct.Equals("taito"))
             {
-                machine.IDConstructeur = 38;
+                machine.Constructeur_Id = 38;
 
                 if (
                     strMachine.StartsWith("taito") ||
@@ -1761,7 +1813,7 @@ epson/qx10.cpp
             // Techmo: 39
             else if (strConstruct.Equals("tecmo"))
             {
-                machine.IDConstructeur = 39;
+                machine.Constructeur_Id = 39;
 
                 if (
                     strMachine.StartsWith("tecmo") ||
@@ -1776,7 +1828,7 @@ epson/qx10.cpp
             // Toaplan: 40
             else if (strConstruct.Equals("toaplan"))
             {
-                machine.IDConstructeur = 40;
+                machine.Constructeur_Id = 40;
 
                 if (
                     strMachine.StartsWith("toaplan")// ||

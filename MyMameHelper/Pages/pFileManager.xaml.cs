@@ -281,13 +281,13 @@ namespace MyMameHelper.Pages
 
             Debug.WriteLine($"Nombre de roms trouvées: {FilteredGamesMapped.Count}");
 
-            if(FilteredGamesMapped.Count == 0)
+            if (FilteredGamesMapped.Count == 0)
             {
                 System.Windows.MessageBox.Show("No rom found", "Finished", MessageBoxButton.OK, MessageBoxImage.Information);
 
             }
 
-            
+
 
 
             // Pour chaque jeu
@@ -304,10 +304,10 @@ namespace MyMameHelper.Pages
 
                     MissingRoms.Add(romMapped);
 
-                  /*  if (IncompleteGames.FirstOrDefault(x => x == dbG) == null)
-                    {
-                        IncompleteGames.Add(dbG);
-                    }*/
+                    /*  if (IncompleteGames.FirstOrDefault(x => x == dbG) == null)
+                      {
+                          IncompleteGames.Add(dbG);
+                      }*/
 
                     continue;
                 }
@@ -442,18 +442,37 @@ namespace MyMameHelper.Pages
         {
 
             //)
+            /*
+            if (romMapped.Machine.Nom.StartsWith("dataeast/"))
+            {
 
+            }*/
+
+            // Pas de machine assignée à la rom
             if (romMapped.Machine == null || romMapped.Machine_Id == null)
-                return Path.Combine(PProp.Default.RomDestination, "_No_Special");
+                return Path.Combine(PProp.Default.RomDestination, "__No_Special");
 
-            if (romMapped.Machine.Category == null)
+            // Pas de constructeur assigné à la machine
+            if (romMapped.Machine.Category == null && romMapped.Machine.Constructeur_Id == 0)
                 return Path.Combine(PProp.Default.RomDestination);
 
             string dest = null;
 
+   
+
+            // Constructeur identifié on ajoute le nom au chemin
+            if (romMapped.Machine.Constructeur_Id != 0 && !String.IsNullOrEmpty( romMapped.Machine.Category))
+                dest = Path.Combine(PProp.Default.RomDestination, $"_{romMapped.Machine.Constructeur.Nom}", $"{romMapped.Machine.Category} ({romMapped.Machine.Year})");
+            else if (romMapped.Machine.Constructeur_Id !=0)
+                dest = Path.Combine(PProp.Default.RomDestination, $"_{romMapped.Machine.Constructeur.Nom}");
+            else
+            {
+                dest = Path.Combine(PProp.Default.RomDestination, romMapped.Machine.Category);
+            }
+
+            // 
 
 
-            dest = Path.Combine(PProp.Default.RomDestination, $"{romMapped.Machine.Category} ({romMapped.Machine.Year})");
 
             if (romMapped.Game.Unwanted == true && useUnwanted.IsChecked == true)
             {
@@ -525,7 +544,7 @@ namespace MyMameHelper.Pages
         private bool AsyncLoad_RomMapped(AsyncWindowProgressG aLoad)
         {
             string typeRqst = (string)aLoad.ProgressContext.Arguments[0];
-          
+
 
             aLoad.AsyncMessage("Loading enhanced Roms...");
             using (SQLite_OP sqReq = new SQLite_OP())
@@ -540,15 +559,15 @@ namespace MyMameHelper.Pages
                         break;
                     default:
                         _RomsMapped = sqReq.List_Rom2Game();
-                            /*
-                        List<CT_Rom> tmp = sqReq.AffRoms_List();
-                        _RomsMapped = new List<CT_Rom_Mapped>();
+                        /*
+                    List<CT_Rom> tmp = sqReq.AffRoms_List();
+                    _RomsMapped = new List<CT_Rom_Mapped>();
 
-                        for (int i = 0; i < tmp.Count; i++) 
-                        {
-                            _RomsMapped.Add(new CT_Rom_Mapped( tmp[i]));
-                        }
-                         */
+                    for (int i = 0; i < tmp.Count; i++) 
+                    {
+                        _RomsMapped.Add(new CT_Rom_Mapped( tmp[i]));
+                    }
+                     */
                         break;
                 }
 

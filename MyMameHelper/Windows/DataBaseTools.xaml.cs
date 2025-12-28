@@ -416,7 +416,7 @@ namespace MyMameHelper.Windows
                     var ctMachine = linkMachine.Machine;
                     sqOP.Update_Machine(ctMachine);
 
-                    SqlCond condition = new SqlCond("Constructeurs.ID", eWhere.Like, linkMachine.Machine.IDConstructeur);
+                    SqlCond condition = new SqlCond("Constructeurs.ID", eWhere.Like, linkMachine.Machine.Constructeur_Id);
                     Machines.ChangeContent = sqOP.List_MachinesJoin(new SqlCond[] { condition });
                 }
             }

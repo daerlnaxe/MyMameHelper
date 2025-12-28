@@ -38,7 +38,7 @@ PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
         public string Revision { get; set; }
-        public uint IDConstructeur
+        public uint Constructeur_Id
         {
             get;
             set;
@@ -53,12 +53,18 @@ PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         /// </summary>
         public string Category { get; internal set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public CT_Constructor Constructeur { get; internal set; }
+
+
         public CT_Machine(Aff_Machine machine)
         {
             this.ID = machine.ID;
             this.Nom = machine.Nom;
             this.Revision = machine.Revision;
-            this.IDConstructeur = machine.IDConstructeur;
+            this.Constructeur_Id = machine.Constructeur_Id;
             this.Year = machine.Year;
             this.FirstVersion = machine.FirstVersion;
             this.AllowCPath = machine.AllowCPath;
@@ -83,7 +89,7 @@ PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             cTC.Category = Trans.GetString("Category", dico);
             cTC.Description = Trans.GetString("Description", dico);
             cTC.Revision = Trans.GetString("Revision", dico);
-            cTC.IDConstructeur = Trans.GetUInt("Constructeur", dico);
+            cTC.Constructeur_Id = Trans.GetUInt("Constructeur", dico);
             cTC.Year = Trans.GetUInt("Year", dico);
             cTC.FirstVersion= Trans.GetUInt("FirstVersion", dico);
 
@@ -99,7 +105,7 @@ PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             cTC.Category = Trans.GetString("Category", reader);
             cTC.Description = Trans.GetString("Description", reader);
             cTC.Revision = Trans.GetString("Revision", reader);
-            cTC.IDConstructeur = Trans.GetUInt("Constructeur", reader);
+            cTC.Constructeur_Id = Trans.GetUInt("Constructeur", reader);
             cTC.Year = Trans.GetUInt("Year", reader);
             cTC.FirstVersion = Trans.GetUInt("FirstVersion", reader);
 

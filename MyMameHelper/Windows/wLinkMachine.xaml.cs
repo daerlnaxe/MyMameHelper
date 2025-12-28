@@ -52,7 +52,7 @@ namespace MyMameHelper.Windows
 
         private void Ex_Save(object sender, ExecutedRoutedEventArgs e)
         {
-            Machine.IDConstructeur = Constructeur.ID;
+            Machine.Constructeur_Id = Constructeur.ID;
             
             DialogResult = true;
         }

@@ -74,6 +74,7 @@ namespace MyMameHelper.SQLite
                 Create_Structure();
                 //Alter_Structure();
                 Fill_Basics_Data();
+
                 MessageBox.Show("Database Created");
             }
             catch (Exception exc)
@@ -192,7 +193,7 @@ namespace MyMameHelper.SQLite
             string tMachines = Properties.Settings.Default.T_Machines;*/
 
             // Constructeurs de Bornes (Feed manuel)
-            List<CT_Constructor> constructors = new List<CT_Constructor>();
+           /* List<CT_Constructor> constructors = new List<CT_Constructor>();/
             constructors.Add(new CT_Constructor() { ID = 1, Nom = "Amiga" });
             constructors.Add(new CT_Constructor() { ID = 2, Nom = "Atari" });
             constructors.Add(new CT_Constructor() { ID = 3, Nom = "Capcom" });
@@ -206,12 +207,12 @@ namespace MyMameHelper.SQLite
             constructors.Add(new CT_Constructor() { ID = 11, Nom = "Taito" });
             constructors.Add(new CT_Constructor() { ID = 12, Nom = "Williams" });
 
-            _SQLite_Op.Insert_Constructors(constructors, ignore: false, preservePK: true);
+            _SQLite_Op.Insert_Constructors(constructors, ignore: false, preservePK: true);*/
 
 
             // Genres
             List<CT_Genre> genres = new List<CT_Genre>();
-            genres.Add(new CT_Genre() { ID=1, Nom= "Beat 'em up" });
+            genres.Add(new CT_Genre() { ID=1, Nom= "Beat Them up" });
             genres.Add(new CT_Genre() { ID=2, Nom= "Fight" });
             genres.Add(new CT_Genre() { ID=3, Nom= "Platform" });
             genres.Add(new CT_Genre() { ID=4, Nom= "Puzzle" });

@@ -43,5 +43,16 @@ namespace MyMameHelper.ContTable
             Constructeur = constructeur;
 
         }
+
+        public static CT_Constructor Convert(Cont_Constructeur contC)
+        {
+            return new CT_Constructor()
+            {
+                ID = (uint)contC.ID,
+                Nom=contC.Constructeur
+
+
+            };
+        }
     }
 }

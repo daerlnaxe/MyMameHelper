@@ -164,22 +164,12 @@ namespace MyMameHelper.Pages
         {
             object myArgument = e.Argument;
 
-            using (SQLite_OP sqOP = new SQLite_OP())
-            {
-                sqOP.Drop_TMachine();
-                sqOP.Create_TMachine();
+        
 
-                List<CT_Occurence<RawMameRom>> rawroms = sqOP.Get_RRomGroupedSFile(); // 62ms
+            SaveInDB.Build_MachinesRelation(sender);
 
-                sqOP.UpdateProgress += ((x, y) => sender.SetProgress(y));
-                // Insertion des rawroms
-                Dictionary<string, List<CT_Machine>> machines = TableFeeder.Machine(rawroms); //<= 310ms, pas d'UI
 
-                sqOP.Insert_Machines(machines["identified"], false, false); 
-                sqOP.Insert_Machines(machines["money"], false, false);
-                sqOP.Insert_Machines(machines["SystemRoms"], ignore: false, preservePK: true);
-                sqOP.Insert_Machines(machines["Constructeurs"], ignore: false, preservePK: true);
-            }
+    
 
         }
         #endregion

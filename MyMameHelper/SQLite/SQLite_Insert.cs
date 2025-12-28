@@ -199,7 +199,7 @@ namespace MyMameHelper.SQLite
                 sqlCmd.Parameters.Add("@ID", DbType.UInt64).Value = ctM.ID;
 
             sqlCmd.Parameters.Add("@Nom", DbType.String).Value = ctM.Nom;
-            sqlCmd.Parameters.Add("@Constructor_ID", DbType.UInt32).Value = ctM.IDConstructeur;
+            sqlCmd.Parameters.Add("@Constructor_ID", DbType.UInt32).Value = ctM.Constructeur_Id;
             sqlCmd.Parameters.Add("@Year", DbType.UInt32).Value = ctM.Year;
             sqlCmd.Parameters.Add("@AllowCPath", DbType.Boolean).Value = ctM.AllowCPath;
 
@@ -364,8 +364,8 @@ namespace MyMameHelper.SQLite
         /// Insère une collection de constructeurs
         /// </summary>
         /// <param name="constructors"></param>
-        /// <param name="ignore"></param>
-        /// <param name="preservePK"></param>
+        /// <param name="ignore">Ignorer si déjà présent</param>
+        /// <param name="preservePK">Préservation de l'ID Primaire</param>
         public void Insert_Constructors(IList<CT_Constructor> constructors, bool ignore, bool preservePK)
         {
             uint max = 10;
@@ -795,7 +795,13 @@ namespace MyMameHelper.SQLite
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="machines"></param>
+        /// <param name="ignore">Ignorer si déjà présent</param>
+        /// <param name="preservePK">Conserver les ID</param>
+        /// <exception cref="Exception"></exception>
         internal void InsertMassive_Machines(IList<CT_Machine> machines, bool ignore, bool preservePK)
         {
             Debug.WriteLine($"Insertion Massive de la collection de machines");
@@ -830,6 +836,7 @@ namespace MyMameHelper.SQLite
                         "Nom",
                         "Description",
                         "Category",
+                        "Constructeur_Id",
                         "Year"
                     };
 
@@ -867,6 +874,9 @@ namespace MyMameHelper.SQLite
 
                         // Récupération de l'accesseur en fonction du champ
                         PropertyInfo prop = machines[i].GetType().GetProperty(field);
+
+
+
                         if (prop != null)
                         {
                             object valeur = prop.GetValue(machines[i]);
@@ -1356,17 +1366,17 @@ namespace MyMameHelper.SQLite
                 while (i < Roms.Count)
                 {
                     sqlCmd.CommandText = $"Insert {strIgnore} INTO [{tRom}] (" +
-                                           "[Archive_Name], " +
-                                           "[Description], " +
-                                           "[Source_File], " +
-                                           "[Game_Id]," +
-                                           "[Unwanted]," +
-                                           "[Year], " +
-                                           "[Manufacturer_Id], " +
-                                           "[Machine_Id], " +
-                                           "[IsParent], " +
-                                           "[Clone_Of]," +
-                                           "[IsPinball]" +
+                                           "[Archive_Name]" +
+                                           ", [Description]" +
+                                           ", [Source_File]" +
+                                           ", [Game_Id]" +
+                                           ", [Unwanted]" +
+                                           ", [Year]" +
+                                           ", [Manufacturer_Id]" +
+                                           ", [Machine_Id]" +
+                                           ", [IsParent]" +
+                                           ", [Clone_Of]" +
+                                           //", [IsPinball]" +
                                            ") VALUES ";
 
 
@@ -1385,7 +1395,8 @@ namespace MyMameHelper.SQLite
 
                         sqlCmd.CommandText += $"(@Archive_Name{j}, @Description{j}, @Source_File{j}, @Game_Id{j}" +
                                                     $", @Unwanted{j}, @Year{j}, @Manufacturer_Id{j}, @Machine_Id{j}" +
-                                                    $", @IsParent{j}, @Clone_Of{j}, @IsPinball{j}" +
+                                                    $", @IsParent{j}, @Clone_Of{j}" +
+                                                    //$", @IsPinball{j}" +
                                                     ")";
 
 
@@ -1404,7 +1415,7 @@ namespace MyMameHelper.SQLite
                         sqlCmd.Parameters.AddWithValue($"@Machine_Id{j}", game.Machine_Id);
                         sqlCmd.Parameters.AddWithValue($"@IsParent{j}", game.IsParent);
                         sqlCmd.Parameters.AddWithValue($"@Clone_Of{j}", game.Clone_Of);
-                        sqlCmd.Parameters.AddWithValue($"@IsPinball{j}", game.IsPinball);
+                        //sqlCmd.Parameters.AddWithValue($"@IsPinball{j}", game.IsPinball);
                     }
 
                     Debug.WriteLine(sqlCmd.ToString());

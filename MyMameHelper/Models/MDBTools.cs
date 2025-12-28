@@ -184,20 +184,8 @@ namespace MyMameHelper.Models
         /// </summary>
         public void BuildMachines()
         {
-            using (SQLite_OP sqOP = new SQLite_OP())
-            {
-                sqOP.Drop_TMachine();
-                sqOP.Create_TMachine();
+            SaveInDB.Build_MachinesRelation( null);
 
-                var srcFiles = sqOP.Get_RRomGroupedSFile();
-
-                Dictionary<string, List<CT_Machine>> machines = TableFeeder.Machine(srcFiles);
-                sqOP.InsertMassive_Machines(machines["identified"], false, false);
-                sqOP.InsertMassive_Machines(machines["money"], false, false);
-                sqOP.InsertMassive_Machines(machines["SystemRoms"], ignore: false, preservePK: true);
-                sqOP.InsertMassive_Machines(machines["Constructeurs"], ignore: false, preservePK: true);
-
-            }
         }
 
         /// <summary>

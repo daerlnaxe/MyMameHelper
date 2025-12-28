@@ -635,7 +635,7 @@ namespace MyMameHelper.SQLite
             machine.ID = Trans.GetUInt("ID", reader);
             machine.Nom = Trans.GetString("Nom", reader);
             machine.Constructeur = Trans.GetString("Aff_Constructeur", reader);
-            machine.IDConstructeur = Trans.GetUInt("Constructeur", reader);
+            machine.Constructeur_Id = Trans.GetUInt("Constructeur_Id", reader);
             machine.Revision = Trans.GetString("Revision", reader);
             machine.Year = Trans.GetUShort("Year", reader);
             machine.AllowCPath = Trans.GetBool("AllowCPath", reader);
@@ -1258,22 +1258,44 @@ namespace MyMameHelper.SQLite
                 game.ID = uint.Parse(aRom.Game_Id.ToString());
                 game.Game_Name = Trans.GetString("Game_Name", reader);
                 //game.Machine_Id = Trans.GetNullableUInt("Machine_Id", reader);
-                
+
                 aRom.Game = game;
             }
 
 
-            // Machine
+            //
+            CT_Machine machine = null;
             if (aRom.Machine_Id != null)
             {
-                CT_Machine machine = new CT_Machine();
+
+
+                machine = new CT_Machine();
                 machine.ID = uint.Parse(aRom.Machine_Id.ToString());
                 machine.Nom = Trans.GetString("Machine_Name", reader);
+                /*if (machine.Nom.StartsWith("atari/"))
+                {
+
+                }*/
                 machine.Category = Trans.GetString("Category", reader);
+                machine.Constructeur_Id = Trans.GetUInt("PK_Constructor", reader);
                 machine.Year = Trans.GetNullableUInt("Year", reader);
-             
+
                 aRom.Machine = machine;
             }
+
+            //
+            CT_Constructor construct = null;
+            if(machine!=null && machine.Constructeur_Id != null && machine.Constructeur_Id != 0)
+            {
+                construct = new CT_Constructor();
+                construct.ID = Trans.GetUInt("PK_Constructor", reader);
+                construct.Nom = Trans.GetString("Constructor_Name", reader);
+
+
+                machine.Constructeur = construct;
+            }
+
+
 
             return aRom;
         }
@@ -1360,9 +1382,11 @@ namespace MyMameHelper.SQLite
             string sql = $"SELECT [{tRom}].ID, [{tRom}].Archive_Name, [{tRom}].Game_Id" +
                           $", [{tGame}].Game_Name" +
                           $", [{tMachine}].ID AS \"Machine_Id\", [{tMachine}].Nom AS \"Machine_Name\", [{tMachine}].Category, [{tMachine}].Year" +
+                          $",  [{tConstructor}].ID AS \"PK_Constructor\", [{tConstructor}].Nom AS \"Constructor_Name\"" +
                           $" FROM [{tRom}] " +
                             $" LEFT JOIN [{tGame}] ON [{tGame}].ID= [{tRom}].Game_Id" +
                             $" LEFT JOIN [{tMachine}] ON [{tMachine}].ID= [{tRom}].Machine_Id " +
+                            $" LEFT JOIN [{tConstructor}] ON [{tConstructor}].ID=[{tMachine}].Constructeur_Id" +
                          "";
 
             SQLiteCommand sqlCMD = new SQLiteCommand(sql, SQLiteConn);
@@ -1370,7 +1394,8 @@ namespace MyMameHelper.SQLite
             SqlCond[] conds = new SqlCond[] { new SqlCond($"Game_Id", eWhere.Is_Not, null) };
             Condition_TreatMt(sqlCMD, conds);
 
-            SqlOrder[] orders = new SqlOrder[] { new SqlOrder($"Game_Name") };
+            //SqlOrder[] orders = new SqlOrder[] { new SqlOrder($"Game_Name") };
+            SqlOrder[] orders = new SqlOrder[] { new SqlOrder($"PK_Constructor") };
             Order_TreatMt(sqlCMD, orders);
 
             Trace.WriteLine($"Requete SQL: {sqlCMD.CommandText}");

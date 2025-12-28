@@ -38,7 +38,7 @@ namespace MyMameHelper.Methods
             }
 
             return false;
-            
+
         }
 
 
@@ -63,11 +63,11 @@ namespace MyMameHelper.Methods
         }
 
 
-    
 
-    #endregion
 
-      #region Games
+        #endregion
+
+        #region Games
         internal static bool Insert_Games(List<CT_Game> games)
         {
             AsyncWindowProgress awP = new AsyncWindowProgress();
@@ -113,7 +113,39 @@ namespace MyMameHelper.Methods
         }
 
 
-    }
+        internal static void Build_MachinesRelation(ProgressWindow sender)
+        {
+            using (SQLite_OP sqOP = new SQLite_OP())
+            {
+                if (sender != null)
+                    sqOP.UpdateProgress += ((x, y) => sender.SetProgress(y));
 
+                sqOP.Drop_TMachine();
+                sqOP.Create_TMachine();
+                sqOP.Drop_TConstructor();
+                sqOP.Create_TConstructor();
+
+                List<CT_Occurence<RawMameRom>> srcFiles = sqOP.Get_RRomGroupedSFile();
+
+
+                // Insertion des rawroms
+                Dictionary<string, List<CT_Machine>> machines = TableFeeder.Machine(srcFiles); //<= 310ms, pas d'UI
+
+                sqOP.InsertMassive_Machines(TableFeeder.KnownSystem, false, false);
+                //
+                sqOP.InsertMassive_Machines(machines["money"], false, false);
+                sqOP.InsertMassive_Machines(machines["SystemRoms"], ignore: false, preservePK: true);
+                sqOP.InsertMassive_Machines(machines["Constructeurs"], ignore: false, preservePK: true);
+
+                //
+                sqOP.Insert_Constructors(TableFeeder.KnownConstructors, false, true);
+            }
+        }
+
+
+
+
+
+    }
     #endregion
 }

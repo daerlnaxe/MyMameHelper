@@ -132,6 +132,22 @@ namespace MyMameHelper.SQLite
         /// <summary>
         /// Drop de la table machine
         /// </summary>
+        public void Drop_TConstructor()
+        {
+            string sql = $"DROP TABLE {tConstructor}";
+            SQLiteCommand command = new SQLiteCommand(sql, SQLiteConn);
+
+            Trace.WriteLine($"Exec: {command.CommandText}");
+
+            if (!ExecNQ(command))
+            {
+                throw new Exception("Drop Constructor failed");
+            }
+        }
+
+        /// <summary>
+        /// Drop de la table machine
+        /// </summary>
         public void Drop_TMachine()
         {
             string sql = $"DROP TABLE {tMachine}";
