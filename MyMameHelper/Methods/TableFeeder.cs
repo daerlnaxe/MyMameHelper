@@ -1039,7 +1039,13 @@ epson/qx10.cpp
                         Category="Capcom - CPS3"
                     }
                 }
-            }, // Data East : 9
+            },
+            // Commodore 8
+            new Cont_Constructeur(8, "Commodore")
+            {
+                Machines = new List<Cont_Machine>()
+            },    
+            // Data East : 9
             new Cont_Constructeur(9, "DataEast")
             {
                 Machines = new List<Cont_Machine>()
@@ -1052,27 +1058,51 @@ epson/qx10.cpp
                         Category="DataEast' - NeoGeo"
 
                     },
-                    new Cont_Machine("neogeo/neopcb.cpp")
-                    {
-                        //machine.IDConstructeur = 5;
-                        Year = 2003,
-                        FirstVersion = 2003,
-                        Category = "SNK - NeoGeo + PCB "
+               */
+                }
 
-                    },*/
+            /*strMachine.StartsWith("dec0") ||
+            strMachine.StartsWith("dec8") ||
+            strMachine.StartsWith("deco32") ||
+            strMachine.StartsWith("deco_mlc") ||
+            strMachine.StartsWith("simpl156") ||
+            strMachine.StartsWith("decocass")
+            )
+            */
+            },
+            // Irem : 18
+            new Cont_Constructeur(18, "Irem")
+            {
+                Machines = new List<Cont_Machine>()
+                {
                 }
             },
 
-                    /*strMachine.StartsWith("dec0") ||
-                    strMachine.StartsWith("dec8") ||
-                    strMachine.StartsWith("deco32") ||
-                    strMachine.StartsWith("deco_mlc") ||
-                    strMachine.StartsWith("simpl156") ||
-                    strMachine.StartsWith("decocass")
-                    )
-                {
-                    return 1;
-                }*/
+            // Konami : 22
+            new Cont_Constructeur(22, "Konami")
+            {
+                Machines = new List<Cont_Machine>()
+                {/*
+                    strMachine.StartsWith("hornet") ||
+                    strMachine.StartsWith("ksys573") ||// Genre de playstation
+                    strMachine.StartsWith("Nemesis") ||
+                    strMachine.StartsWith("NWK-TR")  //||
+                                                     //strMachine.StartsWith("tetris2p")
+                )
+                */
+                }
+
+            },
+             // Midway : 24
+            new Cont_Constructeur(24, "Midway")
+            {
+                Machines = new List<Cont_Machine>()
+            },
+            // Namco : 25
+            new Cont_Constructeur(24, "Namco")
+            {
+                Machines = new List<Cont_Machine>()
+            },
             // Neogeo : 26
             new Cont_Constructeur(26, "NeoGeo")
             {
@@ -1096,6 +1126,12 @@ epson/qx10.cpp
                     },
                 }
             },
+            // Nintendo : 27
+            new Cont_Constructeur(27, "Nintendo")
+            {
+                Machines = new List<Cont_Machine>()
+            },        
+            
             // Sega : 29
             new Cont_Constructeur(29, "Sega")
             {
@@ -1178,8 +1214,13 @@ epson/qx10.cpp
                         FirstVersion=1998,
                         Category="Sega - Naomi"
                     },
-                }
-            }
+                } 
+            },
+            // Taito : 38
+            new Cont_Constructeur(38, "Taito")
+            {
+                Machines = new List<Cont_Machine>()
+            },
         };
 
 
@@ -1257,7 +1298,7 @@ epson/qx10.cpp
 
 
 
-            // Amstrad: 2 ok
+            // Amstrad: 2 - ok
             if (strConstruct.Equals("amstrad"))
             {
                 machine.Constructeur_Id = 2;
@@ -1267,7 +1308,7 @@ epson/qx10.cpp
                 }
                 return 0;
             }
-            // Atari: 3 ok
+            // Atari: 3 - ok
             else if (strConstruct.Equals("atari"))
             {
                 machine.Constructeur_Id = 3;
@@ -1294,7 +1335,7 @@ epson/qx10.cpp
                 return 0;
 
             }
-            // Atlus: 4 ok 
+            // Atlus: 4 - ok 
             else if (strConstruct.Equals("atlus"))
             {
                 machine.Constructeur_Id = 4;
@@ -1326,7 +1367,7 @@ epson/qx10.cpp
                 }
                 return 0;
             }
-            // Commodore: 8
+            // Commodore: 8 - En cours
             else if (strConstruct.Equals("commodore"))
             {
                 machine.Constructeur_Id = 8;
@@ -1336,7 +1377,7 @@ epson/qx10.cpp
                 }
                 return 0;
             }
-            // Data East : 9 
+            // Data East : 9 - ok
             else if (strConstruct.Equals("dataeast"))
             {
                 machine.Constructeur_Id = 9;
@@ -1468,7 +1509,7 @@ epson/qx10.cpp
                 }
                 return 0;
             }
-            // Irem : 18
+            // Irem : 18 - En cours
             else if (strConstruct.Equals("irem"))
             {
                 machine.Constructeur_Id = 18;
@@ -1533,7 +1574,7 @@ epson/qx10.cpp
                 }
                 return 0;
             }
-            // Konami: 22
+            // Konami: 22 - En cours
             else if (strConstruct.Equals("konami"))
             {
                 machine.Constructeur_Id = 22;
@@ -1563,7 +1604,7 @@ epson/qx10.cpp
                 }
                 return 0;
             }
-            // Midway : 24
+            // Midway : 24 - En cours
             else if (strConstruct.Equals("midway"))
             {
                 machine.Constructeur_Id = 24;
@@ -1580,7 +1621,7 @@ epson/qx10.cpp
                 }
                 return 0;
             }
-            // Namco : 25
+            // Namco : 25 - En cours
             else if (strConstruct.Equals("namco"))
             {
                 machine.Constructeur_Id = 25;
@@ -1598,7 +1639,7 @@ epson/qx10.cpp
                 return 0;
             }
 
-            // Nintendo : 27
+            // Nintendo : 27 - En cours
             else if (strConstruct.Equals("nintendo"))
             {
                 machine.Constructeur_Id = 27;
@@ -1630,7 +1671,7 @@ epson/qx10.cpp
                 }
                 return 0;
             }
-            // Sega : 29
+            // Sega : 29 - En cours
             else if (strConstruct.Equals("sega"))
             {
                 machine.Constructeur_Id = 29;
@@ -1791,7 +1832,7 @@ epson/qx10.cpp
                 }
                 return 0;
             }
-            // Taito: 38
+            // Taito: 38 - En cours
             else if (strConstruct.Equals("taito"))
             {
                 machine.Constructeur_Id = 38;

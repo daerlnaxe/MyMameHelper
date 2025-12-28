@@ -17,7 +17,7 @@ using System.Windows.Shapes;
 namespace MyMameHelper.Windows
 {
     /// <summary>
-    /// Lance un travail en fond quand on chare la page
+    /// Lance un travail en fond quand on charge la page
     /// </summary>
     public partial class AsyncWindowProgress : Window, INotifyPropertyChanged
     {

@@ -97,7 +97,7 @@ namespace MyMameHelper.Pages
         {
             InitializeComponent();
 
-            Rom_Folder = Properties.Settings.Default.RomSource;
+            Rom_Folder = Properties.Settings.Default.RomSource.ToString();
             Destination_Folder = Properties.Settings.Default.RomDestination;
 
             DataContext = this;
@@ -277,21 +277,49 @@ namespace MyMameHelper.Pages
             // Récupérer les jeux et les roms associées
             Get_RomMapped(arboChoosen);
 
-            List<CT_Rom_Mapped> FilteredGamesMapped = new List<CT_Rom_Mapped>(_RomsMapped);
 
-            Debug.WriteLine($"Nombre de roms trouvées: {FilteredGamesMapped.Count}");
+            List<CT_Rom_Mapped> filteredGamesMapped = new List<CT_Rom_Mapped>(_RomsMapped);
 
-            if (FilteredGamesMapped.Count == 0)
+
+            Debug.WriteLine($"Nombre de roms trouvées: {filteredGamesMapped.Count}");
+
+            if (filteredGamesMapped.Count == 0)
             {
                 System.Windows.MessageBox.Show("No rom found", "Finished", MessageBoxButton.OK, MessageBoxImage.Information);
 
             }
 
 
+            AsyncWorkBool asyncWorkBool = new AsyncWorkBool();
+            asyncWorkBool.go += new AsyncWorkBool.AsyncBoolAction(WriteOperations);
+            asyncWorkBool.Arguments = new List<object> { arboChoosen, filteredGamesMapped };
 
+            AsyncWindowProgressG aswpg = new AsyncWindowProgressG();
+            aswpg.ProgressContext = asyncWorkBool;
+
+            aswpg.ShowDialog();
+
+            if((Boolean)aswpg.Resultat == true)
+                System.Windows.MessageBox.Show("File operation finished", "Finished", MessageBoxButton.OK, MessageBoxImage.Information);
+            else
+                System.Windows.MessageBox.Show("File operation Aborted", "Aborted", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        private bool WriteOperations(AsyncWindowProgressG window)
+        {
+            //debug
+            return true;
+
+            String arboChoosen = (string)window.ProgressContext.Arguments[0];
+            List<CT_Rom_Mapped> filteredGamesMapped = (List<CT_Rom_Mapped>)window.ProgressContext.Arguments[1];
+
+            window.Total=  filteredGamesMapped.Count;
+            window.Progress_Value = 0;
+
+            int i = 0;
 
             // Pour chaque jeu
-            foreach (CT_Rom_Mapped romMapped in FilteredGamesMapped)
+            foreach (CT_Rom_Mapped romMapped in filteredGamesMapped)
             {
                 string romFile = Path.Combine(PProp.Default.RomSource, $"{romMapped.Archive_Name}.zip");
 
@@ -368,7 +396,7 @@ namespace MyMameHelper.Pages
                         if (!OverWriteFiles)
                         {
                             System.Windows.MessageBox.Show("File exists, unable to move file if you don't allow to overwrite", "File exists", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
+                            return false;
                         }
                         else if (OverWriteFiles && File.Exists(destFile))
                         {
@@ -393,9 +421,9 @@ namespace MyMameHelper.Pages
 
             }
 
-            System.Windows.MessageBox.Show("File operation finished", "Finished", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            return;
+
+            return true;
             // throw new Exception("A revoir");
             /* foreach (Aff_Game dbG in DbGames)
              {
