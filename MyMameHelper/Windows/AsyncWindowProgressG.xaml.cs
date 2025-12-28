@@ -36,7 +36,19 @@ namespace MyMameHelper.Windows
 
 
         //
-        public int Total { get; set; } = 100;
+        private int _Total = 100;
+        public int Total
+        {
+            get => _Total;
+            set
+            {
+                if (_Total != value)
+                {
+                    _Total = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public int _Progress_Value = 0;
         public int Progress_Value
@@ -85,7 +97,7 @@ namespace MyMameHelper.Windows
                 Debug.WriteLine(currentPercent);
                 this.Dispatcher?.Invoke(new Action(() => Progress_Value = value));
                 _LastPercent = currentPercent;
-            }                
+            }
         }
 
         public void AsyncMessage(string value)
@@ -131,7 +143,7 @@ namespace MyMameHelper.Windows
         {
             Resultat = ProgressContext.EndGo(ar);
 
-            Progress_Value = 100;
+            
             Console.WriteLine("Fini");
             this.AsyncClose();
         }

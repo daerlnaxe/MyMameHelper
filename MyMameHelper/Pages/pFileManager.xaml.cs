@@ -24,6 +24,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 using Path = System.IO.Path;
 using PProp = MyMameHelper.Properties.Settings;
 
@@ -86,7 +87,12 @@ namespace MyMameHelper.Pages
         #region Checkboxes
         public Boolean MoveFiles { get; set; }
 
-        public bool OverWriteFiles { get; set; }
+        
+        public bool OverWriteFiles 
+        { 
+            get;
+            set;
+        }
         #endregion
 
 
@@ -296,6 +302,7 @@ namespace MyMameHelper.Pages
 
             AsyncWindowProgressG aswpg = new AsyncWindowProgressG();
             aswpg.ProgressContext = asyncWorkBool;
+            aswpg.Total = filteredGamesMapped.Count;
 
             aswpg.ShowDialog();
 
@@ -305,15 +312,18 @@ namespace MyMameHelper.Pages
                 System.Windows.MessageBox.Show("File operation Aborted", "Aborted", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
+
+
+
         private bool WriteOperations(AsyncWindowProgressG window)
         {
             //debug
-            return true;
+            
 
             String arboChoosen = (string)window.ProgressContext.Arguments[0];
             List<CT_Rom_Mapped> filteredGamesMapped = (List<CT_Rom_Mapped>)window.ProgressContext.Arguments[1];
 
-            window.Total=  filteredGamesMapped.Count;
+
             window.Progress_Value = 0;
 
             int i = 0;
@@ -378,7 +388,7 @@ namespace MyMameHelper.Pages
                 {
                     bool overW = false;
 
-                    if (OverWrite.IsChecked == true)
+                    if (OverWriteFiles)
                         overW = true;
 
                     //var tesDir = Path.GetDF(dest);
@@ -417,6 +427,8 @@ namespace MyMameHelper.Pages
                     Console.WriteLine(exc.Message);
                 }
 
+                i++;
+                window.AsyncUpProgressPercent( i);
 
 
             }

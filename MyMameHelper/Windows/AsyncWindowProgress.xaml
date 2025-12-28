@@ -20,7 +20,7 @@
         <TextBlock Text="" Grid.Row="1"/>
         <TextBlock Text="{Binding Message_Value}" Grid.Row="1" Grid.Column="1"/>
 
-        <ProgressBar Value="{Binding Progress_Value}" Maximum="{Binding Total}" Grid.Row="3" Grid.ColumnSpan="2"/>
+        <ProgressBar Value="{Binding Progress_Value}" Maximum="{Binding Total}" Grid.Row="3" Grid.ColumnSpan="2" ToolTip="{Binding Total}"/>
 
     </Grid>
 </Window>

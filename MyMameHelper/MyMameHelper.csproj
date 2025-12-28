@@ -54,7 +54,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -64,6 +64,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>4679D62220DCD53E19D6AC4C2969BD8D986DA255</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>MyMameHelper_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DxTBoxWPF">
@@ -223,6 +229,7 @@
     <Compile Include="Windows\wConstructeur.xaml.cs">
       <DependentUpon>wConstructeur.xaml</DependentUpon>
     </Compile>
+    <None Include="MyMameHelper_TemporaryKey.pfx" />
     <None Include="Pages\Game_Comparer.cs" />
     <None Include="Controls\ListViewPlus.xaml.cs">
       <DependentUpon>ListViewPlus.xaml</DependentUpon>
