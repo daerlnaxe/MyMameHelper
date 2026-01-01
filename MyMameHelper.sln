@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28922.388
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyMameHelper", "MyMameHelper\MyMameHelper.csproj", "{24E7CA3A-2FC2-4114-B768-4DD7F70C8DEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DxTBoxWPF", "..\DlnxLocalTransfert\DxTBoxWPF\DxTBoxWPF.csproj", "{76439239-D37B-4CF1-9A5B-FF795DA2C038}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{24E7CA3A-2FC2-4114-B768-4DD7F70C8DEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24E7CA3A-2FC2-4114-B768-4DD7F70C8DEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24E7CA3A-2FC2-4114-B768-4DD7F70C8DEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76439239-D37B-4CF1-9A5B-FF795DA2C038}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76439239-D37B-4CF1-9A5B-FF795DA2C038}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76439239-D37B-4CF1-9A5B-FF795DA2C038}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76439239-D37B-4CF1-9A5B-FF795DA2C038}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

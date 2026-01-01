@@ -1050,18 +1050,17 @@ epson/qx10.cpp
             {
                 Machines = new List<Cont_Machine>()
                 {
-                    /*new Cont_Machine("dataeast/dec0.cpp")
+                    new Cont_Machine("dataeast/dec0.cpp")
                     {
-                        //machine.IDConstructeur = 5;
-                        Year=1990,
-                        FirstVersion=1990,
-                        Category="DataEast' - NeoGeo"
+                        //machine.IDConstructeur = 9;
+                        Year=1980,
+                        FirstVersion=1980,
+                        Category="Deco Cassette System"
 
                     },
-               */
                 }
 
-            /*strMachine.StartsWith("dec0") ||
+            /*
             strMachine.StartsWith("dec8") ||
             strMachine.StartsWith("deco32") ||
             strMachine.StartsWith("deco_mlc") ||
@@ -1099,7 +1098,7 @@ epson/qx10.cpp
                 Machines = new List<Cont_Machine>()
             },
             // Namco : 25
-            new Cont_Constructeur(24, "Namco")
+            new Cont_Constructeur(25, "Namco")
             {
                 Machines = new List<Cont_Machine>()
             },

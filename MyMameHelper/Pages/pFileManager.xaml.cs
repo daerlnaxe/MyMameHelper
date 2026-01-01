@@ -1,4 +1,5 @@
-﻿using MyMameHelper.ContTable;
+﻿using DxTBoxWPF.BoxChoose;
+using MyMameHelper.ContTable;
 using MyMameHelper.Models;
 using MyMameHelper.Parsers;
 using MyMameHelper.SQLite;
@@ -24,6 +25,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+
 
 using Path = System.IO.Path;
 using PProp = MyMameHelper.Properties.Settings;
@@ -159,6 +162,18 @@ namespace MyMameHelper.Pages
 
         private void RB_Button_Click(object sender, RoutedEventArgs e)
         {
+            ChooseFolder chooseFolder = new ChooseFolder();
+            chooseFolder.StartingFolder = Properties.Settings.Default.RomSource;
+
+            if (chooseFolder.ShowDialog() == true)
+            {
+                Destination_Folder = chooseFolder.GetLinkResult;
+                Properties.Settings.Default.RomSource = chooseFolder.GetLinkResult;
+                Properties.Settings.Default.Save();
+            }
+
+
+            /*
             using (var fbd = new System.Windows.Forms.FolderBrowserDialog())
             {
 
@@ -170,13 +185,27 @@ namespace MyMameHelper.Pages
                     Properties.Settings.Default.RomSource = Rom_Folder;
                     Properties.Settings.Default.Save();
                 }
-            }
+            }*/
 
         }
 
 
         private void DF_Button_Click(object sender, RoutedEventArgs e)
         {
+            ChooseFolder chooseFolder = new ChooseFolder();
+            chooseFolder.StartingFolder= Properties.Settings.Default.RomDestination;
+            
+            if(chooseFolder.ShowDialog()== true)
+            {
+                Destination_Folder = chooseFolder.GetLinkResult;
+                Properties.Settings.Default.RomDestination = chooseFolder.GetLinkResult;
+                Properties.Settings.Default.Save();
+            }
+
+
+            
+            /*
+
             using (var fbd = new System.Windows.Forms.FolderBrowserDialog())
             {
                 fbd.SelectedPath = Properties.Settings.Default.RomDestination;
@@ -188,7 +217,7 @@ namespace MyMameHelper.Pages
                     Properties.Settings.Default.Save();
 
                 }
-            }
+            }*/
         }
 
 
@@ -259,18 +288,15 @@ namespace MyMameHelper.Pages
             }
 
 
+
             if (string.IsNullOrEmpty(Destination_Folder))
             {
                 MessageBox.Show("Enter a valid Destination Folder", "Error - Directory", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-
-
             // Récupérer les fichiers dans le répertoire
             _DirFiles = Directory.GetFiles(PProp.Default.RomSource);
-
-
 
 
             // Méthode
