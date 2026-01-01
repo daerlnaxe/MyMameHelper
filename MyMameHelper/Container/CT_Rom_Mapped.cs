@@ -64,5 +64,10 @@ namespace MyMameHelper.ContTable
                 }
             }
         }
+
+        /// <summary>
+        /// Localisation de l'archive sur le disque dur
+        /// </summary>
+        public string FilePath { get; set; }
     }
 }

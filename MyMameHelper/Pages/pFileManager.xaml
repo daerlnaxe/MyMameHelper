@@ -46,13 +46,24 @@
             </StackPanel>
 
 
-
             <!-- Panneau du bas -->
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" FlowDirection="RightToLeft">
                 <Button Name="Proceed" Content="Proceed" Command="commands:UICommands.Proceed" />
             </StackPanel>
+
             <StackPanel>
-                <GroupBox x:Name="groupBox" Header="Options" Margin="10" Height="141">
+                <StackPanel.Resources>
+                    <!-- GroupBox -->
+                    <Style TargetType="GroupBox">
+                        <Setter Property="Margin" Value="10,5"/>
+                    </Style>
+                    <!-- RadioButton -->
+                    <Style TargetType="RadioButton">
+                        <Setter Property="Margin" Value="5"/>
+                    </Style>
+                </StackPanel.Resources>
+                <!-- Options -->
+                <GroupBox x:Name="groupBox" Header="Options">
                     <Grid Margin="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -63,24 +74,50 @@
                         </Grid.RowDefinitions>
                         <CheckBox x:Name="useFiles" Content="Use Files Information ???"  ToolTip="???"/>
                         <CheckBox x:Name="useUnwanted"  Content="Use Unwanted Folder (Machine method) ???" Grid.Row="1" ToolTip="???"/>
-                        <CheckBox IsChecked="{Binding OverWriteFiles, UpdateSourceTrigger=PropertyChanged}"   Content="OverWrite Files" Grid.Row="2"  ToolTip="OverWrite if file exists"/>
-                        <CheckBox Content="Move files" Grid.Row="3"  ToolTip="Move files instead of copy" IsChecked="{Binding MoveFiles}"/>
+                        <!--CheckBox Content="Move files" Grid.Row="3"  ToolTip="Move files instead of copy" IsChecked="{Binding MoveFiles}"/-->
 
                     </Grid>
                 </GroupBox>
+                <!-- -->
+                <GroupBox Header="File Management">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- Move or Copy -->
+                        <RadioButton GroupName="gpMoveOrCopy" Content="Move" IsChecked="{Binding MoveFiles}"
+                                     />
+                        <RadioButton GroupName="gpMoveOrCopy" Content="Copy" IsChecked="True" 
+                                     Grid.Column="1"/>
+                        <!-- OverWrite or Pass -->
+                        <RadioButton GroupName="gpCollision" Content="OverWrite" IsChecked="{Binding OverWriteExisting}"
+                                     Grid.Row="1"/>
+                        <RadioButton GroupName="gpCollision" Content="Pass" IsChecked="True" 
+                                     Grid.Row="1" Grid.Column="1"/>
+                        <CheckBox IsChecked="{Binding OverWriteFiles, UpdateSourceTrigger=PropertyChanged}" 
+                                  Content="OverWrite Files" Grid.Row="2"  ToolTip="OverWrite if file exists" Visibility="Hidden"/>
+                    </Grid>
+                </GroupBox>
+
                 <StackPanel Orientation="Horizontal" Margin="10">
-                    <Label Content="Arborescene type:"/>
+                    <Label Content="Arborescence type:"/>
                     <ComboBox x:Name="cbArboType" HorizontalAlignment="Left" Width="165">
                         <ComboBoxItem Content="Favorites"/>
                         <ComboBoxItem Content="Machine"/>
                         <ComboBoxItem Content="Special"/>
                     </ComboBox>
                 </StackPanel>
+                <!-- Panneau du milieu -->
             </StackPanel>
-            <!-- Panneau du milieu -->
         </DockPanel>
 
 
     </Grid>
-    
+
 </Page>

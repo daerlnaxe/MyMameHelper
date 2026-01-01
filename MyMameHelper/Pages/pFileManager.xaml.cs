@@ -54,7 +54,7 @@ namespace MyMameHelper.Pages
         public List<CT_Rom> MissingRoms = new List<CT_Rom>();
 
 
-        private string[] _DirFiles;
+        //private string[] _DirFiles;
         private Dictionary<uint, Aff_Machine> _DicMachines;
 
         private string _RomFolder;
@@ -90,12 +90,10 @@ namespace MyMameHelper.Pages
         #region Checkboxes
         public Boolean MoveFiles { get; set; }
 
-        
-        public bool OverWriteFiles 
-        { 
-            get;
-            set;
-        }
+
+        public bool OverWriteExisting { get; set; }
+
+
         #endregion
 
 
@@ -193,9 +191,9 @@ namespace MyMameHelper.Pages
         private void DF_Button_Click(object sender, RoutedEventArgs e)
         {
             ChooseFolder chooseFolder = new ChooseFolder();
-            chooseFolder.StartingFolder= Properties.Settings.Default.RomDestination;
-            
-            if(chooseFolder.ShowDialog()== true)
+            chooseFolder.StartingFolder = Properties.Settings.Default.RomDestination;
+
+            if (chooseFolder.ShowDialog() == true)
             {
                 Destination_Folder = chooseFolder.GetLinkResult;
                 Properties.Settings.Default.RomDestination = chooseFolder.GetLinkResult;
@@ -203,7 +201,7 @@ namespace MyMameHelper.Pages
             }
 
 
-            
+
             /*
 
             using (var fbd = new System.Windows.Forms.FolderBrowserDialog())
@@ -276,6 +274,9 @@ namespace MyMameHelper.Pages
 
         private void Proceed_Roms(object sender, ExecutedRoutedEventArgs e)
         {
+            /*   if (MoveFiles && !OverWriteFiles &&
+                   System.Windows.MessageBox.Show("Overwrite Files is disabled, programm will pass if the file exists. \n Continue ?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                   return;*/
 
             if (MessageBox.Show("Are you sure ?", "", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                 return;
@@ -295,8 +296,7 @@ namespace MyMameHelper.Pages
                 return;
             }
 
-            // Récupérer les fichiers dans le répertoire
-            _DirFiles = Directory.GetFiles(PProp.Default.RomSource);
+
 
 
             // Méthode
@@ -310,7 +310,8 @@ namespace MyMameHelper.Pages
             Get_RomMapped(arboChoosen);
 
 
-            List<CT_Rom_Mapped> filteredGamesMapped = new List<CT_Rom_Mapped>(_RomsMapped);
+            HashSet<CT_Rom_Mapped> filteredGamesMapped = new HashSet<CT_Rom_Mapped>(_RomsMapped);
+
 
 
             Debug.WriteLine($"Nombre de roms trouvées: {filteredGamesMapped.Count}");
@@ -319,20 +320,67 @@ namespace MyMameHelper.Pages
             {
                 System.Windows.MessageBox.Show("No rom found", "Finished", MessageBoxButton.OK, MessageBoxImage.Information);
 
+
+
             }
+
+
+            // Récupérer les fichiers dans le répertoire
+            //var _DirFiles = Directory.GetFiles(PProp.Default.RomSource, "*", SearchOption.AllDirectories);
+
+
+            // HashSet uniquement sur les chemins → lookup rapide
+            //HashSet<string> knownPaths = new HashSet<string>(_RomsMapped.Select(r => r.Archive_Name));
+
+            // dictionnaire pour lookup direct
+            var archiveDict = _RomsMapped.ToDictionary(r => r.Archive_Name);
+
+            HashSet<CT_Rom_Mapped> hashRoms = new System.Collections.Generic.HashSet<CT_Rom_Mapped>();
+            foreach (var pathFile in Directory.EnumerateFiles(PProp.Default.RomSource, "*", SearchOption.AllDirectories))
+            {
+                // Fichier
+                string file = Path.GetFileNameWithoutExtension(pathFile);
+
+                /*
+                if (knownPaths.Contains(file)){
+
+                    var archive = filteredGamesMapped.First(x => x.Archive_Name.Equals(file));
+                    hashRoms.Add(archive);
+                }*/
+
+                if (archiveDict.TryGetValue(file, out var archive))
+                {
+                    archive.FilePath = pathFile;
+                    hashRoms.Add(archive);
+                }
+                else
+                {
+                    Debug.WriteLine($"Not Found: '{pathFile}'");
+                }
+
+                //hashRoms.Add(archive);
+            }
+
+
+            filteredGamesMapped = null;
+
+
+
+            // Contenu du dossier source
+
 
 
             AsyncWorkBool asyncWorkBool = new AsyncWorkBool();
             asyncWorkBool.go += new AsyncWorkBool.AsyncBoolAction(WriteOperations);
-            asyncWorkBool.Arguments = new List<object> { arboChoosen, filteredGamesMapped };
+            asyncWorkBool.Arguments = new List<object> { arboChoosen, hashRoms };
 
             AsyncWindowProgressG aswpg = new AsyncWindowProgressG();
             aswpg.ProgressContext = asyncWorkBool;
-            aswpg.Total = filteredGamesMapped.Count;
+            aswpg.Total = hashRoms.Count;
 
             aswpg.ShowDialog();
 
-            if((Boolean)aswpg.Resultat == true)
+            if ((Boolean)aswpg.Resultat == true)
                 System.Windows.MessageBox.Show("File operation finished", "Finished", MessageBoxButton.OK, MessageBoxImage.Information);
             else
                 System.Windows.MessageBox.Show("File operation Aborted", "Aborted", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -344,27 +392,31 @@ namespace MyMameHelper.Pages
         private bool WriteOperations(AsyncWindowProgressG window)
         {
             //debug
-            
+
 
             String arboChoosen = (string)window.ProgressContext.Arguments[0];
-            List<CT_Rom_Mapped> filteredGamesMapped = (List<CT_Rom_Mapped>)window.ProgressContext.Arguments[1];
+            HashSet<CT_Rom_Mapped> hashRoms = (HashSet<CT_Rom_Mapped>)window.ProgressContext.Arguments[1];
 
 
             window.Progress_Value = 0;
 
-            int i = 0;
+            int i = -1;
 
             // Pour chaque jeu
-            foreach (CT_Rom_Mapped romMapped in filteredGamesMapped)
+            foreach (CT_Rom_Mapped romMapped in hashRoms)
             {
-                string romFile = Path.Combine(PProp.Default.RomSource, $"{romMapped.Archive_Name}.zip");
+                i++;
+                window.AsyncUpProgressPercent(i);
+
+                //string romFile = Path.Combine(PProp.Default.RomSource, $"{romMapped.Archive_Name}.zip");
+                string romFile = romMapped.FilePath;
 
 
                 // Vérifie que le fichier existe
-                Debug.Write($"Test présence '{romFile}': ");
+                //   Debug.Write($"Test présence '{romFile}': ");
                 if (!File.Exists(romFile))
                 {
-                    Debug.Write("Absent\n");
+                    // Debug.Write("Absent\n");
 
                     MissingRoms.Add(romMapped);
 
@@ -412,10 +464,7 @@ namespace MyMameHelper.Pages
 
                 try
                 {
-                    bool overW = false;
 
-                    if (OverWriteFiles)
-                        overW = true;
 
                     //var tesDir = Path.GetDF(dest);
 
@@ -425,23 +474,26 @@ namespace MyMameHelper.Pages
                     if (dbG.Unwanted == true && useUnwanted.IsChecked == true)
                         File.Create(destFile);
 
+                    // Test si fichier de destination présent
+                    bool destExists = File.Exists(destFile);
+                    // Effacement.
+                    if (destExists && OverWriteExisting)
+                    {
+                        File.Delete(destFile);
+                    }
+                    // Passer
+                    else if (destExists)
+                    {
+                        continue;
+                    }
 
                     // Déplacement des fichiers
+                    // Déplacement
                     if (MoveFiles)
-                    {
-                        if (!OverWriteFiles)
-                        {
-                            System.Windows.MessageBox.Show("File exists, unable to move file if you don't allow to overwrite", "File exists", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return false;
-                        }
-                        else if (OverWriteFiles && File.Exists(destFile))
-                        {
-                            File.Delete(destFile);
-                        }
                         File.Move(romFile, destFile);
-                    }
+                    // Copie
                     else
-                        File.Copy(romFile, destFile, overW);
+                        File.Copy(romFile, destFile);
                 }
                 catch (IOException ioExc)
                 {
@@ -450,16 +502,14 @@ namespace MyMameHelper.Pages
                 }
                 catch (Exception exc)
                 {
-                    Console.WriteLine(exc.Message);
+                    Debug.WriteLine(exc.Message);
                 }
 
-                i++;
-                window.AsyncUpProgressPercent( i);
+
 
 
             }
-
-
+            window.AsyncUpProgressPercent(hashRoms.Count);
 
             return true;
             // throw new Exception("A revoir");
@@ -524,12 +574,12 @@ namespace MyMameHelper.Pages
 
             string dest = null;
 
-   
+
 
             // Constructeur identifié on ajoute le nom au chemin
-            if (romMapped.Machine.Constructeur_Id != 0 && !String.IsNullOrEmpty( romMapped.Machine.Category))
+            if (romMapped.Machine.Constructeur_Id != 0 && !String.IsNullOrEmpty(romMapped.Machine.Category))
                 dest = Path.Combine(PProp.Default.RomDestination, $"_{romMapped.Machine.Constructeur.Nom}", $"{romMapped.Machine.Category} ({romMapped.Machine.Year})");
-            else if (romMapped.Machine.Constructeur_Id !=0)
+            else if (romMapped.Machine.Constructeur_Id != 0)
                 dest = Path.Combine(PProp.Default.RomDestination, $"_{romMapped.Machine.Constructeur.Nom}");
             else
             {
